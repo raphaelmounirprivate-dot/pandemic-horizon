@@ -48,6 +48,10 @@ Le détail figure dans [docs/scenario-degel-2042.md](docs/scenario-degel-2042.md
 - Commandes au clavier et interface adaptée à plusieurs tailles de fenêtre.
 - Scénarios décrits dans des fichiers de données pour faciliter leur ajout.
 
+## Plan détaillé
+
+Le [plan de développement](docs/plan-developpement.md) définit le périmètre de la version 1.0, les choix techniques proposés, les jalons et leurs critères de validation. Il prévoit Godot pour le jeu 2D et un premier export Windows dès la fondation.
+
 ## Étapes de réalisation
 
 1. Construire et tester le moteur de simulation.
