@@ -1,12 +1,14 @@
-# Jouer à Pandemic Horizon 0.3
+# Jouer à Pandemic Horizon 0.4
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.3.0/`. L'ancien dossier `build/windows/` contient la version précédente. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.4.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
 3. Cliquer sur une région pour consulter sa population et ses cas actifs.
 4. Reprendre avec Espace, puis acheter des évolutions lorsque les points et prérequis le permettent. Mobilité exige d'abord Diffusion. Les effets et raisons d'indisponibilité sont affichés avant achat.
 5. Atteindre 90 % de population touchée avant la fin du remède. Le bilan explique le résultat et présente le journal complet.
+
+La carte schématique présente 24 régions fictives, organisées en quatre rangées de six. Elles sont toutes visibles sans déplacement de la carte. Cliquer sur un nom ou utiliser Tab puis Entrée pour afficher ses statistiques. Le compteur de détection indique le nombre de régions repérées sur 24. Les routes du standard relient l'ensemble de la carte, quel que soit le départ choisi.
 
 | Commande | Effet |
 | --- | --- |
@@ -55,4 +57,4 @@ Trois évolutions supplémentaires se trouvent dans le panneau défilant : Adapt
 
 Un seuil plus bas déclenche la détection et les réactions plus tôt. Le minimum de 500 actifs reste applicable. Le remède, les réactions et le climat se combinent ; les difficultés ne modifient pas directement la croissance de base. Reprendre conserve les choix de la partie en cours ; Recommencer les réutilise, même si les sélections du menu ont changé.
 
-**Quitter l'application perd la partie.** Les sauvegardes et la carte de 24 régions sont encore à développer. Les chiffres et le rythme sont provisoires.
+**Quitter l'application perd la partie.** Les sauvegardes et le tutoriel restent à développer. Le remède a été ralenti pour la carte étendue ; les chiffres, le contenu et le rythme restent provisoires et doivent être éprouvés avec des joueurs.

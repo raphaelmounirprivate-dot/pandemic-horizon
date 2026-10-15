@@ -1,16 +1,16 @@
-# Règles du prototype 0.3
+# Règles du prototype 0.4
 
 Ces règles sont provisoires et abstraites. Elles ne représentent aucun modèle biologique réel.
 
-- Six régions fictives, population constante de 920 000 personnes, connexions bidirectionnelles pouvant être fermées temporairement.
+- 24 régions fictives, population constante de 3 530 000 personnes, 38 connexions bidirectionnelles dans le standard, pouvant être fermées temporairement. Dégel ajoute une 39e connexion.
 - 200 cas actifs au départ ; chaque personne passe de saine à active puis retirée, sans réinfection. Le cumul touché est actif + retiré.
-- Une journée expire les effets terminés, active les événements planifiés et vérifie les seuils de détection. Ensuite elle lit un instantané commun des six régions : échanges par routes ouvertes, progression locale, retrait, puis remède, points et fin de partie. Aucun transfert de population lors des échanges : les connexions produisent des cas locaux. La détection utilise les actifs de la veille, avant la progression du jour.
+- Une journée expire les effets terminés, active les événements planifiés et vérifie les seuils de détection. Ensuite elle lit un instantané commun des 24 régions : échanges par routes ouvertes, progression locale, retrait, puis remède, points et fin de partie. Aucun transfert de population lors des échanges : les connexions produisent des cas locaux. La détection utilise les actifs de la veille, avant la progression du jour.
 - Progression locale de base : 22 % des actifs, modulée par un tirage entre 0,92 et 1,08. Retrait : 2,5 % des actifs, au moins un lorsque des cas existent. Les entiers sont tronqués et les nouveaux cas bornés par la population saine.
 - Une connexion reçoit 0,1 % des actifs de la source, au moins un, si la source compte au moins 1 000 actifs.
 - Graine par défaut : 2042. L'état aléatoire est conservé dans le moteur en mémoire. Aucune sauvegarde de partie sur disque n'est encore proposée.
 - 8 points au départ, puis 3 tous les cinq jours. Trois achats uniques définis dans `data/evolutions.json` : Diffusion (12 points, +8 points de croissance), Mobilité (10 points, échanges ×3, exige Diffusion), Discrétion (14 points, remède ×0,7). Coûts, effets et prérequis sont validés avant le lancement ; les cycles de prérequis sont refusés.
 - Détection régionale lorsque les actifs atteignent au moins 500 personnes ET 1,5 % de la population régionale. Une détection reste acquise jusqu'à la fin de la partie ; elle provoque une seule réaction locale de huit jours, multipliant la croissance locale par 0,8.
-- Le remède commence dès la première détection. Gain quotidien en points de pourcentage : `1,3 + couverture × 0,8 + nombre de régions détectées × 0,06`, multiplié par les modificateurs de Discrétion et des événements. La couverture est comprise entre 0 et 1. Les règles de détection et de recherche sont dans `data/events.json`.
+- Le remède commence dès la première détection. Gain quotidien en points de pourcentage : `0,6 + couverture × 0,6 + nombre de régions détectées × 0,015`, multiplié par les modificateurs de Discrétion et des événements. La couverture est comprise entre 0 et 1. Les règles de détection et de recherche sont dans `data/events.json`. Ces trois coefficients ont été ajustés après des simulations sur la carte étendue ; voir le [rapport](EQUILIBRAGE-0.4.md).
 - Victoire lorsque le cumul touché atteint 90 %. Défaite si remède à 100 % ou disparition des actifs. Priorité le même jour : remède, victoire, extinction.
 - Score : `arrondi(max(0, arrondi(couverture × 10 000) − jours × 10) × coefficient de difficulté)`.
 - Une journée dure 0,5 seconde à vitesse ×1 ; ×2 et ×4 exécutent les mêmes pas. Pause sans progression. La durée des parties n'est pas encore équilibrée pour la cible finale de 15 à 30 minutes.
@@ -38,7 +38,7 @@ Le journal annonce activation, conséquence, fin et rétablissement réel des ro
 
 Le catalogue `data/scenarios.json` décrit les scénarios, leurs phases, leurs routes et leurs évolutions additionnelles, ainsi que les trois difficultés. Il est validé intégralement avant de modifier une partie : identifiants, références, dates, coefficients et ordre des phases.
 
-Dégel impose Boréale, seule région froide. Boréale ↔ Occident reste ouverte initialement. Boréale ↔ Centrale devient saisonnière et une neuvième connexion, Boréale ↔ Orient, est ajoutée. Ces deux routes s'ouvrent au jour 12, sous réserve de toute fermeture temporaire active.
+Dégel impose Boréale, seule région froide. Boréale ↔ Occident reste ouverte initialement. Boréale ↔ Centrale devient saisonnière et une 39e connexion, Boréale ↔ Orient, est ajoutée. Ces deux routes s'ouvrent au jour 12, sous réserve de toute fermeture temporaire active. Le reste de la carte demeure joignable par l'unique sortie initiale de Boréale.
 
 | Phase | Jour initial | Température fictive | Croissance froide | Autres régions | Remède de phase |
 | --- | --- | --- | --- | --- | --- |

@@ -34,6 +34,7 @@ static func validate_data(data: Variant) -> String:
 	if not data.get("regions") is Array or data.regions.is_empty():
 		return "Les régions sont absentes."
 	var ids: Array = []
+	var positions: Array = []
 	for region in data.regions:
 		if not region is Dictionary:
 			return "Région invalide."
@@ -54,6 +55,9 @@ static func validate_data(data: Variant) -> String:
 				return "Coordonnée invalide."
 			if not is_finite(float(coordinate)) or coordinate < 0.0 or coordinate > 1.0:
 				return "Coordonnée hors carte."
+		if position in positions:
+			return "Deux régions partagent la même position."
+		positions.append(position)
 		ids.append(region.id)
 	if not data.get("connections") is Array:
 		return "Connexions absentes."

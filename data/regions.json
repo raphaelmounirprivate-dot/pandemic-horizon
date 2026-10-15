@@ -1,17 +1,40 @@
 {
   "schema_version": 1,
   "regions": [
-    {"id": "boreale", "name": "Boréale", "population": 100000, "position": [0.27, 0.20]},
-    {"id": "occident", "name": "Occident", "population": 160000, "position": [0.16, 0.48]},
-    {"id": "centrale", "name": "Centrale", "population": 220000, "position": [0.47, 0.40]},
-    {"id": "australe", "name": "Australe", "population": 120000, "position": [0.39, 0.77]},
-    {"id": "orient", "name": "Orient", "population": 240000, "position": [0.77, 0.34]},
-    {"id": "archipel", "name": "Archipel", "population": 80000, "position": [0.82, 0.73]}
+    {"id": "boreale", "name": "Boréale", "population": 100000, "position": [0.248, 0.06]},
+    {"id": "occident", "name": "Occident", "population": 160000, "position": [0.06, 0.353]},
+    {"id": "centrale", "name": "Centrale", "population": 220000, "position": [0.436, 0.353]},
+    {"id": "australe", "name": "Australe", "population": 120000, "position": [0.436, 0.94]},
+    {"id": "orient", "name": "Orient", "population": 240000, "position": [0.812, 0.353]},
+    {"id": "archipel", "name": "Archipel", "population": 80000, "position": [1.0, 0.94]},
+    {"id": "toundra", "name": "Toundra", "population": 70000, "position": [0.06, 0.06]},
+    {"id": "taiga", "name": "Taïga", "population": 90000, "position": [0.436, 0.06]},
+    {"id": "steppes", "name": "Steppes", "population": 140000, "position": [0.624, 0.06]},
+    {"id": "levant", "name": "Levant", "population": 180000, "position": [0.812, 0.06]},
+    {"id": "pacifique", "name": "Pacifique", "population": 110000, "position": [1.0, 0.06]},
+    {"id": "hauts_pays", "name": "Hauts-Pays", "population": 100000, "position": [0.248, 0.353]},
+    {"id": "meridien", "name": "Méridien", "population": 190000, "position": [0.624, 0.353]},
+    {"id": "littoral", "name": "Littoral", "population": 160000, "position": [1.0, 0.353]},
+    {"id": "peninsule", "name": "Péninsule", "population": 150000, "position": [0.06, 0.646]},
+    {"id": "plateaux", "name": "Plateaux", "population": 130000, "position": [0.248, 0.646]},
+    {"id": "savane", "name": "Savane", "population": 170000, "position": [0.436, 0.646]},
+    {"id": "delta", "name": "Delta", "population": 210000, "position": [0.624, 0.646]},
+    {"id": "jade", "name": "Jade", "population": 230000, "position": [0.812, 0.646]},
+    {"id": "corail", "name": "Corail", "population": 90000, "position": [1.0, 0.646]},
+    {"id": "atlantide", "name": "Atlantide", "population": 110000, "position": [0.06, 0.94]},
+    {"id": "equateur", "name": "Équateur", "population": 180000, "position": [0.248, 0.94]},
+    {"id": "cap_sud", "name": "Cap Sud", "population": 100000, "position": [0.624, 0.94]},
+    {"id": "mousson", "name": "Mousson", "population": 200000, "position": [0.812, 0.94]}
   ],
   "connections": [
     ["boreale", "occident"], ["boreale", "centrale"],
-    ["occident", "centrale"], ["occident", "australe"],
-    ["centrale", "australe"], ["centrale", "orient"],
-    ["orient", "archipel"], ["australe", "archipel"]
+    ["toundra", "occident"], ["toundra", "hauts_pays"],
+    ["taiga", "hauts_pays"], ["taiga", "steppes"], ["steppes", "levant"], ["levant", "pacifique"],
+    ["occident", "hauts_pays"], ["hauts_pays", "centrale"], ["centrale", "meridien"], ["meridien", "orient"], ["orient", "littoral"],
+    ["levant", "orient"], ["pacifique", "littoral"], ["steppes", "meridien"],
+    ["occident", "peninsule"], ["hauts_pays", "plateaux"], ["centrale", "savane"], ["meridien", "delta"], ["orient", "jade"], ["littoral", "corail"],
+    ["peninsule", "plateaux"], ["plateaux", "savane"], ["savane", "delta"], ["delta", "jade"], ["jade", "corail"],
+    ["peninsule", "atlantide"], ["plateaux", "equateur"], ["savane", "australe"], ["delta", "cap_sud"], ["jade", "mousson"], ["corail", "archipel"],
+    ["atlantide", "equateur"], ["equateur", "australe"], ["australe", "cap_sud"], ["cap_sud", "mousson"], ["mousson", "archipel"]
   ]
 }

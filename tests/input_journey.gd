@@ -39,6 +39,8 @@ func run(tree: SceneTree, check: Callable) -> void:
 		return
 	await click(tree, scene.map_view.buttons[2])
 	check.call(scene.selected == 2 and scene.region_details.text.begins_with("Centrale"), "Clic carte sélectionne et affiche la région")
+	await click(tree, scene.map_view.buttons[23])
+	check.call(scene.selected == 23 and scene.region_details.text.begins_with("Mousson"), "Dernière des 24 régions sélectionnable à la souris")
 	await click(tree, scene.pause_button)
 	check.call(not scene.paused, "Clic pause reprend")
 	await key(tree, KEY_SPACE)
@@ -66,7 +68,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 	await key(tree, KEY_ENTER)
 	check.call(scene.screen == "game" and scene.world.day == 0 and scene.world.purchased.is_empty(), "Entrée relance une nouvelle partie depuis le menu")
 	var reachable: Array = []
-	for i in range(30):
+	for i in range(scene.world.regions.size() + scene.world.evolutions.size() + 10):
 		await key(tree, KEY_TAB)
 		var focused = scene.get_viewport().gui_get_focus_owner()
 		if focused not in reachable:

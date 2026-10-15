@@ -9,12 +9,13 @@ signal region_selected(index: int)
 
 func setup(model: PandemicWorld) -> void:
 	world = model
-	custom_minimum_size = Vector2(480, 260)
+	custom_minimum_size = Vector2(720, 260)
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	size_flags_vertical = Control.SIZE_EXPAND_FILL
 	for i in range(world.regions.size()):
 		var button = Button.new()
-		button.custom_minimum_size = Vector2(120, 44)
+		button.custom_minimum_size = Vector2(112, 44)
+		button.add_theme_font_size_override("font_size", 14)
 		button.pressed.connect(func():
 			selected = i
 			region_selected.emit(i)
@@ -26,7 +27,7 @@ func setup(model: PandemicWorld) -> void:
 	refresh()
 
 func map_position(region: Dictionary) -> Vector2:
-	return Vector2(78, 44) + Vector2(region.position[0], region.position[1]) * (size - Vector2(156, 88))
+	return Vector2(62, 30) + Vector2(region.position[0], region.position[1]) * (size - Vector2(124, 60))
 
 func refresh() -> void:
 	if world == null:
@@ -34,8 +35,8 @@ func refresh() -> void:
 	for i in range(buttons.size()):
 		var region = world.regions[i]
 		buttons[i].text = region.name
-		buttons[i].position = map_position(region) - Vector2(60, 22)
-		buttons[i].size = Vector2(120, 44)
+		buttons[i].position = map_position(region) - Vector2(56, 22)
+		buttons[i].size = Vector2(112, 44)
 		buttons[i].modulate = ACCENT if i == selected else Color.WHITE
 		buttons[i].tooltip_text = "%s : %d cas actifs. Entrée pour sélectionner." % [region.name, region.active]
 	queue_redraw()
@@ -61,13 +62,13 @@ func _draw() -> void:
 		var region = world.regions[i]
 		var p = map_position(region)
 		var polygon = PackedVector2Array([
-			p + Vector2(-72, -31), p + Vector2(-38, -54), p + Vector2(44, -45),
-			p + Vector2(75, -9), p + Vector2(54, 39), p + Vector2(-22, 49), p + Vector2(-69, 20)
+			p + Vector2(-59, -25), p + Vector2(48, -25), p + Vector2(59, -14),
+			p + Vector2(59, 25), p + Vector2(-48, 25), p + Vector2(-59, 14)
 		])
 		draw_colored_polygon(polygon, LAND)
 		var fraction = float(region.active + region.removed) / region.population
-		draw_rect(Rect2(p + Vector2(-48, 30), Vector2(96, 4)), Color("294b55"))
-		draw_rect(Rect2(p + Vector2(-48, 30), Vector2(96 * fraction, 4)), ACCENT)
+		draw_rect(Rect2(p + Vector2(-48, 24), Vector2(96, 3)), Color("294b55"))
+		draw_rect(Rect2(p + Vector2(-48, 24), Vector2(96 * fraction, 3)), ACCENT)
 	# Draw closure markers above the land so short routes remain identifiable.
 	for edge in world.connections:
 		if not world.route_is_open(edge):

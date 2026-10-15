@@ -33,7 +33,7 @@ func run(check: Callable) -> void:
 	check.call(not model.start("orient", 2042, null, null, "degel2042").is_empty(), "Départ imposé contrôlé par le moteur")
 	check.call(model.start("boreale", 2042, null, null, "degel2042").is_empty(), "Dégel démarre")
 	check.call(model.phase.id == "isolation" and model.phase.temperature == -18, "Phase et température initiales")
-	check.call(model.connections.size() == 9 and not model.route_is_open(["boreale", "orient"]), "Route arctique ajoutée mais fermée initialement")
+	check.call(model.connections.size() == data.connections.size() + 1 and not model.route_is_open(["boreale", "orient"]), "Route arctique ajoutée mais fermée initialement")
 	check.call(not model.route_is_open(["boreale", "centrale"]) and model.route_is_open(["boreale", "occident"]), "Isolement conserve une seule sortie de Boréale")
 	check.call(model.evolutions.has("polar") and model.evolutions.size() == 6, "Trois évolutions spécifiques au scénario")
 	model.day = 11
@@ -103,7 +103,7 @@ func run(check: Callable) -> void:
 	var prior = model.scenario.duplicate(true)
 	check.call(not model.start("orient", 2042, null, null, "degel2042").is_empty() and model.scenario == prior, "Refus de départ conserve le scénario existant")
 	model.start("orient")
-	check.call(model.scenario.id == "standard" and model.connections.size() == 8 and not model.evolutions.has("polar"), "Retour standard sans état climatique résiduel")
+	check.call(model.scenario.id == "standard" and model.connections.size() == data.connections.size() and not model.evolutions.has("polar"), "Retour standard sans état climatique résiduel")
 	# Real complete runs cover all scenario/difficulty combinations and seeded replay.
 	var outcomes: Dictionary = {}
 	for scenario_id in ["standard", "degel2042"]:

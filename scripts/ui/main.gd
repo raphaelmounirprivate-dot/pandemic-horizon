@@ -45,7 +45,7 @@ func _ready() -> void:
 func _smoke_test() -> void:
 	# Exercise the actual exported resources; no dependency on the tests folder.
 	start_game()
-	if screen != "game" or world.totals().active != 200:
+	if screen != "game" or world.totals().active != 200 or world.regions.size() != 24 or map_view.buttons.size() != 24:
 		get_tree().quit(1)
 		return
 	world.points = 100
@@ -155,7 +155,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.3", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.4", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -188,7 +188,7 @@ func show_menu() -> void:
 	spacer.custom_minimum_size.y = 40
 	presentation.add_child(spacer)
 	presentation.add_child(_label("Chaque région compte.", 36))
-	var description = _label("Pilotez un agent fictif dans six régions reliées.\nFaites évoluer sa diffusion et surveillez le remède.\n\nObjectif : toucher 90 % de la population\navant l'achèvement du remède.", 22)
+	var description = _label("Pilotez un agent fictif dans 24 régions reliées.\nFaites évoluer sa diffusion et surveillez le remède.\n\nObjectif : toucher 90 % de la population\navant l'achèvement du remède.", 22)
 	presentation.add_child(description)
 	menu_scenario_detail = _label("", 16, MUTED)
 	menu_scenario_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -386,7 +386,7 @@ func toggle_pause() -> void:
 func _refresh() -> void:
 	if screen != "game":
 		return
-	metrics.text = "Jour %d     Touchés : %.1f %%     Remède : %.1f %%     Points : %d     Détectées : %d/6" % [world.day, world.coverage() * 100, world.cure, world.points, world.detected_count()]
+	metrics.text = "Jour %d     Touchés : %.1f %%     Remède : %.1f %%     Points : %d     Détectées : %d/%d" % [world.day, world.coverage() * 100, world.cure, world.points, world.detected_count(), world.regions.size()]
 	var region = world.regions[selected]
 	region_details.text = "%s · Population : %d\nSains : %d · Actifs : %d\nRetirés : %d · %s" % [region.name, region.population, region.healthy, region.active, region.removed, "Détectée" if region.detected else "Non détectée"]
 	if world.scenario.id != "standard":

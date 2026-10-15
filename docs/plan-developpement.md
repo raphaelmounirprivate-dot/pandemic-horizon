@@ -4,7 +4,7 @@ Date : 15 octobre 2026.
 
 Dépôt : [raphaelmounirprivate-dot/plague-inc-evolved](https://github.com/raphaelmounirprivate-dot/plague-inc-evolved).
 
-**État actuel :** prototype 0.3 de six régions, Standard et Dégel 2042, trois difficultés, phases et évolutions climatiques ; export Windows testé localement. Voir le [point de contrôle 03](suivi/03-j4-degel-difficultes.md) pour les validations et les limites. La carte de 24 régions et les sauvegardes restent à développer. Ce document conserve la feuille de route complète de la version 1.0 ; ses jalons décrivent les objectifs, pas une liste de fonctionnalités toutes livrées.
+**État actuel :** prototype 0.4 de 24 régions, Standard et Dégel 2042, trois difficultés, phases et évolutions climatiques ; export Windows testé localement. Voir le [point de contrôle 04](suivi/04-j4-carte24.md) pour les validations et les limites. Sauvegardes, tutoriel, diversité du contenu et validation humaine de l'équilibrage restent à réaliser. Ce document conserve la feuille de route complète de la version 1.0 ; ses jalons décrivent les objectifs, pas une liste de fonctionnalités toutes livrées.
 
 ## 1. Résultat à livrer
 
@@ -140,7 +140,7 @@ Aucune date ferme n'est fixée avant J2. À ce stade, estimer le reste à partir
 
 ## 11. Première étape à entreprendre
 
-Les trois premiers lots ont construit la partie complète, les mécanismes de J3 puis Dégel et les difficultés sur six régions. Le [point de contrôle 03](suivi/03-j4-degel-difficultes.md) détaille les essais réalisés et les limites. **Prochain lot : compléter J4**, avec la carte de 24 régions et l'équilibrage des deux scénarios avant les sauvegardes de J5.
+Les quatre premiers lots ont construit la partie complète, J3, Dégel et les difficultés, puis la carte de 24 régions avec une première exploration d'équilibrage. Le [point de contrôle 04](suivi/04-j4-carte24.md) détaille les essais réalisés et les limites. **Prochain lot : J5, sauvegardes versionnées et chargement fidèle**, avant de compléter la variété du contenu et l'équilibrage auprès de joueurs.
 
 ## 12. Besoins pour démarrer
 

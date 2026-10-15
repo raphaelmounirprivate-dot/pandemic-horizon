@@ -30,7 +30,7 @@ func run() -> void:
 	var model = World.new()
 	check(model.start("inconnue") != "", "Départ inconnu refusé")
 	check(model.start("boreale").is_empty(), "Initialisation")
-	check(model.totals().population == 920000, "Population totale")
+	check(model.totals().population == 3530000, "Population totale des 24 régions")
 	check(model.totals().active == 200, "Cas initiaux")
 	check(model.purchase("transmission") != "", "Achat sans points refusé")
 	check(model.points == 8 and model.purchased.is_empty(), "Refus sans mutation")
@@ -111,7 +111,7 @@ func run() -> void:
 			check(model.regions == end and model.day == end_day, "Fin de partie immuable")
 			if model.outcome == "victory": wins += 1
 			else: losses += 1
-	print("Exploration : %d victoires, %d défaites sur 72 parties (pas une mesure d'équilibrage)." % [wins, losses])
+	print("Exploration : %d victoires, %d défaites sur %d parties (pas une mesure d'équilibrage)." % [wins, losses, data.regions.size() * 12])
 	check(wins > 0 and losses > 0, "Victoire et défaite possibles sur les parcours explorés")
 	# Explicit victory, defeat and same-day priority fixtures.
 	model.start("boreale")
@@ -184,5 +184,8 @@ func run() -> void:
 	var before_input = checks
 	await load("res://tests/input_journey.gd").new().run(self, check)
 	check(checks - before_input >= 15, "Parcours d'entrée entièrement exécuté")
+	var before_map = checks
+	await load("res://tests/test_map.gd").new().run(self, check)
+	check(checks - before_map >= 33, "Suite carte entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
