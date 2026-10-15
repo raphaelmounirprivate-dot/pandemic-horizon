@@ -53,10 +53,11 @@ func run() -> void:
 		second.step()
 	check(first.regions == second.regions and first.rng.state == second.rng.state, "Rejeu déterministe complet")
 	check(first.cure == second.cure and first.points == second.points, "Rejeu remède et points")
+	check(first.active_events == second.active_events and first.activated_events == second.activated_events and first.journal == second.journal, "Rejeu complet des événements et réactions")
 	# No active connections means no spontaneous spread to an isolated region.
 	var isolated = data.duplicate(true)
 	isolated.connections = []
-	model.start("boreale", 3, isolated)
+	model.start("boreale", 3, isolated, load("res://tests/test_gameplay.gd").new().clean_content())
 	for i in range(30): model.step()
 	check(model.regions[1].active == 0, "Pas de diffusion sans connexion")
 	# Reversing edge traversal must not change any simulation result.
@@ -69,10 +70,14 @@ func run() -> void:
 		second.step()
 	check(first.regions == second.regions, "Échanges indépendants de l'ordre des connexions")
 	# Verify each upgrade changes the promised observable behavior.
-	for id in World.EVOLUTIONS:
+	for id in first.evolutions:
 		first.start("boreale", 10)
 		second.start("boreale", 10)
 		second.points = 100
+		for prerequisite in second.evolutions[id].requires:
+			first.points = 100
+			first.purchase(prerequisite)
+			second.purchase(prerequisite)
 		second.purchase(id)
 		for i in range(35):
 			first.step()
@@ -89,7 +94,7 @@ func run() -> void:
 			model.start(start.id, seed_value)
 			for i in range(500):
 				if seed_value % 2 == 0:
-					for id in World.EVOLUTIONS: model.purchase(id)
+					for id in model.evolutions: model.purchase(id)
 				model.step()
 				var valid = model.cure >= 0 and model.cure <= 100 and model.points >= 0
 				for region in model.regions:
@@ -127,6 +132,9 @@ func run() -> void:
 	check(model.purchase("mobility") != "", "Achat interdit après résultat")
 	model.start("orient")
 	check(model.day == 0 and model.points == 8 and model.outcome == "" and model.purchased.is_empty(), "Nouvelle partie réinitialisée")
+	var before_gameplay = checks
+	load("res://tests/test_gameplay.gd").new().run(check)
+	check(checks - before_gameplay >= 59, "Suite gameplay entièrement exécutée")
 	# Exercise the actual UI controller without rendering, then its time integration.
 	var scene = load("res://scenes/main.tscn").instantiate()
 	root.add_child(scene)
@@ -170,5 +178,8 @@ func run() -> void:
 	check(scene.screen == "game" and scene.world.day == 0, "Rejouer après résultat")
 	scene.queue_free()
 	await process_frame
+	var before_input = checks
+	await load("res://tests/input_journey.gd").new().run(self, check)
+	check(checks - before_input >= 15, "Parcours d'entrée entièrement exécuté")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

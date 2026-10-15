@@ -8,7 +8,7 @@ Application de bureau Windows, Godot 4.7.2 standard et GDScript. Simulation abst
 
 ## Parcours
 
-Choisir un départ, suivre la propagation entre régions fictives, acheter des évolutions, gérer le temps et comprendre le résultat. Le premier prototype porte sur six régions et le scénario standard. Dégel 2042 reste à développer.
+Choisir un départ, suivre la propagation entre régions fictives, acheter des évolutions avec prérequis, gérer le temps et comprendre le résultat. Le prototype 0.2 porte sur six régions et le scénario standard, avec détection, réactions régionales et événements temporaires. Dégel 2042 reste à développer.
 
 ## Contraintes
 
@@ -16,4 +16,4 @@ Règles visibles, interface redimensionnable dès 1280 × 720, navigation au cla
 
 ## Public et décisions ouvertes
 
-Public supposé : joueurs de jeux de stratégie sur PC ; niveau d'expérience et préférences visuelles à confirmer. Les essais avec des joueurs extérieurs et l'équilibrage restent à organiser.
+Public supposé : joueurs de jeux de stratégie sur PC ; niveau d'expérience à confirmer. Direction visuelle sombre cartographique avec turquoise et ambre confirmée par l'utilisateur. Les essais avec des joueurs extérieurs et l'équilibrage restent à organiser.

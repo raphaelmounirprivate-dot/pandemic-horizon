@@ -9,7 +9,7 @@ signal region_selected(index: int)
 
 func setup(model: PandemicWorld) -> void:
 	world = model
-	custom_minimum_size = Vector2(480, 290)
+	custom_minimum_size = Vector2(480, 260)
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	size_flags_vertical = Control.SIZE_EXPAND_FILL
 	for i in range(world.regions.size()):
@@ -52,7 +52,11 @@ func _draw() -> void:
 	for region in world.regions:
 		positions[region.id] = map_position(region)
 	for edge in world.connections:
-		draw_line(positions[edge[0]], positions[edge[1]], Color("3e6e7c"), 2.0, true)
+		var open = world.route_is_open(edge)
+		if open:
+			draw_line(positions[edge[0]], positions[edge[1]], Color("3e6e7c"), 2.0, true)
+		else:
+			draw_dashed_line(positions[edge[0]], positions[edge[1]], Color("efbc70"), 3.0, 8.0, true)
 	for i in range(world.regions.size()):
 		var region = world.regions[i]
 		var p = map_position(region)
@@ -64,6 +68,13 @@ func _draw() -> void:
 		var fraction = float(region.active + region.removed) / region.population
 		draw_rect(Rect2(p + Vector2(-48, 30), Vector2(96, 4)), Color("294b55"))
 		draw_rect(Rect2(p + Vector2(-48, 30), Vector2(96 * fraction, 4)), ACCENT)
+	# Draw closure markers above the land so short routes remain identifiable.
+	for edge in world.connections:
+		if not world.route_is_open(edge):
+			var middle = (positions[edge[0]] + positions[edge[1]]) * 0.5
+			draw_circle(middle, 10, Color("0b2029"))
+			draw_line(middle + Vector2(-6, -6), middle + Vector2(6, 6), Color("efbc70"), 3.0)
+			draw_line(middle + Vector2(-6, 6), middle + Vector2(6, -6), Color("efbc70"), 3.0)
 
 func _background() -> StyleBoxFlat:
 	var style = StyleBoxFlat.new()

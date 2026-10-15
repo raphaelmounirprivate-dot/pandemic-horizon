@@ -1,13 +1,15 @@
 ﻿# Interface du prototype
 
-Direction confirmée par le joueur : centre de contrôle cartographique sobre et sombre, texte clair et accent turquoise. Surface de jeu de bureau, conçue pour observer et agir. L'accent ambre fait partie de la direction retenue, mais il n'est pas encore implémenté ; aucune valeur de couleur ambre n'est définie dans le prototype.
+Direction confirmée par le joueur : centre de contrôle cartographique sobre et sombre, texte clair, accents turquoise et ambre. Surface de jeu de bureau Windows/Godot, conçue pour observer et agir.
 
 - Fond : `#091115`, carte : `#0b2029`, régions : `#193a45`.
-- Texte principal : `#e1eee9`, secondaire : `#a7c4c9`, sélection et progression : `#69d6bd`.
-- Police embarquée par Godot ; corps 18 px, secondaire 16 px, titre 30 px. Les effets courts des évolutions utilisent 14 px.
-- Marges externes 24 px, espacement vertical 8 px (6 px dans le panneau des évolutions), groupes horizontaux 16 px. Boutons de hauteur minimale 44 px, focus bordé de 2 px.
-- Carte schématique en géométrie originale : connexions fixes, sélection nommée et barres de couverture. Aucun fond photo ni ressource tierce ajoutée.
-- Information permanente : jour, couverture, remède et points. Détails de la région et évolutions à droite ; deux derniers événements et commandes sous la carte. Le bilan expose le journal complet.
-- Le prototype commence en pause ; un écran distinct explique la fin de partie. La couleur complète les libellés et les chiffres.
+- Texte principal : `#e1eee9`, secondaire : `#a7c4c9`, sélection et progression : `#69d6bd`. L'ambre `#efbc70` signale les événements actifs, les routes fermées et les raisons qui empêchent un achat.
+- Police embarquée par Godot ; corps 18 px, secondaire 16 px, titre 30 px. Les effets courts et états des évolutions utilisent 14 px ; les événements actifs, 15 px.
+- Marges externes 24 px, espacement vertical 8 px (4 px dans le panneau des évolutions), groupes horizontaux 16 px. Boutons de hauteur minimale 44 px, focus bordé de 2 px.
+- Carte schématique en géométrie originale : connexions fixes, sélection nommée et barres de couverture. Les routes ouvertes sont tracées en bleu ; les routes fermées en pointillés ambre (3 px, tirets de 8 px), avec une croix ambre sur fond de carte au milieu du trajet, dessinée au-dessus des régions. Aucun fond photo ni ressource tierce ajoutée.
+- Information permanente : jour, couverture, remède, points et nombre de régions détectées. Détails de la région et évolutions à droite dans un `ScrollContainer` sans défilement horizontal, avec `follow_focus` activé ; largeur minimale du conteneur 360 px, contenu 340 px. La carte conserve une taille minimale de 480 × 260 px.
+- Sous la carte, les événements actifs occupent un `RichTextLabel` de hauteur minimale 86 px. Les deux derniers événements du journal, le statut et les commandes restent sous la zone de jeu. Le bilan expose le journal complet.
+- Chaque évolution expose son effet et son état : « Acquise » ou « Disponible » en turquoise, sinon la raison de blocage en ambre. Une évolution acquise est désactivée ; les autres boutons restent accessibles au focus, même si un prérequis ou les points manquent.
+- Le prototype commence en pause ; le statut affiche la vitesse sélectionnée même pendant la pause. Un écran distinct explique la fin de partie. La couleur complète les libellés, les chiffres et les formes.
 
-Les captures et tests de rendu sont des contrôles de développement ; ils ne remplacent pas les essais avec des joueurs.
+Les captures et tests de rendu sont des contrôles de développement ; ils ne remplacent pas les essais avec des joueurs ni la validation des entrées physiques.

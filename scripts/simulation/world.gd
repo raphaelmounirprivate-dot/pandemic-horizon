@@ -3,11 +3,7 @@ extends RefCounted
 ## Abstract game model. No real biological parameters. One step = one day.
 
 const DATA_PATH = "res://data/regions.json"
-const EVOLUTIONS = {
-	"transmission": {"name": "Diffusion", "cost": 12, "effect": "Progression locale : +8 points de pourcentage."},
-	"mobility": {"name": "Mobilité", "cost": 10, "effect": "Échanges entre régions : multipliés par 3."},
-	"discretion": {"name": "Discrétion", "cost": 14, "effect": "Progression du remède : réduite de 30 %."}
-}
+const Content = preload("res://scripts/gameplay/content.gd")
 
 var regions: Array = []
 var connections: Array = []
@@ -18,6 +14,12 @@ var outcome: String = ""
 var purchased: Array[String] = []
 var journal: Array[String] = []
 var rng = RandomNumberGenerator.new()
+var evolutions: Dictionary = {}
+var event_definitions: Array = []
+var detection_rules: Dictionary = {}
+var cure_rules: Dictionary = {}
+var active_events: Array = []
+var activated_events: Array[String] = []
 
 static func validate_data(data: Variant) -> String:
 	if not data is Dictionary:
@@ -63,7 +65,7 @@ static func validate_data(data: Variant) -> String:
 		edges.append(pair)
 	return ""
 
-func start(start_id: String, seed_value: int = 2042, source: Variant = null) -> String:
+func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null) -> String:
 	var data: Variant = source
 	if data == null:
 		if not FileAccess.file_exists(DATA_PATH):
@@ -77,8 +79,20 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null) -> 
 		selected = selected or region.id == start_id
 	if not selected:
 		return "Région de départ inconnue."
+	var gameplay: Variant = Content.load_files() if gameplay_source == null else gameplay_source
+	error = Content.validate(gameplay, data.regions, data.connections)
+	if not error.is_empty():
+		return error
 	regions = data.regions.duplicate(true)
 	connections = data.connections.duplicate(true)
+	evolutions.clear()
+	for item in gameplay.evolutions.evolutions:
+		evolutions[item.id] = item.duplicate(true)
+	event_definitions = gameplay.events.events.duplicate(true)
+	detection_rules = gameplay.events.detection.duplicate(true)
+	cure_rules = gameplay.events.cure.duplicate(true)
+	active_events.clear()
+	activated_events.clear()
 	day = 0
 	points = 8
 	cure = 0.0
@@ -90,6 +104,7 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null) -> 
 		region["active"] = 200 if region.id == start_id else 0
 		region["removed"] = 0
 		region["healthy"] = int(region.population) - region.active
+		region["detected"] = false
 	journal.append("Jour 0 · Départ dans la région %s." % region_name(start_id))
 	return ""
 
@@ -114,24 +129,127 @@ func coverage() -> float:
 func score() -> int:
 	return maxi(0, roundi(coverage() * 10000.0) - day * 10)
 
-func purchase(id: String) -> String:
+func purchase_reason(id: String) -> String:
+	if regions.is_empty():
+		return "Aucune partie en cours."
 	if not outcome.is_empty():
 		return "La partie est terminée."
-	if not EVOLUTIONS.has(id):
+	if not evolutions.has(id):
 		return "Évolution inconnue."
 	if id in purchased:
 		return "Évolution déjà acquise."
-	if points < EVOLUTIONS[id].cost:
+	for prerequisite in evolutions[id].requires:
+		if prerequisite not in purchased:
+			return "Prérequis : " + evolutions[prerequisite].name
+	if points < evolutions[id].cost:
 		return "Points insuffisants."
-	points -= EVOLUTIONS[id].cost
-	purchased.append(id)
-	journal.append("Jour %d · Évolution acquise : %s." % [day, EVOLUTIONS[id].name])
 	return ""
+
+func purchase(id: String) -> String:
+	var reason = purchase_reason(id)
+	if not reason.is_empty():
+		return reason
+	points -= int(evolutions[id].cost)
+	purchased.append(id)
+	journal.append("Jour %d · Évolution acquise : %s." % [day, evolutions[id].name])
+	return ""
+
+func upgrade_modifier(key: String, base: float = 1.0) -> float:
+	var result = base
+	for id in purchased:
+		var effects = evolutions[id].modifiers
+		if effects.has(key):
+			if key == "growth_bonus":
+				result += effects[key]
+			else:
+				result *= effects[key]
+	return result
+
+func detected_count() -> int:
+	var count = 0
+	for region in regions:
+		if region.detected:
+			count += 1
+	return count
+
+func route_is_open(edge: Array) -> bool:
+	if edge.size() != 2:
+		return false
+	if edge not in connections and [edge[1], edge[0]] not in connections:
+		return false
+	for effect in active_events:
+		if effect.kind == "route_closure" and (effect.target == edge or effect.target == [edge[1], edge[0]]):
+			return false
+	return true
+
+func event_modifier(kind: String, target: String = "global") -> float:
+	var factor = 1.0
+	for effect in active_events:
+		if effect.kind == kind and effect.target == target:
+			factor *= effect.factor
+	return factor
+
+func effect_description(effect: Dictionary) -> String:
+	match effect.kind:
+		"route_closure": return "%s ↔ %s : route fermée" % [region_name(effect.target[0]), region_name(effect.target[1])]
+		"growth_multiplier": return "%s : croissance ×%.2f" % [region_name(effect.target), effect.factor]
+		"cure_multiplier": return "remède ×%.2f" % effect.factor
+	return ""
+
+func _add_event(definition: Dictionary) -> bool:
+	if definition.id in activated_events:
+		return false
+	var effect = definition.duplicate(true)
+	effect["start_day"] = day
+	effect["end_day"] = day + int(definition.duration)
+	activated_events.append(effect.id)
+	active_events.append(effect)
+	journal.append("Jour %d · %s — %s ; fin au jour %d." % [day, effect.name, effect_description(effect), effect.end_day])
+	return true
+
+func activate_event(id: String) -> String:
+	if regions.is_empty() or not outcome.is_empty():
+		return "Aucune partie active."
+	for definition in event_definitions:
+		if definition.id == id:
+			return "" if _add_event(definition) else "Événement déjà déclenché."
+	return "Événement inconnu."
+
+func _update_events_and_detection() -> void:
+	# End is exclusive: duration 8 at day 18 affects days 18 through 25.
+	var closed_before: Array = []
+	for edge in connections:
+		if not route_is_open(edge):
+			closed_before.append(edge)
+	for i in range(active_events.size() - 1, -1, -1):
+		var effect = active_events[i]
+		if day >= effect.end_day:
+			active_events.remove_at(i)
+			journal.append("Jour %d · Fin : %s." % [day, effect.name])
+	for definition in event_definitions:
+		if day == int(definition.start_day):
+			_add_event(definition)
+	for region in regions:
+		if not region.detected and region.active >= detection_rules.min_active and float(region.active) / region.population >= detection_rules.active_ratio:
+			region.detected = true
+			journal.append("Jour %d · Détection dans la région %s ; recherche mondiale renforcée." % [day, region.name])
+			_add_event({"id": "reaction_" + region.id, "name": "Réaction de " + region.name, "kind": "growth_multiplier", "target": region.id, "factor": detection_rules.reaction_factor, "duration": detection_rules.reaction_duration})
+	# Announce final daily route state, after all expirations AND activations.
+	for edge in closed_before:
+		if route_is_open(edge):
+			journal.append("Jour %d · Route rétablie : %s ↔ %s." % [day, region_name(edge[0]), region_name(edge[1])])
+
+func active_event_lines() -> Array[String]:
+	var lines: Array[String] = []
+	for effect in active_events:
+		lines.append("%s · %s · %d j restants" % [effect.name, effect_description(effect), effect.end_day - day])
+	return lines
 
 func step() -> void:
 	if not outcome.is_empty() or regions.is_empty():
 		return
 	day += 1
+	_update_events_and_detection()
 	var incoming: Dictionary = {}
 	var snapshot = regions.duplicate(true)
 	var by_id: Dictionary = {}
@@ -140,14 +258,16 @@ func step() -> void:
 		by_id[region.id] = region
 	# Every connection reads the same snapshot. Traversal order cannot cascade.
 	for edge in connections:
+		if not route_is_open(edge):
+			continue
 		for direction in [[edge[0], edge[1]], [edge[1], edge[0]]]:
 			var source = by_id[direction[0]]
 			if source.active >= 1000:
-				incoming[direction[1]] += maxi(1, int(source.active * (0.003 if "mobility" in purchased else 0.001)))
+				incoming[direction[1]] += maxi(1, int(source.active * 0.001 * upgrade_modifier("exchange_multiplier")))
 	for index in range(regions.size()):
 		var before = snapshot[index]
 		var region = regions[index]
-		var rate = 0.22 + (0.08 if "transmission" in purchased else 0.0)
+		var rate = upgrade_modifier("growth_bonus", 0.22) * event_modifier("growth_multiplier", region.id)
 		var growth = int(before.active * rate * rng.randf_range(0.92, 1.08))
 		var new_cases = mini(int(before.healthy), growth + int(incoming[region.id]))
 		var recovered = mini(int(before.active), maxi(1, int(before.active * 0.025))) if before.active > 0 else 0
@@ -156,8 +276,9 @@ func step() -> void:
 		region.removed += recovered
 		if before.active == 0 and new_cases > 0:
 			journal.append("Jour %d · Premiers cas dans la région %s." % [day, region.name])
-	if day > 25:
-		cure = minf(100.0, cure + (1.6 + coverage() * 0.8) * (0.7 if "discretion" in purchased else 1.0))
+	if detected_count() > 0:
+		var gain = cure_rules.base_gain + coverage() * cure_rules.coverage_gain + detected_count() * cure_rules.per_detected_gain
+		cure = minf(100.0, cure + gain * upgrade_modifier("cure_multiplier") * event_modifier("cure_multiplier"))
 	if day % 5 == 0:
 		points += 3
 	resolve_outcome()

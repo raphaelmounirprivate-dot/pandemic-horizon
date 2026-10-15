@@ -33,13 +33,15 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-export.ps1
 
 Résultat : `build/windows/PandemicHorizon.exe`, ressources embarquées, accompagné du guide et des licences copiés par le script. L'exécutable n'est pas signé. Les exécutables, archives téléchargées et captures ne sont pas versionnés dans Git. La release GitHub 1.0 reste un jalon ultérieur.
 
-`verify-export.ps1` copie le binaire seul vers un chemin contenant espaces et accents, vérifie deux parties automatisées (victoire et défaite) dans l'export, puis son démarrage graphique. Ce contrôle nécessite une session graphique pour sa deuxième étape ; il n'utilise ni les scènes sources ni le dossier de tests.
+`verify-export.ps1` copie le binaire seul vers un chemin contenant espaces et accents, vérifie les prérequis JSON, la détection, les fermetures superposées et leur expiration, le bonus de remède, puis deux parties automatisées (victoire et défaite) dans l'export et son démarrage graphique. Ce contrôle nécessite une session graphique pour sa deuxième étape ; il n'utilise ni les scènes sources ni le dossier de tests.
 
 ## Tests
 
 - `tests/run_tests.gd` vérifie données invalides, conservation de population, bornes, replay, ordre des connexions, effets des achats, fins simultanées, redémarrage et contrôleur d'interface.
+- `tests/test_gameplay.gd` couvre les schémas JSON, prérequis, détection, effets régionaux, expiration exclusive, fermetures superposées et cumuls sans effet résiduel.
+- `tests/input_journey.gd` injecte des événements souris/clavier dans le viewport : clics avec test de position, refus/acceptation d'achat, Tab/Maj+Tab, Entrée, Espace, vitesses et Échap. Il teste le routage Godot ; il ne simule pas le pilote d'entrée Windows ni des gestes humains. API utilisée : [Viewport.push_input](https://docs.godotengine.org/en/stable/classes/class_viewport.html#class-viewport-method-push-input).
 - 72 parties automatisées explorent six départs et douze graines, avec ou sans achats automatiques. Ce lot ne mesure pas la difficulté pour des joueurs humains.
-- La commande `Capture` utilise un vrai rendu graphique et produit les quatre écrans à 1280 × 720 et 1920 × 1080 dans `build/qa/`. Elle nécessite une session graphique.
+- La commande `Capture` utilise un vrai rendu graphique et produit douze captures à 1280 × 720 et 1920 × 1080 : menu, jeu, fermetures superposées, bonus de recherche, paramètres et bilan. Elle nécessite une session graphique.
 - Le script `dev.ps1` signale un échec si le moteur renvoie une erreur ou si un test échoue. Le workflow GitHub exécute import et tests ; il ne publie aucun binaire.
 
 ```powershell
@@ -52,6 +54,8 @@ Les essais automatiques et les captures ne prouvent pas la facilité d'utilisati
 
 - `scripts/simulation/world.gd` : état du monde et règles ; aucune dépendance aux scènes.
 - `data/regions.json` : six régions fictives et connexions, avec validation au lancement.
+- `data/evolutions.json` : coûts, prérequis et modificateurs ; `data/events.json` : calendrier, effets temporaires, détection et recherche.
+- `scripts/gameplay/content.gd` : validation des références, bornes et cycles avant de modifier le monde.
 - `scripts/ui/main.gd` : menus, commandes et accumulation du temps de simulation.
 - `scripts/ui/region_map.gd` : carte schématique et sélection des régions.
 - `docs/REGLES.md` : paramètres effectifs du prototype.

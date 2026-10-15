@@ -5,6 +5,7 @@ const MapView = preload("res://scripts/ui/region_map.gd")
 const INK = Color("e1eee9")
 const MUTED = Color("a7c4c9")
 const ACCENT = Color("69d6bd")
+const AMBER = Color("efbc70")
 const CONFIG_PATH = "user://settings.cfg"
 
 var world = World.new()
@@ -22,6 +23,8 @@ var status_label: Label
 var pause_button: Button
 var map_view: Control
 var evolution_buttons: Dictionary = {}
+var evolution_reasons: Dictionary = {}
+var effects_label: RichTextLabel
 
 func _ready() -> void:
 	_apply_theme()
@@ -39,10 +42,23 @@ func _smoke_test() -> void:
 		get_tree().quit(1)
 		return
 	world.points = 100
+	if world.purchase("mobility").is_empty():
+		get_tree().quit(1)
+		return
 	buy_evolution("transmission")
 	buy_evolution("mobility")
 	buy_evolution("discretion")
 	toggle_pause()
+	for target_day in [23, 26, 32, 44]:
+		while world.day < target_day and screen == "game":
+			advance_time(0.5)
+		var closed = not world.route_is_open(["boreale", "centrale"])
+		if screen != "game" or closed != (target_day in [23, 26]):
+			get_tree().quit(1)
+			return
+	if not world.active_events.any(func(e): return e.id == "research_boost") or world.detected_count() == 0:
+		get_tree().quit(1)
+		return
 	for i in range(500):
 		advance_time(0.5)
 	if screen != "result" or world.outcome != "victory":
@@ -60,7 +76,7 @@ func _smoke_test() -> void:
 	if screen != "menu":
 		get_tree().quit(1)
 		return
-	print("RUNTIME_SMOKE_OK: exported data, purchases, victory, defeat, restart, settings, menu")
+	print("RUNTIME_SMOKE_OK: JSON prerequisites, detection, overlapping closures, expiry, cure boost, victory, defeat, restart, settings, menu")
 	get_tree().quit()
 
 func _apply_theme() -> void:
@@ -91,6 +107,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 		remove_child(child)
 		child.queue_free()
 	evolution_buttons.clear()
+	evolution_reasons.clear()
 	var margin = MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	for side in ["left", "right", "top", "bottom"]:
@@ -103,7 +120,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.1", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.2", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -223,20 +240,34 @@ func show_game() -> void:
 		_refresh()
 	)
 	map_column.add_child(map_view)
-	map_column.add_child(_label("Carte schématique · Traits : connexions · Barres : cumul touché", 16, MUTED))
+	map_column.add_child(_label("Routes : bleu ouvertes, ambre fermées · Barres : cumul touché", 16, MUTED))
+	effects_label = RichTextLabel.new()
+	effects_label.custom_minimum_size.y = 86
+	effects_label.add_theme_font_size_override("normal_font_size", 15)
+	effects_label.add_theme_color_override("default_color", AMBER)
+	map_column.add_child(effects_label)
+	var sidebar_scroll = ScrollContainer.new()
+	sidebar_scroll.custom_minimum_size.x = 360
+	sidebar_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	sidebar_scroll.follow_focus = true
+	content.add_child(sidebar_scroll)
 	var sidebar = VBoxContainer.new()
-	sidebar.add_theme_constant_override("separation", 6)
-	sidebar.custom_minimum_size.x = 330
-	content.add_child(sidebar)
+	sidebar.add_theme_constant_override("separation", 4)
+	sidebar.custom_minimum_size.x = 340
+	sidebar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sidebar_scroll.add_child(sidebar)
 	region_details = _label("", 16)
 	sidebar.add_child(region_details)
 	sidebar.add_child(_label("Évolutions", 22))
-	for id in World.EVOLUTIONS:
-		var evolution = World.EVOLUTIONS[id]
+	for id in world.evolutions:
+		var evolution = world.evolutions[id]
 		var button = _button("", func(): buy_evolution(id), sidebar)
 		button.tooltip_text = evolution.effect
 		evolution_buttons[id] = button
 		sidebar.add_child(_label(evolution.effect, 14, MUTED))
+		var reason = _label("", 14, AMBER)
+		sidebar.add_child(reason)
+		evolution_reasons[id] = reason
 	status_label = _label("", 16, MUTED)
 	body.add_child(status_label)
 	journal_label = _label("", 16, MUTED)
@@ -269,19 +300,25 @@ func toggle_pause() -> void:
 func _refresh() -> void:
 	if screen != "game":
 		return
-	metrics.text = "Jour %d     Touchés : %.1f %%     Remède : %.1f %%     Points : %d" % [world.day, world.coverage() * 100, world.cure, world.points]
+	metrics.text = "Jour %d     Touchés : %.1f %%     Remède : %.1f %%     Points : %d     Détectées : %d/6" % [world.day, world.coverage() * 100, world.cure, world.points, world.detected_count()]
 	var region = world.regions[selected]
-	region_details.text = "%s · Population : %d\nSains : %d · Actifs : %d\nRetirés : %d" % [region.name, region.population, region.healthy, region.active, region.removed]
+	region_details.text = "%s · Population : %d\nSains : %d · Actifs : %d\nRetirés : %d · %s" % [region.name, region.population, region.healthy, region.active, region.removed, "Détectée" if region.detected else "Non détectée"]
 	for id in evolution_buttons:
-		var evolution = World.EVOLUTIONS[id]
+		var evolution = world.evolutions[id]
 		var acquired = id in world.purchased
 		evolution_buttons[id].text = "%s · %s" % [evolution.name, "acquise" if acquired else "%d pts" % evolution.cost]
 		# Keep insufficient purchases focusable so keyboard users can read the reason.
 		evolution_buttons[id].disabled = acquired
-		evolution_buttons[id].tooltip_text = evolution.effect + (" Points insuffisants." if world.points < evolution.cost else "")
+		var reason = world.purchase_reason(id)
+		evolution_buttons[id].tooltip_text = evolution.effect + " " + reason
+		evolution_reasons[id].text = "Acquise" if acquired else ("Disponible" if reason.is_empty() else reason)
+		evolution_reasons[id].add_theme_color_override("font_color", ACCENT if acquired or reason.is_empty() else AMBER)
 	pause_button.text = "Reprendre [Espace]" if paused else "Pause [Espace]"
-	status_label.text = "En pause · Prenez le temps de choisir vos évolutions." if paused else "Simulation en cours · Vitesse ×%d" % speed
+	status_label.text = ("En pause" if paused else "Simulation en cours") + " · Vitesse ×%d" % speed
 	journal_label.text = "\n".join(world.journal.slice(maxi(0, world.journal.size() - 2)))
+	journal_label.clip_text = true
+	var lines = world.active_event_lines()
+	effects_label.text = "Événements actifs\n" + ("Aucun effet temporaire." if lines.is_empty() else "\n".join(lines))
 	map_view.refresh()
 
 func _process(delta: float) -> void:

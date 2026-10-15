@@ -10,12 +10,17 @@ func capture() -> void:
 	DirAccess.make_dir_recursive_absolute("res://build/qa")
 	for resolution in [Vector2i(1280, 720), Vector2i(1920, 1080)]:
 		DisplayServer.window_set_size(resolution)
-		for surface in ["menu", "game", "settings", "result"]:
+		for surface in ["menu", "game", "closures", "research", "settings", "result"]:
 			match surface:
 				"menu": scene.show_menu()
 				"game":
 					scene.start_game()
 					for i in range(40): scene.world.step()
+					scene._refresh()
+				"closures", "research":
+					scene.start_game()
+					var target_day = 23 if surface == "closures" else 46
+					for i in range(target_day): scene.world.step()
 					scene._refresh()
 				"settings": scene.show_settings()
 				"result":

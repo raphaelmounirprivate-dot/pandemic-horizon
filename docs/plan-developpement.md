@@ -4,7 +4,7 @@ Date : 15 octobre 2026.
 
 Dépôt : [raphaelmounirprivate-dot/plague-inc-evolved](https://github.com/raphaelmounirprivate-dot/plague-inc-evolved).
 
-**État actuel :** premier prototype de six régions implémenté et export Windows testé localement. Voir le [point de contrôle 01](suivi/01-prototype.md) pour les validations et les limites. Ce document conserve la feuille de route complète de la version 1.0 ; ses jalons décrivent les objectifs, pas une liste de fonctionnalités toutes livrées.
+**État actuel :** prototype 0.2 de six régions, évolutions JSON, prérequis, détection, réactions et événements temporaires implémentés ; export Windows testé localement. Voir le [point de contrôle 02](suivi/02-j3-reactions-evenements.md) pour les validations et les limites. Ce document conserve la feuille de route complète de la version 1.0 ; ses jalons décrivent les objectifs, pas une liste de fonctionnalités toutes livrées.
 
 ## 1. Résultat à livrer
 
@@ -140,7 +140,7 @@ Aucune date ferme n'est fixée avant J2. À ce stade, estimer le reste à partir
 
 ## 11. Première étape à entreprendre
 
-Le premier lot a construit la fondation et la partie complète sur six régions. Le [point de contrôle 01](suivi/01-prototype.md) détaille les essais réalisés. **Prochain lot : compléter J3**, notamment les prérequis, réactions et événements temporaires, avant d'étendre la carte et Dégel 2042.
+Les deux premiers lots ont construit la partie complète sur six régions puis les mécanismes de J3 : prérequis, détection, réactions et événements temporaires. Le [point de contrôle 02](suivi/02-j3-reactions-evenements.md) détaille les essais réalisés et l'essai physique restant. **Prochain lot : J4**, données de scénarios, extension progressive du contenu et Dégel 2042.
 
 ## 12. Besoins pour démarrer
 

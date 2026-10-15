@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "evolutions": [
+    {"id": "transmission", "name": "Diffusion", "cost": 12, "requires": [], "effect": "Croissance locale : +8 points de %.", "modifiers": {"growth_bonus": 0.08}},
+    {"id": "mobility", "name": "Mobilité", "cost": 10, "requires": ["transmission"], "effect": "Échanges entre régions : multipliés par 3.", "modifiers": {"exchange_multiplier": 3.0}},
+    {"id": "discretion", "name": "Discrétion", "cost": 14, "requires": [], "effect": "Progression du remède : réduite de 30 %.", "modifiers": {"cure_multiplier": 0.7}}
+  ]
+}
