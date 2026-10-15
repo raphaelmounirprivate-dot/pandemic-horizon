@@ -4,7 +4,7 @@ Date : 15 octobre 2026.
 
 Dépôt : [raphaelmounirprivate-dot/plague-inc-evolved](https://github.com/raphaelmounirprivate-dot/plague-inc-evolved).
 
-**État actuel :** présentation et scénario documentés ; moteur, interface et exécutable à développer. Ce document définit les travaux à réaliser et leurs critères de réussite.
+**État actuel :** premier prototype de six régions implémenté et export Windows testé localement. Voir le [point de contrôle 01](suivi/01-prototype.md) pour les validations et les limites. Ce document conserve la feuille de route complète de la version 1.0 ; ses jalons décrivent les objectifs, pas une liste de fonctionnalités toutes livrées.
 
 ## 1. Résultat à livrer
 
@@ -140,4 +140,99 @@ Aucune date ferme n'est fixée avant J2. À ce stade, estimer le reste à partir
 
 ## 11. Première étape à entreprendre
 
-**Commencer par J0 : un projet Godot minimal et un premier exécutable Windows.** Ensuite, construire une partie complète sur 6 régions avant de produire les illustrations et les 24 régions finales. Le prochain livrable sera donc un `.exe` de fondation, puis un prototype réellement jouable au J2.
+Le premier lot a construit la fondation et la partie complète sur six régions. Le [point de contrôle 01](suivi/01-prototype.md) détaille les essais réalisés. **Prochain lot : compléter J3**, notamment les prérequis, réactions et événements temporaires, avant d'étendre la carte et Dégel 2042.
+
+## 12. Besoins pour démarrer
+
+| Besoin | À préparer | Moment nécessaire |
+| --- | --- | --- |
+| Poste de développement | PC Windows, Git, éditeur Godot et modèles d'export de même version ; relever CPU, mémoire, GPU et version de Windows | J0 |
+| Outillage reproductible | Version exacte du moteur, procédure d'import et d'export, commandes de tests sans interface, exclusions Git des fichiers générés | J0 puis J1 |
+| Règles du jeu | Objectifs, priorité des fins de partie, ressources, effets des difficultés, ordre du calcul quotidien et formule de score écrits | J0, affinage J1 |
+| Données du prototype | Six régions fictives, populations, connexions, un scénario standard et quelques évolutions ; valeurs provisoires explicitement identifiées | J1 à J3 |
+| Ressources visuelles | Carte schématique et formes simples au prototype ; ensuite icônes, police lisible et illustrations avec licences consignées | J2 puis J6 |
+| Son | Effets courts et musique facultative ; réglages de volume et crédits associés | J6 |
+| Validation humaine | Une personne pour les essais de développement et, si possible, deux ou trois personnes extérieures pour observer la compréhension des règles | Dès J2, puis J6 |
+| Livraison | Machine ou environnement Windows de test sans Godot, archive versionnée, guide de lancement et notes de version | Premier essai J0, validation complète J7 |
+
+Une même personne peut assurer programmation, conception, intégration et essais. Il faut néanmoins réserver du temps pour chacun de ces travaux. Les retours de personnes extérieures restent à organiser ; ils ne sont pas acquis.
+
+Aucun serveur, compte joueur, base de données distante ni abonnement n'est nécessaire au périmètre hors ligne prévu. Privilégier les outils gratuits et les ressources originales ou sous licence compatible. Aucun achat n'est engagé par ce plan.
+
+### Décisions à consigner au démarrage
+
+- Retenir et consigner la version stable de Godot après un essai d'import et d'export sur le poste.
+- Adopter provisoirement l'objectif de couverture à 90 %, sans réinfection dans le prototype : chaque personne passe de saine à touchée puis à retirée. La population reste constante.
+- Résoudre une journée dans un ordre documenté : commandes, transitions de scénario et routes, effets actifs, progression régionale, échanges entre régions, remède, objectifs, journal. Calculer les échanges depuis un instantané commun pour éviter que l'ordre de parcours des régions change le résultat.
+- Proposition pour les fins simultanées : remède achevé prioritaire, puis objectif atteint, puis extinction. Afficher cette règle et la tester avant de l'utiliser dans une partie.
+- Définir un gain de points déterministe et plafonné, indépendant de la vitesse d'affichage ; commencer par une règle simple avant l'équilibrage.
+- Écrire une formule de score explicite au J0 ; ne pas bloquer le prototype sur sa sophistication.
+
+Ces choix sont des hypothèses de conception à éprouver dans le prototype. Ils ne décrivent pas un moteur déjà implémenté.
+
+## 13. Tâches de développement et dépendances
+
+Priorités : **P0** pour obtenir la première partie complète ; **P1** pour compléter la version 1.0 ; **P2** pour les finitions après stabilisation. Ce tableau conserve le découpage initial ; les tâches effectivement couvertes et les validations restantes sont suivies dans les [points de reprise](suivi/00-index.md).
+
+| ID | Priorité / jalon | Tâche et résultat attendu | Dépend de | Acceptation |
+| --- | --- | --- | --- | --- |
+| DEV-01 | P0 / J0 | Créer le projet Godot, le menu et le profil Windows | — | Export lancé sur Windows, fermeture correcte, procédure reproductible |
+| DEV-02 | P0 / J0 | Écrire les règles et les contrats de données | — | Ordre quotidien, points, score, objectifs, fins simultanées et champs obligatoires définis |
+| DEV-03 | P0 / J1 | Charger et valider les six régions et connexions | DEV-02 | Références inconnues, doublons et valeurs hors limites rejetés avec un message précis |
+| DEV-04 | P0 / J1 | Programmer le pas quotidien et l'état aléatoire | DEV-01, DEV-03 | Population conservée, bornes respectées, même graine et mêmes commandes donnent le même état |
+| DEV-05 | P0 / J1 | Ajouter remède, ressources, objectifs et score | DEV-04 | Victoire, défaite et égalité de seuils couvertes par des cas déterministes |
+| DEV-06 | P0 / J2 | Construire carte, sélection et statistiques | DEV-04 | Six régions sélectionnables, valeurs cohérentes avec le moteur à 1280 × 720 |
+| DEV-07 | P0 / J2 | Relier lancement, pause, vitesses, bilan et redémarrage | DEV-05, DEV-06 | Partie complète réalisable dans l'exécutable, puis nouvelle partie sans état résiduel |
+| DEV-08 | P1 / J3 | Implémenter achats, prérequis et effets des évolutions | DEV-07 | Refus expliqué, points jamais négatifs, aucun double achat |
+| DEV-09 | P1 / J3 | Ajouter réactions, événements temporaires et journal | DEV-08 | Effets appliqués puis retirés une seule fois, durées et conséquences visibles |
+| DEV-10 | P1 / J4 | Étendre le standard aux 24 régions et trois difficultés | DEV-09 | Toutes les références de contenu sont valides, difficultés explicites et jouables |
+| DEV-11 | P1 / J4 | Implémenter les quatre phases de Dégel 2042 | DEV-09 | Ouverture, interruption et rétablissement des routes vérifiés ; effets spécifiques mesurables |
+| DEV-12 | P1 / J5 | Ajouter sauvegarde, chargement et récupération | DEV-10, DEV-11 | Aller-retour fidèle, suite aléatoire identique, version inconnue refusée sans écraser la sauvegarde |
+| DEV-13 | P1 / J5 | Ajouter tutoriel, réglages et navigation au clavier | DEV-12 | Parcours complet au clavier, commandes compréhensibles et préférences conservées |
+| DEV-14 | P1 / J6 | Mesurer et ajuster équilibre et performance | DEV-13 | Rapport de graines, stratégies, durées et configuration de test ; blocages corrigés |
+| DEV-15 | P2 / J6 | Finaliser illustrations, sons et textes | DEV-14 | Ressources créditées, textes lisibles et sons réglables ; nouveau parcours de vérification |
+| DEV-16 | P1 / J7 | Préparer et vérifier l'archive Windows 1.0 | DEV-15 | Jeu hors ligne sans éditeur, guide et crédits présents, sauvegarde et chargement testés |
+
+Les travaux de sauvegarde commencent plus tôt que leur écran : définir l'état sérialisable et tester l'état aléatoire dans DEV-04. DEV-12 ajoute le stockage robuste et les commandes utilisateur. Un même événement doit pouvoir bloquer une route pour plusieurs raisons : l'expiration d'une tempête ne doit pas annuler une autre fermeture encore active.
+
+### Premier lot concret : fondation
+
+1. Relever l'environnement Windows et vérifier la disponibilité de Godot et des modèles d'export.
+2. Créer le projet avec un menu « Nouvelle partie », « Paramètres » et « Quitter » ; seules les commandes déjà fonctionnelles sont activées.
+3. Fixer les conventions de fichiers et les règles provisoires dans un document de conception.
+4. Exporter le menu vers un dossier de build ignoré par Git, puis lancer l'exécutable.
+5. Documenter les commandes exactes d'import, de test et d'export réellement utilisées.
+6. Clore J0 uniquement après l'essai Windows, puis démarrer DEV-03 à DEV-05.
+
+## 14. Estimation de l'effort
+
+Ces fourchettes sont des hypothèses de planification pour une personne déjà à l'aise avec Godot, avec des graphismes 2D simples. Un jour représente environ six heures de travail concentré. Elles ne constituent ni un calendrier ni un engagement de livraison ; l'apprentissage du moteur et l'indisponibilité des testeurs peuvent les allonger.
+
+| Jalon | Effort indicatif |
+| --- | --- |
+| J0 — Fondation | 1 à 2 jours |
+| J1 — Simulation testée | 4 à 7 jours |
+| J2 — Première partie complète | 3 à 5 jours |
+| J3 — Évolutions et réactions | 4 à 6 jours |
+| J4 — Contenu et Dégel 2042 | 5 à 8 jours |
+| J5 — Sauvegardes et confort | 4 à 6 jours |
+| J6 — Équilibrage et finition | 5 à 8 jours |
+| J7 — Livraison Windows | 2 à 3 jours |
+| Total hors réserve | 28 à 45 jours |
+
+Prévoir une réserve de 20 à 30 % pour corrections et reprises : soit une enveloppe arrondie de **34 à 59 jours de travail**, à réestimer après J2. La première partie complète représente **8 à 14 jours hors réserve** sur ces hypothèses. La durée calendaire dépendra du temps réellement disponible chaque semaine.
+
+Après chaque jalon, noter l'effort réel, les défauts ouverts et les tâches restantes. Après J2, décider de conserver les cibles de contenu ou de les réduire avant de produire les ressources finales. Un export Windows vérifié et une boucle complète restent prioritaires.
+
+## 15. Définition de terminé et suivi
+
+Une tâche est terminée lorsque son critère d'acceptation a été exécuté, les tests pertinents passent et la documentation reflète le comportement livré. Conserver un relevé indiquant : tâche, version testée, commande ou parcours, résultat et limites connues.
+
+- Pour le moteur : tests automatiques sans interface sur les invariants, les commandes et les cas limites ; une longue simulation couvre plusieurs graines.
+- Pour les données : validation de tous les fichiers livrés à chaque changement de contenu.
+- Pour la persistance : comparaison de l'état avant et après chargement, puis comparaison des journées suivantes.
+- Pour l'interface : essais manuels du lancement au bilan, à la souris et au clavier, aux deux résolutions prévues.
+- Pour un jalon : réexécuter les tests concernés et un parcours complet sur l'export Windows ; consigner les régressions avant de poursuivre.
+- Pour la 1.0 : aucun défaut connu empêchant de démarrer, terminer, sauvegarder ou reprendre une partie ; documenter les autres limites connues.
+
+La création d'issues GitHub, les commits, leur publication et la release seront des actions de suivi distinctes. Ce document prépare ces tâches ; il ne prouve pas qu'elles ont été réalisées.

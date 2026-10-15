@@ -4,7 +4,26 @@ Projet de jeu de stratégie original pour PC Windows, inspiré du genre de la si
 
 ## État du projet
 
-**Cadrage initial.** Ce dépôt décrit le jeu à construire. Aucun jeu complet ni exécutable Windows n'est encore livré. Les éléments ci-dessous sont des fonctionnalités prévues, pas des fonctionnalités déjà implémentées.
+**Prototype 0.1 développé.** Une première boucle jouable sur six régions est implémentée sous Godot 4.7.2 : choix du départ, propagation abstraite, trois évolutions, remède, pause, vitesses, journal et bilan. Un export Windows a été généré et testé localement. La version 1.0 reste à développer ; les fonctionnalités de son périmètre ci-dessous ne sont pas toutes disponibles.
+
+Les exécutables restent dans `build/windows/`, hors de Git. Aucune release binaire GitHub n'est publiée à ce stade.
+
+## Lancer et développer le prototype
+
+Sous Windows, depuis la racine du dépôt :
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-godot.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Import
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Test
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Play
+```
+
+Le script télécharge l'éditeur officiel et vérifie son empreinte SHA512. Pour compiler un exécutable autonome, voir [les instructions de développement](docs/DEVELOPPEMENT.md).
+
+- [Guide joueur](docs/GUIDE-JOUEUR.md) : commandes et limites du prototype.
+- [Points de reprise](docs/suivi/00-index.md) : état réel, validations et prochains travaux.
+- [Règles du prototype](docs/REGLES.md) : paramètres actuellement implémentés.
 
 ## Concept
 
@@ -12,7 +31,7 @@ Piloter l'évolution d'un agent fictif dans un monde stylisé, gérer les points
 
 Le jeu utilisera un code, une interface, des textes et des ressources graphiques originaux. Il sera autonome et ne nécessitera pas d'installation de Plague Inc: Evolved.
 
-## Première version jouable prévue
+## Périmètre prévu pour la version 1.0
 
 - Carte mondiale interactive organisée en régions, avec des statistiques lisibles.
 - Choix de la région de départ et de la difficulté.
@@ -61,4 +80,4 @@ Le [plan de développement](docs/plan-developpement.md) définit le périmètre 
 5. Vérifier l'équilibrage et les parcours de jeu.
 6. Générer et tester l'exécutable Windows.
 
-La technologie et les instructions de compilation seront documentées lorsque la première version sera implémentée. Aucune commande de lancement n'est disponible à ce stade.
+Le suivi détaillé du premier lot figure dans [le point de contrôle 01](docs/suivi/01-prototype.md). Les sauvegardes de partie, Dégel 2042, les trois difficultés et le contenu final restent à implémenter.

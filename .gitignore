@@ -9,3 +9,7 @@ saves/
 .env
 .env.*
 !.env.example
+.godot/
+.tools/
+.impeccable/
+*.tmp

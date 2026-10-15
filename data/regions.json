@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "regions": [
+    {"id": "boreale", "name": "Boréale", "population": 100000, "position": [0.27, 0.20]},
+    {"id": "occident", "name": "Occident", "population": 160000, "position": [0.16, 0.48]},
+    {"id": "centrale", "name": "Centrale", "population": 220000, "position": [0.47, 0.40]},
+    {"id": "australe", "name": "Australe", "population": 120000, "position": [0.39, 0.77]},
+    {"id": "orient", "name": "Orient", "population": 240000, "position": [0.77, 0.34]},
+    {"id": "archipel", "name": "Archipel", "population": 80000, "position": [0.82, 0.73]}
+  ],
+  "connections": [
+    ["boreale", "occident"], ["boreale", "centrale"],
+    ["occident", "centrale"], ["occident", "australe"],
+    ["centrale", "australe"], ["centrale", "orient"],
+    ["orient", "archipel"], ["australe", "archipel"]
+  ]
+}
