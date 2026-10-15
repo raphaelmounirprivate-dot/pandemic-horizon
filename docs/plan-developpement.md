@@ -4,7 +4,7 @@ Date : 15 octobre 2026.
 
 Dépôt : [raphaelmounirprivate-dot/plague-inc-evolved](https://github.com/raphaelmounirprivate-dot/plague-inc-evolved).
 
-**État actuel :** prototype 0.2 de six régions, évolutions JSON, prérequis, détection, réactions et événements temporaires implémentés ; export Windows testé localement. Voir le [point de contrôle 02](suivi/02-j3-reactions-evenements.md) pour les validations et les limites. Ce document conserve la feuille de route complète de la version 1.0 ; ses jalons décrivent les objectifs, pas une liste de fonctionnalités toutes livrées.
+**État actuel :** prototype 0.3 de six régions, Standard et Dégel 2042, trois difficultés, phases et évolutions climatiques ; export Windows testé localement. Voir le [point de contrôle 03](suivi/03-j4-degel-difficultes.md) pour les validations et les limites. La carte de 24 régions et les sauvegardes restent à développer. Ce document conserve la feuille de route complète de la version 1.0 ; ses jalons décrivent les objectifs, pas une liste de fonctionnalités toutes livrées.
 
 ## 1. Résultat à livrer
 
@@ -140,7 +140,7 @@ Aucune date ferme n'est fixée avant J2. À ce stade, estimer le reste à partir
 
 ## 11. Première étape à entreprendre
 
-Les deux premiers lots ont construit la partie complète sur six régions puis les mécanismes de J3 : prérequis, détection, réactions et événements temporaires. Le [point de contrôle 02](suivi/02-j3-reactions-evenements.md) détaille les essais réalisés et l'essai physique restant. **Prochain lot : J4**, données de scénarios, extension progressive du contenu et Dégel 2042.
+Les trois premiers lots ont construit la partie complète, les mécanismes de J3 puis Dégel et les difficultés sur six régions. Le [point de contrôle 03](suivi/03-j4-degel-difficultes.md) détaille les essais réalisés et les limites. **Prochain lot : compléter J4**, avec la carte de 24 régions et l'équilibrage des deux scénarios avant les sauvegardes de J5.
 
 ## 12. Besoins pour démarrer
 

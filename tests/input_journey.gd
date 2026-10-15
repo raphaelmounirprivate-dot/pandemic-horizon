@@ -77,5 +77,21 @@ func run(tree: SceneTree, check: Callable) -> void:
 	for button in scene.evolution_buttons.values():
 		complete = complete and button in reachable
 	check.call(complete, "Tab atteint toutes les régions et évolutions, panneau défilant compris")
+	scene.show_menu()
+	scene.scenario_choice.select(1)
+	scene.scenario_choice.item_selected.emit(1)
+	scene.difficulty_choice.select(2)
+	scene.difficulty_choice.item_selected.emit(2)
+	check.call(scene.start_choice.disabled and scene.start_id == "boreale", "Menu impose le départ de Dégel")
+	check.call("1.30" in scene.menu_difficulty_detail.text and "Difficile" in scene.menu_difficulty_detail.text, "Menu explique la difficulté")
+	await key(tree, KEY_ENTER)
+	check.call(scene.world.scenario.id == "degel2042" and scene.world.difficulty.id == "hard" and scene.evolution_buttons.size() == 6, "Lancement applique scénario et difficulté")
+	scene.show_menu()
+	scene.scenario_choice.select(0)
+	scene.scenario_choice.item_selected.emit(0)
+	check.call(not scene.start_choice.disabled, "Standard rend le départ libre")
+	scene.show_game()
+	scene.restart_game()
+	check.call(scene.world.scenario.id == "degel2042" and scene.world.difficulty.id == "hard", "Recommencer conserve les choix de la partie, pas les changements du menu")
 	scene.queue_free()
 	await tree.process_frame

@@ -10,19 +10,29 @@ func capture() -> void:
 	DirAccess.make_dir_recursive_absolute("res://build/qa")
 	for resolution in [Vector2i(1280, 720), Vector2i(1920, 1080)]:
 		DisplayServer.window_set_size(resolution)
-		for surface in ["menu", "game", "closures", "research", "settings", "result"]:
+		for surface in ["menu", "degel-menu", "game", "isolation", "opening", "instability", "mobilization", "result"]:
 			match surface:
-				"menu": scene.show_menu()
+				"menu":
+					scene.scenario_id = "standard"
+					scene.difficulty_id = "normal"
+					scene.show_menu()
+				"degel-menu":
+					scene.scenario_id = "degel2042"
+					scene.difficulty_id = "hard"
+					scene.show_menu()
 				"game":
+					scene.scenario_id = "standard"
+					scene.difficulty_id = "normal"
 					scene.start_game()
 					for i in range(40): scene.world.step()
 					scene._refresh()
-				"closures", "research":
+				"isolation", "opening", "instability", "mobilization":
+					scene.scenario_id = "degel2042"
+					scene.difficulty_id = "normal"
 					scene.start_game()
-					var target_day = 23 if surface == "closures" else 46
+					var target_day = {"isolation":0,"opening":12,"instability":33,"mobilization":56}[surface]
 					for i in range(target_day): scene.world.step()
 					scene._refresh()
-				"settings": scene.show_settings()
 				"result":
 					for i in range(500): scene.world.step()
 					scene.show_result()

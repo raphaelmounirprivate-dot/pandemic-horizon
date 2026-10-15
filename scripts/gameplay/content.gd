@@ -35,10 +35,11 @@ static func validate(source: Variant, regions: Array, connections: Array) -> Str
 		if not item.get("modifiers") is Dictionary or item.modifiers.is_empty():
 			return "Effets absents : " + item.id
 		for modifier in item.modifiers:
-			if modifier not in ["growth_bonus", "exchange_multiplier", "cure_multiplier"]:
+			if modifier not in ["growth_bonus", "exchange_multiplier", "cure_multiplier", "cold_multiplier", "seasonal_multiplier", "climate_penalty_multiplier"]:
 				return "Effet d'évolution inconnu : " + str(modifier)
 			var minimum = 0.0 if modifier == "growth_bonus" else 0.05
-			if not number(item.modifiers[modifier], minimum, 5.0):
+			var maximum = 1.0 if modifier == "climate_penalty_multiplier" else 5.0
+			if not number(item.modifiers[modifier], minimum, maximum):
 				return "Coefficient d'évolution hors limites."
 		ids.append(item.id)
 		definitions[item.id] = item

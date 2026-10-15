@@ -4,9 +4,9 @@ Projet de jeu de stratégie original pour PC Windows, inspiré du genre de la si
 
 ## État du projet
 
-**Prototype 0.2 développé.** Une boucle jouable sur six régions est implémentée sous Godot 4.7.2 : choix du départ, propagation abstraite, trois évolutions avec prérequis, détection et réactions régionales, événements temporaires, remède, pause, vitesses, journal et bilan. Les évolutions et événements sont pilotés par JSON. Un export Windows a été généré et testé localement. La version 1.0 reste à développer ; les fonctionnalités de son périmètre ci-dessous ne sont pas toutes disponibles.
+**Prototype 0.3 développé.** Deux scénarios sont jouables sur six régions sous Godot 4.7.2 : Standard et Dégel 2042. Le menu propose trois difficultés avec leurs effets affichés. Dégel impose le départ en Boréale et ajoute quatre phases, des routes saisonnières, des tempêtes et trois évolutions climatiques. Détection, réactions, événements, remède, pause, vitesses, journal et bilan sont implémentés. Un export Windows a été généré et testé localement. La carte de 24 régions et les sauvegardes restent à développer.
 
-Les exécutables restent dans `build/windows/`, hors de Git. Aucune release binaire GitHub n'est publiée à ce stade.
+L'exécutable actuel se trouve dans `build/windows-0.3.0/PandemicHorizon.exe`, hors de Git. Les exports sont séparés par version ; l'ancien dossier `build/windows/` conserve la version précédente. Aucune release binaire GitHub n'est publiée à ce stade.
 
 ## Lancer et développer le prototype
 
@@ -80,4 +80,4 @@ Le [plan de développement](docs/plan-developpement.md) définit le périmètre 
 5. Vérifier l'équilibrage et les parcours de jeu.
 6. Générer et tester l'exécutable Windows.
 
-Le suivi du lot J3 figure dans [le point de contrôle 02](docs/suivi/02-j3-reactions-evenements.md). Les sauvegardes de partie, Dégel 2042, les trois difficultés et le contenu final restent à implémenter.
+Le suivi du premier lot J4 figure dans [le point de contrôle 03](docs/suivi/03-j4-degel-difficultes.md). Les sauvegardes de partie, la carte étendue et le contenu final restent à implémenter.

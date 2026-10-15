@@ -14,6 +14,13 @@ var paused: bool = true
 var speed: int = 1
 var elapsed: float = 0.0
 var start_id: String = "boreale"
+var scenario_id: String = "standard"
+var difficulty_id: String = "normal"
+var scenario_choice: OptionButton
+var difficulty_choice: OptionButton
+var start_choice: OptionButton
+var menu_scenario_detail: Label
+var menu_difficulty_detail: Label
 var selected: int = 0
 var body: VBoxContainer
 var metrics: Label
@@ -71,12 +78,40 @@ func _smoke_test() -> void:
 	if screen != "result" or world.outcome != "defeat_cure":
 		get_tree().quit(1)
 		return
+	scenario_id = "degel2042"
+	difficulty_id = "normal"
+	start_id = "boreale"
+	start_game()
+	if world.phase.id != "isolation" or world.evolutions.size() != 6 or world.route_is_open(["boreale", "orient"]):
+		get_tree().quit(1)
+		return
+	toggle_pause()
+	for target_day in [12, 28, 36, 39, 55]:
+		while world.day < target_day and screen == "game":
+			advance_time(0.5)
+		var expected_closed = target_day in [28, 36]
+		if screen != "game" or (not world.route_is_open(["boreale", "centrale"])) != expected_closed:
+			get_tree().quit(1)
+			return
+	if world.phase.id != "mobilization" or world.phase.cure_multiplier != 1.35:
+		get_tree().quit(1)
+		return
+	world.points = 100
+	for id in world.evolutions: buy_evolution(id)
+	if world.purchased.size() != 6:
+		get_tree().quit(1)
+		return
+	difficulty_id = "hard"
+	start_game()
+	if world.difficulty.cure_multiplier != 1.3:
+		get_tree().quit(1)
+		return
 	show_settings()
 	show_menu()
 	if screen != "menu":
 		get_tree().quit(1)
 		return
-	print("RUNTIME_SMOKE_OK: JSON prerequisites, detection, overlapping closures, expiry, cure boost, victory, defeat, restart, settings, menu")
+	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, restart, settings, menu")
 	get_tree().quit()
 
 func _apply_theme() -> void:
@@ -120,7 +155,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.2", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.3", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -155,19 +190,51 @@ func show_menu() -> void:
 	presentation.add_child(_label("Chaque région compte.", 36))
 	var description = _label("Pilotez un agent fictif dans six régions reliées.\nFaites évoluer sa diffusion et surveillez le remède.\n\nObjectif : toucher 90 % de la population\navant l'achèvement du remède.", 22)
 	presentation.add_child(description)
-	presentation.add_child(_label("Standard · Difficulté normale · Partie hors ligne\nDégel 2042 et sauvegardes prévus pour les prochains lots.", 16, MUTED))
+	menu_scenario_detail = _label("", 16, MUTED)
+	menu_scenario_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	presentation.add_child(menu_scenario_detail)
+	menu_difficulty_detail = _label("", 16, AMBER)
+	presentation.add_child(menu_difficulty_detail)
 	var actions = VBoxContainer.new()
 	actions.custom_minimum_size.x = 320
 	center.add_child(actions)
-	actions.add_child(_label("Région de départ", 20))
-	var choices = OptionButton.new()
-	choices.custom_minimum_size.y = 48
 	var data = JSON.parse_string(FileAccess.get_file_as_string(World.DATA_PATH))
 	var error = World.validate_data(data)
+	var catalog: Variant = World.Scenarios.load_catalog()
+	if error.is_empty():
+		error = World.Scenarios.validate(catalog, data, World.Content.load_files())
 	if not error.is_empty():
 		actions.add_child(_label(error))
 		_button("Quitter", func(): get_tree().quit(), actions)
 		return
+	actions.add_child(_label("Scénario", 18))
+	scenario_choice = OptionButton.new()
+	scenario_choice.custom_minimum_size.y = 44
+	for i in range(catalog.scenarios.size()):
+		scenario_choice.add_item(catalog.scenarios[i].name)
+		scenario_choice.set_item_metadata(i, catalog.scenarios[i].id)
+		if catalog.scenarios[i].id == scenario_id: scenario_choice.select(i)
+	scenario_choice.item_selected.connect(func(index):
+		scenario_id = scenario_choice.get_item_metadata(index)
+		_update_menu_choices(catalog)
+	)
+	actions.add_child(scenario_choice)
+	actions.add_child(_label("Difficulté", 18))
+	difficulty_choice = OptionButton.new()
+	difficulty_choice.custom_minimum_size.y = 44
+	for i in range(catalog.difficulties.size()):
+		difficulty_choice.add_item(catalog.difficulties[i].name)
+		difficulty_choice.set_item_metadata(i, catalog.difficulties[i].id)
+		if catalog.difficulties[i].id == difficulty_id: difficulty_choice.select(i)
+	difficulty_choice.item_selected.connect(func(index):
+		difficulty_id = difficulty_choice.get_item_metadata(index)
+		_update_menu_choices(catalog)
+	)
+	actions.add_child(difficulty_choice)
+	actions.add_child(_label("Région de départ", 18))
+	var choices = OptionButton.new()
+	choices.custom_minimum_size.y = 44
+	start_choice = choices
 	for i in range(data.regions.size()):
 		choices.add_item(data.regions[i].name)
 		choices.set_item_metadata(i, data.regions[i].id)
@@ -175,6 +242,7 @@ func show_menu() -> void:
 			choices.select(i)
 	choices.item_selected.connect(func(index): start_id = choices.get_item_metadata(index))
 	actions.add_child(choices)
+	_update_menu_choices(catalog)
 	var launch = _button("Nouvelle partie", start_game, actions)
 	if not world.regions.is_empty() and world.outcome.is_empty():
 		_button("Reprendre la partie", show_game, actions)
@@ -182,6 +250,18 @@ func show_menu() -> void:
 	_button("Quitter", func(): get_tree().quit(), actions)
 	body.add_child(_label("Simulation abstraite · Les chiffres sont des paramètres de jeu fictifs.\nAucune sauvegarde de partie : quitter l'application perd la progression.", 16, MUTED))
 	launch.grab_focus()
+
+func _update_menu_choices(catalog: Dictionary) -> void:
+	for item in catalog.scenarios:
+		if item.id == scenario_id:
+			start_choice.disabled = item.forced_start != ""
+			if item.forced_start != "": start_id = item.forced_start
+			menu_scenario_detail.text = item.description
+	for i in range(start_choice.item_count):
+		if start_choice.get_item_metadata(i) == start_id: start_choice.select(i)
+	for item in catalog.difficulties:
+		if item.id == difficulty_id:
+			menu_difficulty_detail.text = "%s · Recherche ×%.2f · Seuil de détection ×%.2f\nScore ×%.2f · Objectif : 90 %% avant le remède" % [item.name, item.cure_multiplier, item.detection_multiplier, item.score_multiplier]
 
 func show_settings() -> void:
 	screen = "settings"
@@ -207,7 +287,7 @@ func show_settings() -> void:
 	fullscreen.grab_focus()
 
 func start_game() -> void:
-	var error = world.start(start_id)
+	var error = world.start(start_id, 2042, null, null, scenario_id, difficulty_id)
 	if not error.is_empty():
 		show_menu()
 		body.add_child(_label("Impossible de démarrer : " + error))
@@ -221,9 +301,15 @@ func start_game() -> void:
 	elapsed = 0.0
 	show_game()
 
+func restart_game() -> void:
+	scenario_id = world.scenario.id
+	difficulty_id = world.difficulty.id
+	start_id = world.start_region_id
+	start_game()
+
 func show_game() -> void:
 	screen = "game"
-	_reset_screen("Pandemic Horizon", "Standard · Objectif : 90 % touchés · Défaite si remède à 100 % ou disparition des cas actifs.")
+	_reset_screen("Pandemic Horizon", "%s · %s · Objectif : 90 %% avant le remède · Défaite si extinction." % [world.scenario.name, world.difficulty.name])
 	metrics = _label("", 22, ACCENT)
 	body.add_child(metrics)
 	var content = HBoxContainer.new()
@@ -281,7 +367,7 @@ func show_game() -> void:
 			speed = value
 			_refresh()
 		, controls)
-	_button("Recommencer", start_game, controls)
+	_button("Recommencer", restart_game, controls)
 	_button("Menu", show_menu, controls)
 	_refresh()
 	pause_button.grab_focus()
@@ -303,6 +389,8 @@ func _refresh() -> void:
 	metrics.text = "Jour %d     Touchés : %.1f %%     Remède : %.1f %%     Points : %d     Détectées : %d/6" % [world.day, world.coverage() * 100, world.cure, world.points, world.detected_count()]
 	var region = world.regions[selected]
 	region_details.text = "%s · Population : %d\nSains : %d · Actifs : %d\nRetirés : %d · %s" % [region.name, region.population, region.healthy, region.active, region.removed, "Détectée" if region.detected else "Non détectée"]
+	if world.scenario.id != "standard":
+		region_details.text += "\nClimat local : croissance ×%.2f" % world.climate_factor(region.id)
 	for id in evolution_buttons:
 		var evolution = world.evolutions[id]
 		var acquired = id in world.purchased
@@ -318,7 +406,8 @@ func _refresh() -> void:
 	journal_label.text = "\n".join(world.journal.slice(maxi(0, world.journal.size() - 2)))
 	journal_label.clip_text = true
 	var lines = world.active_event_lines()
-	effects_label.text = "Événements actifs\n" + ("Aucun effet temporaire." if lines.is_empty() else "\n".join(lines))
+	var climate = "Phase %s · %.0f °C fictifs · Remède de phase ×%.2f\n" % [world.phase.name, world.phase.temperature, world.phase.cure_multiplier] if world.scenario.id != "standard" else ""
+	effects_label.text = climate + "Événements actifs\n" + ("Aucun effet temporaire." if lines.is_empty() else "\n".join(lines))
 	map_view.refresh()
 
 func _process(delta: float) -> void:
@@ -345,12 +434,12 @@ func show_result() -> void:
 	paused = true
 	_reset_screen("Objectif atteint" if world.outcome == "victory" else "Fin de partie", world.outcome_text())
 	body.add_child(_label("Jour %d\nPopulation touchée : %.1f %%\nRemède : %.1f %%\nScore : %d" % [world.day, world.coverage() * 100, world.cure, world.score()], 28))
-	body.add_child(_label("Score = couverture × 10 000 − jours × 10, avec un minimum de zéro.", 16, MUTED))
+	body.add_child(_label("%s · %s · Score = max(0, couverture × 10 000 − jours × 10) ×%.2f." % [world.scenario.name, world.difficulty.name, world.difficulty.score_multiplier], 16, MUTED))
 	var log = RichTextLabel.new()
 	log.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	log.text = "\n".join(world.journal)
 	body.add_child(log)
-	var restart = _button("Rejouer avec le même départ", start_game, body)
+	var restart = _button("Rejouer avec les mêmes choix", restart_game, body)
 	_button("Choisir une autre région", show_menu, body)
 	restart.grab_focus()
 

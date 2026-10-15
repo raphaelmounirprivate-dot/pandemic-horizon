@@ -4,6 +4,7 @@ extends RefCounted
 
 const DATA_PATH = "res://data/regions.json"
 const Content = preload("res://scripts/gameplay/content.gd")
+const Scenarios = preload("res://scripts/gameplay/scenarios.gd")
 
 var regions: Array = []
 var connections: Array = []
@@ -20,6 +21,10 @@ var detection_rules: Dictionary = {}
 var cure_rules: Dictionary = {}
 var active_events: Array = []
 var activated_events: Array[String] = []
+var scenario: Dictionary = {}
+var difficulty: Dictionary = {}
+var phase: Dictionary = {}
+var start_region_id: String = ""
 
 static func validate_data(data: Variant) -> String:
 	if not data is Dictionary:
@@ -65,7 +70,7 @@ static func validate_data(data: Variant) -> String:
 		edges.append(pair)
 	return ""
 
-func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null) -> String:
+func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null) -> String:
 	var data: Variant = source
 	if data == null:
 		if not FileAccess.file_exists(DATA_PATH):
@@ -83,8 +88,26 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	error = Content.validate(gameplay, data.regions, data.connections)
 	if not error.is_empty():
 		return error
+	var catalog: Variant = Scenarios.load_catalog() if catalog_source == null else catalog_source
+	error = Scenarios.validate(catalog, data, gameplay)
+	if not error.is_empty():
+		return error
+	var chosen_scenario: Dictionary = {}
+	var chosen_difficulty: Dictionary = {}
+	for item in catalog.scenarios:
+		if item.id == scenario_id: chosen_scenario = item
+	for item in catalog.difficulties:
+		if item.id == difficulty_id: chosen_difficulty = item
+	if chosen_scenario.is_empty() or chosen_difficulty.is_empty():
+		return "Scénario ou difficulté inconnu."
+	if chosen_scenario.forced_start != "" and chosen_scenario.forced_start != start_id:
+		return "Ce scénario impose un départ en " + chosen_scenario.forced_start + "."
+	scenario = chosen_scenario.duplicate(true)
+	difficulty = chosen_difficulty.duplicate(true)
+	phase = scenario.phases[0].duplicate(true)
+	gameplay = Scenarios.gameplay_for(gameplay, scenario)
 	regions = data.regions.duplicate(true)
-	connections = data.connections.duplicate(true)
+	connections = Scenarios.connections_for(data, scenario)
 	evolutions.clear()
 	for item in gameplay.evolutions.evolutions:
 		evolutions[item.id] = item.duplicate(true)
@@ -94,6 +117,7 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	active_events.clear()
 	activated_events.clear()
 	day = 0
+	start_region_id = start_id
 	points = 8
 	cure = 0.0
 	outcome = ""
@@ -106,6 +130,7 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 		region["healthy"] = int(region.population) - region.active
 		region["detected"] = false
 	journal.append("Jour 0 · Départ dans la région %s." % region_name(start_id))
+	journal.append("Jour 0 · %s · Difficulté %s · Phase %s." % [scenario.name, difficulty.name, phase.name])
 	return ""
 
 func region_name(id: String) -> String:
@@ -127,7 +152,7 @@ func coverage() -> float:
 	return 0.0 if total.population == 0 else float(total.touched) / total.population
 
 func score() -> int:
-	return maxi(0, roundi(coverage() * 10000.0) - day * 10)
+	return roundi(maxi(0, roundi(coverage() * 10000.0) - day * 10) * float(difficulty.get("score_multiplier", 1.0)))
 
 func purchase_reason(id: String) -> String:
 	if regions.is_empty():
@@ -177,10 +202,37 @@ func route_is_open(edge: Array) -> bool:
 		return false
 	if edge not in connections and [edge[1], edge[0]] not in connections:
 		return false
+	for route in scenario.get("seasonal_routes", []):
+		if (route.edge == edge or route.edge == [edge[1], edge[0]]) and day < route.open_day:
+			return false
 	for effect in active_events:
 		if effect.kind == "route_closure" and (effect.target == edge or effect.target == [edge[1], edge[0]]):
 			return false
 	return true
+
+func route_is_seasonal(edge: Array) -> bool:
+	for route in scenario.get("seasonal_routes", []):
+		if route.edge == edge or route.edge == [edge[1], edge[0]]:
+			return true
+	return false
+
+func climate_factor(region_id: String) -> float:
+	var cold = region_id in scenario.get("cold_regions", [])
+	var factor = float(phase.get("cold_factor" if cold else "warm_factor", 1.0))
+	if factor < 1.0:
+		factor = 1.0 - (1.0 - factor) * upgrade_modifier("climate_penalty_multiplier")
+	if cold:
+		factor *= upgrade_modifier("cold_multiplier")
+	return factor
+
+func _update_scenario() -> void:
+	for candidate in scenario.phases:
+		if day == int(candidate.start_day) and candidate.id != phase.id:
+			phase = candidate.duplicate(true)
+			journal.append("Jour %d · Phase %s · Température fictive %.0f °C · Remède ×%.2f." % [day, phase.name, phase.temperature, phase.cure_multiplier])
+	for route in scenario.seasonal_routes:
+		if day == int(route.open_day):
+			journal.append("Jour %d · Saison ouverte : %s ↔ %s ; les fermetures temporaires restent prioritaires." % [day, region_name(route.edge[0]), region_name(route.edge[1])])
 
 func event_modifier(kind: String, target: String = "global") -> float:
 	var factor = 1.0
@@ -230,7 +282,7 @@ func _update_events_and_detection() -> void:
 		if day == int(definition.start_day):
 			_add_event(definition)
 	for region in regions:
-		if not region.detected and region.active >= detection_rules.min_active and float(region.active) / region.population >= detection_rules.active_ratio:
+		if not region.detected and region.active >= detection_rules.min_active and float(region.active) / region.population >= detection_rules.active_ratio * difficulty.detection_multiplier:
 			region.detected = true
 			journal.append("Jour %d · Détection dans la région %s ; recherche mondiale renforcée." % [day, region.name])
 			_add_event({"id": "reaction_" + region.id, "name": "Réaction de " + region.name, "kind": "growth_multiplier", "target": region.id, "factor": detection_rules.reaction_factor, "duration": detection_rules.reaction_duration})
@@ -249,6 +301,7 @@ func step() -> void:
 	if not outcome.is_empty() or regions.is_empty():
 		return
 	day += 1
+	_update_scenario()
 	_update_events_and_detection()
 	var incoming: Dictionary = {}
 	var snapshot = regions.duplicate(true)
@@ -263,11 +316,12 @@ func step() -> void:
 		for direction in [[edge[0], edge[1]], [edge[1], edge[0]]]:
 			var source = by_id[direction[0]]
 			if source.active >= 1000:
-				incoming[direction[1]] += maxi(1, int(source.active * 0.001 * upgrade_modifier("exchange_multiplier")))
+				var seasonal = upgrade_modifier("seasonal_multiplier") if route_is_seasonal(edge) else 1.0
+				incoming[direction[1]] += maxi(1, int(source.active * 0.001 * upgrade_modifier("exchange_multiplier") * seasonal))
 	for index in range(regions.size()):
 		var before = snapshot[index]
 		var region = regions[index]
-		var rate = upgrade_modifier("growth_bonus", 0.22) * event_modifier("growth_multiplier", region.id)
+		var rate = upgrade_modifier("growth_bonus", 0.22) * event_modifier("growth_multiplier", region.id) * climate_factor(region.id)
 		var growth = int(before.active * rate * rng.randf_range(0.92, 1.08))
 		var new_cases = mini(int(before.healthy), growth + int(incoming[region.id]))
 		var recovered = mini(int(before.active), maxi(1, int(before.active * 0.025))) if before.active > 0 else 0
@@ -278,7 +332,7 @@ func step() -> void:
 			journal.append("Jour %d · Premiers cas dans la région %s." % [day, region.name])
 	if detected_count() > 0:
 		var gain = cure_rules.base_gain + coverage() * cure_rules.coverage_gain + detected_count() * cure_rules.per_detected_gain
-		cure = minf(100.0, cure + gain * upgrade_modifier("cure_multiplier") * event_modifier("cure_multiplier"))
+		cure = minf(100.0, cure + gain * upgrade_modifier("cure_multiplier") * event_modifier("cure_multiplier") * difficulty.cure_multiplier * phase.cure_multiplier)
 	if day % 5 == 0:
 		points += 3
 	resolve_outcome()

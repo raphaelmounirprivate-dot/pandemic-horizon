@@ -1,6 +1,6 @@
 # Scénario proposé : Dégel 2042
 
-**Statut : spécification à implémenter et à équilibrer.**
+**Statut : implémenté dans le prototype 0.3 sur six régions, à étendre et à équilibrer.** Voir les [règles effectives](REGLES.md) et le [point de contrôle 03](suivi/03-j4-degel-difficultes.md). Les sauvegardes restent absentes ; leur critère ci-dessous est réservé au jalon J5.
 
 ## Situation initiale
 

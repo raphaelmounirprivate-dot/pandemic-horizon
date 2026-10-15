@@ -28,10 +28,14 @@ switch ($Action) {
     'Test' { Invoke-Godot ($baseArgs + @('--script', 'res://tests/run_tests.gd')) }
     'Play' { & $engine --path $projectRoot }
     'Export' {
-        New-Item -ItemType Directory -Force (Join-Path $projectRoot 'build/windows') | Out-Null
-        Invoke-Godot ($baseArgs + @('--export-release', 'Windows Desktop', (Join-Path $projectRoot 'build/windows/PandemicHorizon.exe')))
-        Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/GUIDE-JOUEUR.md') -Destination (Join-Path $projectRoot 'build/windows/GUIDE-JOUEUR.md')
-        Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/licences') -Destination (Join-Path $projectRoot 'build/windows') -Recurse -Force
+        $version = [regex]::Match((Get-Content -LiteralPath (Join-Path $projectRoot 'project.godot') -Raw), 'config/version="([0-9]+\.[0-9]+\.[0-9]+)"').Groups[1].Value
+        if (-not $version) { throw 'Project version missing' }
+        $exportDirectory = Join-Path $projectRoot "build/windows-$version"
+        New-Item -ItemType Directory -Force $exportDirectory | Out-Null
+        Invoke-Godot ($baseArgs + @('--export-release', 'Windows Desktop', (Join-Path $exportDirectory 'PandemicHorizon.exe')))
+        Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/GUIDE-JOUEUR.md') -Destination (Join-Path $exportDirectory 'GUIDE-JOUEUR.md')
+        Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/licences') -Destination $exportDirectory -Recurse -Force
+        Write-Output "Export: $exportDirectory"
     }
     'Capture' {
         Invoke-Godot @('--path', $projectRoot, '--script', 'res://tests/capture.gd')

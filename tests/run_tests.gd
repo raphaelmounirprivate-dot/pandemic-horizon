@@ -135,6 +135,9 @@ func run() -> void:
 	var before_gameplay = checks
 	load("res://tests/test_gameplay.gd").new().run(check)
 	check(checks - before_gameplay >= 59, "Suite gameplay entièrement exécutée")
+	var before_scenarios = checks
+	load("res://tests/test_scenarios.gd").new().run(check)
+	check(checks - before_scenarios >= 180, "Suite scénarios entièrement exécutée")
 	# Exercise the actual UI controller without rendering, then its time integration.
 	var scene = load("res://scenes/main.tscn").instantiate()
 	root.add_child(scene)

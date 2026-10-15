@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "difficulties": [
+    {"id":"easy","name":"Facile","cure_multiplier":0.75,"detection_multiplier":1.25,"score_multiplier":0.8},
+    {"id":"normal","name":"Normale","cure_multiplier":1.0,"detection_multiplier":1.0,"score_multiplier":1.0},
+    {"id":"hard","name":"Difficile","cure_multiplier":1.3,"detection_multiplier":0.75,"score_multiplier":1.25}
+  ],
+  "scenarios": [
+    {"id":"standard","name":"Standard","description":"Six régions connectées, réactions régionales et événements temporaires.","forced_start":"","cold_regions":[],"seasonal_routes":[],"extra_evolutions":[],"phases":[
+      {"id":"standard","name":"Standard","start_day":0,"temperature":15,"cold_factor":1.0,"warm_factor":1.0,"cure_multiplier":1.0}
+    ]},
+    {"id":"degel2042","name":"Dégel 2042","description":"Départ imposé en Boréale. Routes saisonnières au jour 12, tempêtes au jour 28, mobilisation au jour 55.","forced_start":"boreale","cold_regions":["boreale"],
+      "seasonal_routes":[{"edge":["boreale","centrale"],"open_day":12},{"edge":["boreale","orient"],"open_day":12}],
+      "phases":[
+        {"id":"isolation","name":"Isolement","start_day":0,"temperature":-18,"cold_factor":0.8,"warm_factor":1.0,"cure_multiplier":1.0},
+        {"id":"opening","name":"Ouverture","start_day":12,"temperature":-5,"cold_factor":0.95,"warm_factor":1.0,"cure_multiplier":1.0},
+        {"id":"instability","name":"Instabilité","start_day":28,"temperature":5,"cold_factor":0.75,"warm_factor":0.9,"cure_multiplier":1.0},
+        {"id":"mobilization","name":"Mobilisation","start_day":55,"temperature":9,"cold_factor":0.9,"warm_factor":0.95,"cure_multiplier":1.35}
+      ],
+      "extra_evolutions":[
+        {"id":"polar","name":"Adaptation polaire","cost":9,"requires":[],"effect":"Croissance des régions froides : ×1,25.","modifiers":{"cold_multiplier":1.25}},
+        {"id":"seasonal","name":"Mobilité saisonnière","cost":10,"requires":["polar"],"effect":"Échanges sur les routes saisonnières : ×2.","modifiers":{"seasonal_multiplier":2.0}},
+        {"id":"resilience","name":"Résilience climatique","cost":12,"requires":["polar"],"effect":"Pénalités climatiques : divisées par 2.","modifiers":{"climate_penalty_multiplier":0.5}}
+      ],
+      "events_override":[
+        {"id":"arctic_storm","name":"Tempête arctique","kind":"route_closure","start_day":28,"duration":8,"target":["boreale","centrale"],"factor":1.0},
+        {"id":"arctic_inspection","name":"Inspection arctique","kind":"route_closure","start_day":31,"duration":8,"target":["boreale","centrale"],"factor":1.0},
+        {"id":"orient_storm","name":"Tempête orientale","kind":"route_closure","start_day":30,"duration":6,"target":["boreale","orient"],"factor":1.0}
+      ]
+    }
+  ]
+}

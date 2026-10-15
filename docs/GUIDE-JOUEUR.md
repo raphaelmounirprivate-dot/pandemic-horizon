@@ -1,8 +1,8 @@
-# Jouer à Pandemic Horizon 0.2
+# Jouer à Pandemic Horizon 0.3
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe`. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.3.0/`. L'ancien dossier `build/windows/` contient la version précédente. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
-1. Choisir une région de départ, puis « Nouvelle partie ».
+1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
 3. Cliquer sur une région pour consulter sa population et ses cas actifs.
 4. Reprendre avec Espace, puis acheter des évolutions lorsque les points et prérequis le permettent. Mobilité exige d'abord Diffusion. Les effets et raisons d'indisponibilité sont affichés avant achat.
@@ -32,4 +32,27 @@ Le standard inclut une tempête, un contrôle des transports, des mesures locale
 
 Les points augmentent tous les cinq jours. Chaque évolution ne peut être achetée qu'une fois. Les achats trop chers sont refusés avec un message. Le plein écran se règle dans les paramètres et ce réglage est conservé sur le PC.
 
-**Quitter l'application perd la partie.** Les sauvegardes, Dégel 2042, les trois difficultés et la carte finale sont encore à développer. Les chiffres et le rythme sont provisoires.
+## Dégel 2042
+
+| Phase | Début | Changement |
+| --- | --- | --- |
+| Isolement | Jour 0 | Une seule sortie ouverte depuis Boréale ; croissance froide ×0,8 |
+| Ouverture | Jour 12 | Routes Boréale ↔ Centrale et Boréale ↔ Orient disponibles ; froid ×0,95 |
+| Instabilité | Jour 28 | Tempêtes et inspection ; froid ×0,75 et autres régions ×0,9 |
+| Mobilisation | Jour 55 | Recherche ×1,35 ; froid ×0,9 et autres régions ×0,95 |
+
+Les températures affichées sont fictives et changent par paliers. Le multiplicateur « Climat local » indique l'effet réel sur la région sélectionnée. Les événements actifs restent prioritaires sur l'ouverture saisonnière : Boréale ↔ Centrale est fermée du jour 28 au 38 inclus, et Boréale ↔ Orient du 30 au 35 inclus.
+
+Trois évolutions supplémentaires se trouvent dans le panneau défilant : Adaptation polaire (9 points, croissance froide ×1,25), Mobilité saisonnière (10 points, échanges saisonniers ×2) et Résilience climatique (12 points, pénalités climatiques divisées par deux). Les deux dernières exigent Adaptation polaire. Faire défiler ou utiliser Tab pour les atteindre.
+
+## Difficultés
+
+| Difficulté | Recherche | Seuil de détection | Score |
+| --- | --- | --- | --- |
+| Facile | ×0,75 | ×1,25 | ×0,8 |
+| Normale | ×1 | ×1 | ×1 |
+| Difficile | ×1,3 | ×0,75 | ×1,25 |
+
+Un seuil plus bas déclenche la détection et les réactions plus tôt. Le minimum de 500 actifs reste applicable. Le remède, les réactions et le climat se combinent ; les difficultés ne modifient pas directement la croissance de base. Reprendre conserve les choix de la partie en cours ; Recommencer les réutilise, même si les sélections du menu ont changé.
+
+**Quitter l'application perd la partie.** Les sauvegardes et la carte de 24 régions sont encore à développer. Les chiffres et le rythme sont provisoires.
