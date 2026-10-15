@@ -8,7 +8,11 @@ Application de bureau Windows, Godot 4.7.2 standard et GDScript. Simulation abst
 
 ## Parcours
 
-Choisir un scénario et une difficulté, suivre la propagation entre régions fictives, acheter des évolutions avec prérequis, gérer le temps et comprendre le résultat. Le prototype 0.4 porte sur 24 régions, Standard et Dégel 2042, avec détection, réactions régionales, événements temporaires et phases climatiques. Les sauvegardes, le tutoriel et le volume final de contenu restent à développer.
+Choisir un scénario et une difficulté, suivre la propagation entre régions fictives, acheter des évolutions avec prérequis, gérer le temps et comprendre le résultat. Le prototype 0.5 porte sur 24 régions, Standard et Dégel 2042, avec détection, réactions régionales, événements temporaires et phases climatiques. Le tutoriel et le volume final de contenu restent à développer.
+
+Les sauvegardes locales sont accessibles depuis le menu, la partie et le bilan : trois emplacements manuels et un emplacement automatique. Chaque emplacement renseigné affiche le scénario, la difficulté, le jour et la date. La sauvegarde automatique intervient tous les dix jours, en fin de partie, au retour au menu et à la fermeture. Charger une partie reprend en pause ; une partie terminée ouvre son bilan.
+
+Le remplacement d'un emplacement existant ou le chargement qui remplace une partie en mémoire demande confirmation, avec « Annuler » au focus initial. Les erreurs de lecture ou d'écriture sont affichées en français. Si le fichier principal est absent ou invalide, une copie de secours valide peut être chargée avec un avertissement ; un chargement échoué conserve la partie en mémoire.
 
 ## Contraintes
 

@@ -25,7 +25,7 @@ function Invoke-Godot([string[]]$EngineArgs) {
 $baseArgs = @('--headless', '--path', $projectRoot)
 switch ($Action) {
     'Import' { Invoke-Godot ($baseArgs + @('--editor', '--import', '--quit')) }
-    'Test' { Invoke-Godot ($baseArgs + @('--script', 'res://tests/run_tests.gd')) }
+    'Test' { Invoke-Godot ($baseArgs + @('--script', 'res://tests/run_tests.gd', '--', '--no-autosave')) }
     'Balance' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/balance.gd')) }
     'Play' { & $engine --path $projectRoot }
     'Export' {
@@ -39,6 +39,6 @@ switch ($Action) {
         Write-Output "Export: $exportDirectory"
     }
     'Capture' {
-        Invoke-Godot @('--path', $projectRoot, '--script', 'res://tests/capture.gd')
+        Invoke-Godot @('--path', $projectRoot, '--script', 'res://tests/capture.gd', '--', '--no-autosave')
     }
 }

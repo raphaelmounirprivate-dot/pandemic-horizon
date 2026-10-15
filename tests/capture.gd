@@ -7,11 +7,23 @@ func _initialize() -> void:
 func capture() -> void:
 	var scene = load("res://scenes/main.tscn").instantiate()
 	root.add_child(scene)
+	scene.save_store.directory = "user://capture-saves"
 	DirAccess.make_dir_recursive_absolute("res://build/qa")
 	for resolution in [Vector2i(1280, 720), Vector2i(1920, 1080)]:
+		for slot in scene.SaveStore.SLOTS:
+			for suffix in ["", ".bak", ".tmp", ".bak.tmp"]:
+				if FileAccess.file_exists(scene.save_store._path(slot) + suffix): DirAccess.remove_absolute(scene.save_store._path(slot) + suffix)
 		DisplayServer.window_set_size(resolution)
-		for surface in ["menu", "degel-menu", "game", "isolation", "opening", "instability", "mobilization", "result"]:
+		for surface in ["menu", "saves-empty", "degel-menu", "game", "isolation", "opening", "instability", "mobilization", "saves-filled", "save-confirm", "result"]:
 			match surface:
+				"saves-empty":
+					scene.open_saves()
+				"saves-filled":
+					scene.save_store.save_slot("slot1", scene.world)
+					scene.save_store.save_slot("auto", scene.world)
+					scene.open_saves()
+				"save-confirm":
+					scene.confirm_action("Remplacer l'emplacement 1 par la partie en mémoire ?", func(): pass)
 				"menu":
 					scene.scenario_id = "standard"
 					scene.difficulty_id = "normal"
@@ -34,6 +46,8 @@ func capture() -> void:
 					for i in range(target_day): scene.world.step()
 					scene._refresh()
 				"result":
+					if is_instance_valid(scene.pending_dialog):
+						scene.pending_dialog.queue_free()
 					for i in range(500): scene.world.step()
 					scene.show_result()
 			await process_frame

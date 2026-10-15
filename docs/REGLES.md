@@ -1,4 +1,4 @@
-# Règles du prototype 0.4
+# Règles du prototype 0.5
 
 Ces règles sont provisoires et abstraites. Elles ne représentent aucun modèle biologique réel.
 
@@ -7,7 +7,7 @@ Ces règles sont provisoires et abstraites. Elles ne représentent aucun modèle
 - Une journée expire les effets terminés, active les événements planifiés et vérifie les seuils de détection. Ensuite elle lit un instantané commun des 24 régions : échanges par routes ouvertes, progression locale, retrait, puis remède, points et fin de partie. Aucun transfert de population lors des échanges : les connexions produisent des cas locaux. La détection utilise les actifs de la veille, avant la progression du jour.
 - Progression locale de base : 22 % des actifs, modulée par un tirage entre 0,92 et 1,08. Retrait : 2,5 % des actifs, au moins un lorsque des cas existent. Les entiers sont tronqués et les nouveaux cas bornés par la population saine.
 - Une connexion reçoit 0,1 % des actifs de la source, au moins un, si la source compte au moins 1 000 actifs.
-- Graine par défaut : 2042. L'état aléatoire est conservé dans le moteur en mémoire. Aucune sauvegarde de partie sur disque n'est encore proposée.
+- Graine par défaut : 2042. Les sauvegardes conservent la graine et l'état aléatoire sur 64 bits, ainsi que la valeur exacte du remède. Le chargement reprend en pause avec les mêmes journées suivantes. Voir le [guide](GUIDE-JOUEUR.md#sauvegarder-et-reprendre).
 - 8 points au départ, puis 3 tous les cinq jours. Trois achats uniques définis dans `data/evolutions.json` : Diffusion (12 points, +8 points de croissance), Mobilité (10 points, échanges ×3, exige Diffusion), Discrétion (14 points, remède ×0,7). Coûts, effets et prérequis sont validés avant le lancement ; les cycles de prérequis sont refusés.
 - Détection régionale lorsque les actifs atteignent au moins 500 personnes ET 1,5 % de la population régionale. Une détection reste acquise jusqu'à la fin de la partie ; elle provoque une seule réaction locale de huit jours, multipliant la croissance locale par 0,8.
 - Le remède commence dès la première détection. Gain quotidien en points de pourcentage : `0,6 + couverture × 0,6 + nombre de régions détectées × 0,015`, multiplié par les modificateurs de Discrétion et des événements. La couverture est comprise entre 0 et 1. Les règles de détection et de recherche sont dans `data/events.json`. Ces trois coefficients ont été ajustés après des simulations sur la carte étendue ; voir le [rapport](EQUILIBRAGE-0.4.md).

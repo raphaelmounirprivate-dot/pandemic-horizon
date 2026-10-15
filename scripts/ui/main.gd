@@ -2,6 +2,7 @@ extends Control
 
 const World = preload("res://scripts/simulation/world.gd")
 const MapView = preload("res://scripts/ui/region_map.gd")
+const SaveStore = preload("res://scripts/persistence/save_store.gd")
 const INK = Color("e1eee9")
 const MUTED = Color("a7c4c9")
 const ACCENT = Color("69d6bd")
@@ -32,8 +33,129 @@ var map_view: Control
 var evolution_buttons: Dictionary = {}
 var evolution_reasons: Dictionary = {}
 var effects_label: RichTextLabel
+var save_store = SaveStore.new()
+var autosave_enabled = true
+var save_notice = ""
+var saves_return = "menu"
+var pending_dialog: ConfirmationDialog
+
+func autosave() -> String:
+	if not autosave_enabled or world.regions.is_empty(): return ""
+	var error = save_store.save_slot("auto", world, selected, speed)
+	save_notice = "Sauvegarde automatique : " + ("jour %d." % world.day if error.is_empty() else error)
+	return error
+
+func request_quit() -> void:
+	if is_instance_valid(pending_dialog) and pending_dialog.visible: return
+	if autosave().is_empty():
+		get_tree().quit()
+	else:
+		confirm_action("La sauvegarde a échoué. " + save_notice + "\nQuitter sans sauvegarder ?", func(): get_tree().quit())
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST: request_quit()
+
+func confirm_action(message: String, action: Callable) -> void:
+	if screen == "game":
+		paused = true
+		elapsed = 0.0
+		_refresh()
+	var dialog = ConfirmationDialog.new()
+	pending_dialog = dialog
+	dialog.title = "Confirmer l'action"
+	dialog.dialog_text = message
+	dialog.ok_button_text = "Confirmer"
+	dialog.cancel_button_text = "Annuler"
+	add_child(dialog)
+	dialog.confirmed.connect(func():
+		dialog.queue_free()
+		action.call()
+	)
+	dialog.canceled.connect(dialog.queue_free)
+	dialog.popup_centered(Vector2i(620, 180))
+	dialog.get_cancel_button().grab_focus()
+
+func open_saves() -> void:
+	saves_return = screen
+	show_saves()
+
+func close_saves() -> void:
+	if saves_return == "game": show_game()
+	elif saves_return == "result": show_result()
+	else: show_menu()
+
+func save_manual(slot: String) -> void:
+	var error = save_store.save_slot(slot, world, selected, speed)
+	save_notice = "Partie enregistrée dans l'emplacement %s." % slot.trim_prefix("slot") if error.is_empty() else error
+	show_saves()
+
+func load_saved(slot: String) -> void:
+	var result = save_store.load_slot(slot)
+	if not result.error.is_empty():
+		save_notice = result.error + " La partie en mémoire est conservée."
+		show_saves()
+		return
+	world = result.world
+	selected = result.selected
+	speed = result.speed
+	start_id = world.start_region_id
+	scenario_id = world.scenario.id
+	difficulty_id = world.difficulty.id
+	paused = true
+	elapsed = 0.0
+	save_notice = result.get("warning", "Partie chargée en pause.")
+	if world.outcome.is_empty(): show_game()
+	else: show_result()
+
+func show_saves() -> void:
+	paused = true
+	elapsed = 0.0
+	screen = "saves"
+	_reset_screen("Sauvegardes", "Trois emplacements manuels et une sauvegarde automatique sur ce PC.")
+	body.add_child(_label("Le chargement remplace la partie en mémoire et reprend en pause.\nL'automatique est actualisée tous les 10 jours, au menu et à la fermeture.", 18, MUTED))
+	var scroll = ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.follow_focus = true
+	body.add_child(scroll)
+	var rows = VBoxContainer.new()
+	rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rows.add_theme_constant_override("separation", 20)
+	scroll.add_child(rows)
+	for slot in SaveStore.SLOTS:
+		var result = save_store.load_slot(slot)
+		var group = VBoxContainer.new()
+		rows.add_child(group)
+		var name_text = "Automatique" if slot == "auto" else "Emplacement " + slot.trim_prefix("slot")
+		var summary = result.error
+		if result.error.is_empty():
+			summary = "%s · %s · Jour %d · %s" % [result.world.scenario.name, result.world.difficulty.name, result.world.day, result.saved_at.replace("T", " à ")]
+			if result.has("warning"): summary += " · Copie de secours"
+		var label = _label(name_text + " — " + summary, 18)
+		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		group.add_child(label)
+		var actions = HBoxContainer.new()
+		group.add_child(actions)
+		if slot != "auto":
+			var save_button = _button("Enregistrer ici", func():
+				if FileAccess.file_exists(save_store._path(slot)) or FileAccess.file_exists(save_store._path(slot) + ".bak"):
+					confirm_action("Remplacer " + name_text.to_lower() + " par la partie en mémoire ?", func(): save_manual(slot))
+				else: save_manual(slot)
+			, actions)
+			save_button.disabled = world.regions.is_empty()
+		var load_button = _button("Charger", func():
+			if not world.regions.is_empty():
+				confirm_action("Charger " + name_text.to_lower() + " et remplacer la partie en mémoire ?", func(): load_saved(slot))
+			else: load_saved(slot)
+		, actions)
+		load_button.disabled = not result.error.is_empty()
+	var notice = _label(save_notice if not save_notice.is_empty() else "Une copie de la sauvegarde précédente est conservée après chaque remplacement.", 16, AMBER)
+	notice.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.add_child(notice)
+	_button("Retour", close_saves, body).grab_focus()
 
 func _ready() -> void:
+	autosave_enabled = not ("--no-autosave" in OS.get_cmdline_user_args() or "--smoke-test" in OS.get_cmdline_user_args())
+	get_tree().auto_accept_quit = false
 	_apply_theme()
 	var settings = ConfigFile.new()
 	if settings.load(CONFIG_PATH) == OK and settings.get_value("display", "fullscreen", false) == true:
@@ -106,12 +228,33 @@ func _smoke_test() -> void:
 	if world.difficulty.cure_multiplier != 1.3:
 		get_tree().quit(1)
 		return
+	# Exercise persistence inside the standalone export, away from real player slots.
+	var smoke_store = SaveStore.new()
+	smoke_store.directory = "user://smoke-persistence"
+	for slot in SaveStore.SLOTS:
+		for suffix in ["", ".bak", ".tmp", ".bak.tmp"]:
+			if FileAccess.file_exists(smoke_store._path(slot) + suffix): DirAccess.remove_absolute(smoke_store._path(slot) + suffix)
+	for i in range(33): world.step()
+	if not smoke_store.save_slot("slot1", world).is_empty():
+		get_tree().quit(1)
+		return
+	var restored = smoke_store.load_slot("slot1")
+	if not restored.error.is_empty():
+		get_tree().quit(1)
+		return
+	for i in range(20):
+		world.step()
+		restored.world.step()
+	if world.regions != restored.world.regions or world.cure != restored.world.cure or world.rng.state != restored.world.rng.state:
+		get_tree().quit(1)
+		return
+	DirAccess.remove_absolute(smoke_store._path("slot1"))
 	show_settings()
 	show_menu()
 	if screen != "menu":
 		get_tree().quit(1)
 		return
-	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, restart, settings, menu")
+	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, persistence replay, restart, settings, menu")
 	get_tree().quit()
 
 func _apply_theme() -> void:
@@ -155,7 +298,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.4", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.5", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -174,6 +317,7 @@ func _button(text: String, action: Callable, parent: Node) -> Button:
 	return button
 
 func show_menu() -> void:
+	if screen == "game" or screen == "result": autosave()
 	screen = "menu"
 	paused = true
 	elapsed = 0.0
@@ -247,8 +391,11 @@ func show_menu() -> void:
 	if not world.regions.is_empty() and world.outcome.is_empty():
 		_button("Reprendre la partie", show_game, actions)
 	_button("Paramètres", show_settings, actions)
-	_button("Quitter", func(): get_tree().quit(), actions)
-	body.add_child(_label("Simulation abstraite · Les chiffres sont des paramètres de jeu fictifs.\nAucune sauvegarde de partie : quitter l'application perd la progression.", 16, MUTED))
+	_button("Sauvegardes", open_saves, actions)
+	_button("Quitter", request_quit, actions)
+	var footer = _label("Simulation abstraite · Les chiffres sont des paramètres de jeu fictifs.\n" + (save_notice if not save_notice.is_empty() else "Sauvegardes locales disponibles depuis le menu ou la partie."), 16, MUTED)
+	footer.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.add_child(footer)
 	launch.grab_focus()
 
 func _update_menu_choices(catalog: Dictionary) -> void:
@@ -369,6 +516,7 @@ func show_game() -> void:
 		, controls)
 	_button("Recommencer", restart_game, controls)
 	_button("Menu", show_menu, controls)
+	_button("Sauvegardes", open_saves, controls)
 	_refresh()
 	pause_button.grab_focus()
 
@@ -403,6 +551,8 @@ func _refresh() -> void:
 		evolution_reasons[id].add_theme_color_override("font_color", ACCENT if acquired or reason.is_empty() else AMBER)
 	pause_button.text = "Reprendre [Espace]" if paused else "Pause [Espace]"
 	status_label.text = ("En pause" if paused else "Simulation en cours") + " · Vitesse ×%d" % speed
+	if not save_notice.is_empty(): status_label.text += " · " + save_notice
+	status_label.clip_text = true
 	journal_label.text = "\n".join(world.journal.slice(maxi(0, world.journal.size() - 2)))
 	journal_label.clip_text = true
 	var lines = world.active_event_lines()
@@ -422,6 +572,7 @@ func advance_time(delta: float) -> void:
 	while elapsed >= 0.5 and steps < 16:
 		elapsed -= 0.5
 		world.step()
+		if world.day % 10 == 0 or not world.outcome.is_empty(): autosave()
 		steps += 1
 		if not world.outcome.is_empty():
 			paused = true
@@ -441,13 +592,16 @@ func show_result() -> void:
 	body.add_child(log)
 	var restart = _button("Rejouer avec les mêmes choix", restart_game, body)
 	_button("Choisir une autre région", show_menu, body)
+	_button("Sauvegardes", open_saves, body)
 	restart.grab_focus()
 
 func _input(event: InputEvent) -> void:
+	if is_instance_valid(pending_dialog) and pending_dialog.visible: return
 	if not event is InputEventKey or not event.pressed or event.echo:
 		return
 	if event.keycode == KEY_ESCAPE:
-		show_menu()
+		if screen == "saves": close_saves()
+		else: show_menu()
 		get_viewport().set_input_as_handled()
 	elif screen == "game":
 		if event.keycode == KEY_SPACE:

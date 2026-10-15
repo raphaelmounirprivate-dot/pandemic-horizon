@@ -1,0 +1,179 @@
+extends RefCounted
+## JSON only: rebuild definitions from packaged content, validate before replacing a world.
+const World = preload("res://scripts/simulation/world.gd")
+const SLOTS = ["slot1", "slot2", "slot3", "auto"]
+const MAX_BYTES = 2097152
+var directory = "user://saves"
+
+func content_hash() -> String:
+	var text = ""
+	for path in ["regions", "evolutions", "events", "scenarios"]:
+		text += FileAccess.get_file_as_string("res://data/%s.json" % path)
+	return text.sha256_text()
+
+func encode(world: RefCounted, selected: int = 0, speed: int = 1) -> Dictionary:
+	if world.regions.is_empty(): return {}
+	var states: Array = []
+	for region in world.regions:
+		states.append({"id": region.id, "healthy": region.healthy, "active": region.active, "removed": region.removed, "detected": region.detected})
+	var effects: Array = []
+	for effect in world.active_events:
+		effects.append({"id": effect.id, "start_day": effect.start_day, "end_day": effect.end_day})
+	return {"format": 1, "content": content_hash(), "engine": Engine.get_version_info().string,
+		"saved_at": Time.get_datetime_string_from_system(), "scenario": world.scenario.id,
+		"difficulty": world.difficulty.id, "start": world.start_region_id,
+		"day": world.day, "points": world.points, "cure": PackedFloat64Array([world.cure]).to_byte_array().hex_encode(), "outcome": world.outcome,
+		"regions": states, "purchased": world.purchased.duplicate(), "journal": world.journal.duplicate(),
+		"events": effects, "activated": world.activated_events.duplicate(), "phase": world.phase.id,
+		"seed": str(world.rng.seed), "rng": str(world.rng.state),
+		"selected": world.regions[clampi(selected, 0, world.regions.size() - 1)].id, "speed": speed}
+
+func _integer(value: Variant, minimum: int, maximum: int) -> bool:
+	return (value is int or value is float) and is_finite(float(value)) and value == floor(value) and value >= minimum and value <= maximum
+
+func _strings(value: Variant, maximum: int) -> bool:
+	if not value is Array or value.size() > maximum: return false
+	for item in value:
+		if not item is String or item.length() > 2000: return false
+	return true
+
+func decode(data: Variant) -> Dictionary:
+	var invalid = {"error": "Fichier de sauvegarde invalide."}
+	if not data is Dictionary: return invalid
+	for key in ["format", "content", "engine"]:
+		if not data.has(key): return invalid
+	if data.get("format") != 1 or data.get("content") != content_hash() or data.get("engine") != Engine.get_version_info().string:
+		return {"error": "Sauvegarde incompatible avec cette version du jeu.", "incompatible": true}
+	for key in ["scenario", "difficulty", "start", "phase", "outcome", "selected", "saved_at", "seed", "rng"]:
+		if not data.get(key) is String or data[key].length() > 100: return invalid
+	for key in ["seed", "rng"]:
+		if not data[key].is_valid_int() or str(data[key].to_int()) != data[key]: return invalid
+	if not _integer(data.get("day"), 0, 100000) or not _integer(data.get("points"), 0, 100000): return invalid
+	# Decimal JSON round-trips can change the last bit: retain the exact IEEE-754 bytes.
+	if not data.get("cure") is String or data.cure.length() != 16: return invalid
+	for character in data.cure:
+		if character not in "0123456789abcdef": return invalid
+	var cure_bytes: PackedByteArray = data.cure.hex_decode()
+	if cure_bytes.size() != 8 or cure_bytes.hex_encode() != data.cure: return invalid
+	var cure_value = cure_bytes.to_float64_array()[0]
+	if not is_finite(cure_value) or cure_value < 0 or cure_value > 100: return invalid
+	if not _integer(data.get("speed"), 1, 4) or int(data.speed) not in [1, 2, 4]: return invalid
+	if not _strings(data.get("purchased"), 100) or not _strings(data.get("journal"), 10000) or not _strings(data.get("activated"), 200): return invalid
+	var world = World.new()
+	if not world.start(data.start, data.seed.to_int(), null, null, data.scenario, data.difficulty).is_empty(): return invalid
+	if not data.get("regions") is Array or data.regions.size() != world.regions.size(): return invalid
+	var ids: Array = []
+	for i in range(world.regions.size()):
+		var state = data.regions[i]
+		var region = world.regions[i]
+		if not state is Dictionary or state.get("id") != region.id or not state.get("detected") is bool: return invalid
+		for key in ["healthy", "active", "removed"]:
+			if not _integer(state.get(key), 0, int(region.population)): return invalid
+		if state.healthy + state.active + state.removed != region.population: return invalid
+		for key in ["healthy", "active", "removed"]: region[key] = int(state[key])
+		region.detected = state.detected
+		ids.append(region.id)
+	if data.selected not in ids: return invalid
+	var spent = 0
+	for id in data.purchased:
+		if not world.evolutions.has(id) or id in world.purchased: return invalid
+		for required in world.evolutions[id].requires:
+			if required not in world.purchased: return invalid
+		spent += int(world.evolutions[id].cost)
+		world.purchased.append(id)
+	if int(data.points) != 8 + int(data.day / 5) * 3 - spent: return invalid
+	world.day = int(data.day)
+	world.points = int(data.points)
+	world.cure = cure_value
+	for candidate in world.scenario.phases:
+		if candidate.start_day <= world.day: world.phase = candidate.duplicate(true)
+	if data.phase != world.phase.id: return invalid
+	var definitions: Dictionary = {}
+	for definition in world.event_definitions: definitions[definition.id] = definition
+	for region in world.regions:
+		if region.detected:
+			var id = "reaction_" + region.id
+			definitions[id] = {"id": id, "name": "Réaction de " + region.name, "kind": "growth_multiplier", "target": region.id, "factor": world.detection_rules.reaction_factor, "duration": world.detection_rules.reaction_duration}
+			if id not in data.activated: return invalid
+	for id in data.activated:
+		if not definitions.has(id) or id in world.activated_events: return invalid
+		world.activated_events.append(id)
+	for definition in world.event_definitions:
+		if definition.start_day <= world.day and definition.id not in world.activated_events: return invalid
+	if not data.get("events") is Array or data.events.size() > definitions.size(): return invalid
+	var effect_ids: Array = []
+	for effect in data.events:
+		if not effect is Dictionary or not effect.get("id") is String: return invalid
+		if effect.id not in world.activated_events or effect.id in effect_ids: return invalid
+		if not _integer(effect.get("start_day"), 0, world.day) or not _integer(effect.get("end_day"), world.day + 1, 100100): return invalid
+		var definition = definitions[effect.id].duplicate(true)
+		if effect.end_day != effect.start_day + definition.duration: return invalid
+		if definition.has("start_day") and effect.start_day != definition.start_day: return invalid
+		definition.start_day = int(effect.start_day)
+		definition.end_day = int(effect.end_day)
+		world.active_events.append(definition)
+		effect_ids.append(effect.id)
+	for definition in world.event_definitions:
+		if definition.start_day <= world.day and world.day < definition.start_day + definition.duration and definition.id not in effect_ids: return invalid
+	world.journal.assign(data.journal)
+	world.rng.seed = data.seed.to_int()
+	world.rng.state = data.rng.to_int()
+	var expected = ""
+	if world.cure >= 100: expected = "defeat_cure"
+	elif world.coverage() >= 0.9: expected = "victory"
+	elif world.totals().active == 0: expected = "defeat_extinction"
+	if data.outcome != expected: return invalid
+	world.outcome = expected
+	return {"error": "", "world": world, "selected": ids.find(data.selected), "speed": int(data.speed), "saved_at": data.saved_at}
+
+func _path(slot: String) -> String:
+	return directory.path_join(slot + ".json")
+
+func _read(path: String) -> Dictionary:
+	if not FileAccess.file_exists(path): return {"error": "Emplacement vide."}
+	var file = FileAccess.open(path, FileAccess.READ)
+	if file == null: return {"error": "Lecture impossible."}
+	if file.get_length() > MAX_BYTES: return {"error": "Fichier trop volumineux."}
+	var json = JSON.new()
+	if json.parse(file.get_as_text()) != OK: return {"error": "Fichier JSON endommagé."}
+	return decode(json.data)
+
+func load_slot(slot: String) -> Dictionary:
+	if slot not in SLOTS: return {"error": "Emplacement inconnu."}
+	var primary = _read(_path(slot))
+	if primary.error.is_empty() or primary.get("incompatible", false): return primary
+	var backup = _read(_path(slot) + ".bak")
+	if backup.error.is_empty():
+		backup["warning"] = "Copie de secours chargée ; le fichier principal est absent ou invalide."
+		return backup
+	return primary
+
+func _write(path: String, text: String) -> String:
+	var file = FileAccess.open(path, FileAccess.WRITE)
+	if file == null: return "Impossible d'écrire la sauvegarde."
+	file.store_string(text)
+	file.flush()
+	var error = file.get_error()
+	file.close()
+	return "" if error == OK else "Écriture incomplète ; ancienne sauvegarde conservée."
+
+func save_slot(slot: String, world: RefCounted, selected: int = 0, speed: int = 1) -> String:
+	if slot not in SLOTS: return "Emplacement inconnu."
+	var data = encode(world, selected, speed)
+	var validation = decode(data)
+	if not validation.error.is_empty(): return validation.error
+	var path = _path(slot)
+	var previous = _read(path)
+	if previous.get("incompatible", false): return previous.error
+	if DirAccess.make_dir_recursive_absolute(directory) != OK: return "Dossier de sauvegarde inaccessible."
+	var error = _write(path + ".tmp", JSON.stringify(data, "", true, true))
+	if not error.is_empty(): return error
+	if not _read(path + ".tmp").error.is_empty(): return "Vérification de l'écriture impossible."
+	# Never replace a valid backup with corrupt input. Rename on the same volume.
+	if previous.error.is_empty():
+		error = _write(path + ".bak.tmp", FileAccess.get_file_as_string(path))
+		if not error.is_empty(): return error
+		if not _read(path + ".bak.tmp").error.is_empty(): return "Copie de secours invalide."
+		if DirAccess.rename_absolute(path + ".bak.tmp", path + ".bak") != OK: return "Impossible de conserver la copie de secours."
+	if DirAccess.rename_absolute(path + ".tmp", path) != OK: return "Remplacement impossible ; ancienne sauvegarde conservée."
+	return ""

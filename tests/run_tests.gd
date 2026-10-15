@@ -187,5 +187,8 @@ func run() -> void:
 	var before_map = checks
 	await load("res://tests/test_map.gd").new().run(self, check)
 	check(checks - before_map >= 33, "Suite carte entièrement exécutée")
+	var before_persistence = checks
+	await load("res://tests/test_persistence.gd").new().run(self, check)
+	check(checks - before_persistence >= 165, "Suite sauvegardes entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

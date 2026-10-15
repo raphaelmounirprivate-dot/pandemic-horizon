@@ -31,9 +31,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Export
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-export.ps1
 ```
 
-Résultat actuel : `build/windows-0.4.0/PandemicHorizon.exe`, ressources embarquées, accompagné du guide et des licences copiés par le script. Le dossier est calculé depuis `config/version` dans `project.godot` : `build/windows-<version>/`. Cela permet de conserver une ancienne version en cours d'exécution. Un nouvel export de la même version exige toutefois que son binaire soit fermé. L'exécutable n'est pas signé. Les exécutables, archives téléchargées et captures ne sont pas versionnés dans Git. La release GitHub 1.0 reste un jalon ultérieur.
+Résultat actuel : `build/windows-0.5.0/PandemicHorizon.exe`, ressources embarquées, accompagné du guide et des licences copiés par le script. Le dossier est calculé depuis `config/version` dans `project.godot` : `build/windows-<version>/`. Cela permet de conserver une ancienne version en cours d'exécution. Un nouvel export de la même version exige toutefois que son binaire soit fermé. L'exécutable n'est pas signé. Les exécutables, archives téléchargées et captures ne sont pas versionnés dans Git. La release GitHub 1.0 reste un jalon ultérieur.
 
 `verify-export.ps1` copie le binaire de la version courante seul vers un chemin contenant espaces et accents, vérifie le standard (prérequis, événements, victoire/défaite), Dégel (quatre phases, routes et évolutions) et les difficultés, puis son démarrage graphique. Ce contrôle nécessite une session graphique pour sa deuxième étape ; il n'utilise ni les scènes sources ni le dossier de tests.
+
+Le smoke test vérifie aussi une écriture/lecture et vingt journées de reprise identique dans le binaire. Il utilise `user://smoke-persistence`, distinct des sauvegardes du joueur. Les tests et captures désactivent l'automatique par `--no-autosave` et isolent leurs écritures dans leurs propres dossiers.
 
 ## Tests
 
@@ -41,9 +43,10 @@ Résultat actuel : `build/windows-0.4.0/PandemicHorizon.exe`, ressources embarqu
 - `tests/test_gameplay.gd` couvre les schémas JSON, prérequis, détection, effets régionaux, expiration exclusive, fermetures superposées et cumuls sans effet résiduel.
 - `tests/test_scenarios.gd` couvre les catalogues invalides, départ imposé, phases, climat, routes saisonnières, évolutions spécifiques, difficultés et rejeu complet. Il explore 48 parties et trois stratégies ciblées gagnantes de Dégel, une par difficulté, avec les points normalement gagnés.
 - `tests/test_map.gd` vérifie les 24 régions, les 38/39 routes, la connexité, les positions uniques, des victoires légales depuis chaque départ standard en difficile et l'absence de superposition des cibles aux deux tailles testées.
+- `tests/test_persistence.gd` vérifie trente états de Standard/Dégel dans trois difficultés, la reprise de cinquante journées, l'état aléatoire 64 bits, la valeur exacte du remède, les fichiers altérés/incompatibles, le secours, les erreurs d'écriture, les emplacements et le contrôleur. Les clics dans le viewport ouvrent les sauvegardes et la confirmation d'écrasement ; Annuler reçoit le focus initial.
 - `tests/input_journey.gd` injecte des événements souris/clavier dans le viewport : clics avec test de position, refus/acceptation d'achat, Tab/Maj+Tab, Entrée, Espace, vitesses et Échap. Il teste le routage Godot ; il ne simule pas le pilote d'entrée Windows ni des gestes humains. API utilisée : [Viewport.push_input](https://docs.godotengine.org/en/stable/classes/class_viewport.html#class-viewport-method-push-input).
 - 288 parties automatisées explorent les 24 départs standards et douze graines, avec ou sans achats automatiques. Ce lot ne mesure pas la difficulté pour des joueurs humains.
-- La commande `Capture` utilise un vrai rendu graphique et produit seize captures à 1280 × 720 et 1920 × 1080 : menus Standard/Dégel, jeu Standard, quatre phases de Dégel et bilan. Elle nécessite une session graphique.
+- La commande `Capture` utilise un vrai rendu graphique et produit vingt-deux captures à 1280 × 720 et 1920 × 1080 : menus Standard/Dégel, jeu Standard, quatre phases de Dégel, sauvegardes vides/remplies, confirmation et bilan. Elle nécessite une session graphique.
 - Le script `dev.ps1` signale un échec si le moteur renvoie une erreur ou si un test échoue. Le workflow GitHub exécute import et tests ; il ne publie aucun binaire.
 
 ```powershell
@@ -63,6 +66,7 @@ Les essais automatiques et les captures ne prouvent pas la facilité d'utilisati
 ## Organisation
 
 - `scripts/simulation/world.gd` : état du monde et règles ; aucune dépendance aux scènes.
+- `scripts/persistence/save_store.gd` : format JSON 1, validation avant mutation, écriture temporaire vérifiée puis renommage, copie précédente et récupération. Compatibilité contrôlée par empreinte des quatre fichiers de données et version exacte du moteur. La graine et l'état RNG sont des chaînes décimales ; le remède utilise huit octets IEEE-754 en hexadécimal pour éviter la dérive constatée du dernier bit lors du passage JSON. Aucun objet ou script n'est désérialisé.
 - `data/regions.json` : 24 régions fictives et connexions, avec validation au lancement.
 - `data/evolutions.json` : coûts, prérequis et modificateurs ; `data/events.json` : calendrier, effets temporaires, détection et recherche.
 - `scripts/gameplay/content.gd` : validation des références, bornes et cycles avant de modifier le monde.

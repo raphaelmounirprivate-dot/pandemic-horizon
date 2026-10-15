@@ -4,7 +4,7 @@ Date : 15 octobre 2026.
 
 Dépôt : [raphaelmounirprivate-dot/plague-inc-evolved](https://github.com/raphaelmounirprivate-dot/plague-inc-evolved).
 
-**État actuel :** prototype 0.4 de 24 régions, Standard et Dégel 2042, trois difficultés, phases et évolutions climatiques ; export Windows testé localement. Voir le [point de contrôle 04](suivi/04-j4-carte24.md) pour les validations et les limites. Sauvegardes, tutoriel, diversité du contenu et validation humaine de l'équilibrage restent à réaliser. Ce document conserve la feuille de route complète de la version 1.0 ; ses jalons décrivent les objectifs, pas une liste de fonctionnalités toutes livrées.
+**État actuel :** prototype 0.5 de 24 régions, Standard et Dégel 2042, trois difficultés, phases et évolutions climatiques ; export Windows testé localement. Voir le [point de contrôle 05](suivi/05-j5-sauvegardes.md) pour les validations et les limites. Tutoriel, diversité du contenu et validation humaine de l'équilibrage restent à réaliser. Ce document conserve la feuille de route complète de la version 1.0 ; ses jalons décrivent les objectifs, pas une liste de fonctionnalités toutes livrées.
 
 ## 1. Résultat à livrer
 
@@ -140,7 +140,7 @@ Aucune date ferme n'est fixée avant J2. À ce stade, estimer le reste à partir
 
 ## 11. Première étape à entreprendre
 
-Les quatre premiers lots ont construit la partie complète, J3, Dégel et les difficultés, puis la carte de 24 régions avec une première exploration d'équilibrage. Le [point de contrôle 04](suivi/04-j4-carte24.md) détaille les essais réalisés et les limites. **Prochain lot : J5, sauvegardes versionnées et chargement fidèle**, avant de compléter la variété du contenu et l'équilibrage auprès de joueurs.
+Les quatre premiers lots ont construit la partie complète, J3, Dégel et les difficultés, puis la carte de 24 régions avec une première exploration d'équilibrage. Le [point de contrôle 04](suivi/04-j4-carte24.md) détaille les essais réalisés et les limites. **Sauvegardes versionnées et chargement fidèle livrés en 0.5 ; prochain lot : tutoriel et aide contextuelle**, avant de compléter la variété du contenu et l'équilibrage auprès de joueurs.
 
 ## 12. Besoins pour démarrer
 

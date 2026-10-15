@@ -4,9 +4,9 @@ Projet de jeu de stratégie original pour PC Windows, inspiré du genre de la si
 
 ## État du projet
 
-**Prototype 0.4 développé.** Deux scénarios sont jouables sur **24 régions** sous Godot 4.7.2 : Standard et Dégel 2042. La carte schématique contient 38 connexions, plus une route arctique propre à Dégel, et 3,53 millions d'habitants fictifs. Le menu propose trois difficultés avec leurs effets affichés. Dégel impose le départ en Boréale et ajoute quatre phases, des routes saisonnières, des tempêtes et trois évolutions climatiques. Détection, réactions, événements, remède, pause, vitesses, journal et bilan sont implémentés. Le remède a été ajusté sur cette carte ; les sauvegardes et le contenu final restent à développer.
+**Prototype 0.5 développé.** Deux scénarios sont jouables sur **24 régions** sous Godot 4.7.2 : Standard et Dégel 2042. La carte schématique contient 38 connexions, plus une route arctique propre à Dégel, et 3,53 millions d'habitants fictifs. Le menu propose trois difficultés avec leurs effets affichés. Dégel impose le départ en Boréale et ajoute quatre phases, des routes saisonnières, des tempêtes et trois évolutions climatiques. Détection, réactions, événements, remède, pause, vitesses, journal et bilan sont implémentés. Trois sauvegardes manuelles et une automatique permettent de reprendre en pause, avec récupération de la copie précédente si le fichier principal est endommagé.
 
-L'exécutable actuel se trouve dans `build/windows-0.4.0/PandemicHorizon.exe`, hors de Git. Les exports sont séparés par version ; les anciens dossiers conservent leurs versions précédentes. Aucune release binaire GitHub n'est publiée à ce stade.
+L'exécutable actuel se trouve dans `build/windows-0.5.0/PandemicHorizon.exe`, hors de Git. Les exports sont séparés par version ; les anciens dossiers conservent leurs versions précédentes. Aucune release binaire GitHub n'est publiée à ce stade.
 
 ## Lancer et développer le prototype
 
@@ -80,4 +80,4 @@ Le [plan de développement](docs/plan-developpement.md) définit le périmètre 
 5. Vérifier l'équilibrage et les parcours de jeu.
 6. Générer et tester l'exécutable Windows.
 
-Le suivi de la carte étendue figure dans [le point de contrôle 04](docs/suivi/04-j4-carte24.md) et les mesures dans [le rapport d'équilibrage](docs/EQUILIBRAGE-0.4.md). Les sauvegardes de partie, le tutoriel et le contenu final restent à implémenter.
+Le suivi des sauvegardes figure dans [le point de contrôle 05](docs/suivi/05-j5-sauvegardes.md) et les mesures de la carte dans [le rapport d'équilibrage](docs/EQUILIBRAGE-0.4.md). Le tutoriel, le contenu final et les essais avec des joueurs restent à réaliser.

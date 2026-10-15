@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.4
+# Jouer à Pandemic Horizon 0.5
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.4.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.5.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -18,6 +18,7 @@ La carte schématique présente 24 régions fictives, organisées en quatre rang
 | Tab / Maj + Tab | Parcourir les contrôles |
 | Entrée | Activer le contrôle sélectionné |
 | Menu → Reprendre la partie | Retrouver la partie en mémoire, en pause |
+| Sauvegardes | Enregistrer ou charger une partie sur ce PC |
 | Recommencer / Nouvelle partie | Abandonner la partie courante et repartir du jour zéro |
 
 « Retirés » signifie sortis de l'état actif. Le cumul touché additionne actifs et retirés, sans compter deux fois une personne. Les traits bleus indiquent les connexions ouvertes ; une croix et des pointillés ambre signalent une route fermée. Les barres indiquent la proportion touchée par région.
@@ -57,4 +58,14 @@ Trois évolutions supplémentaires se trouvent dans le panneau défilant : Adapt
 
 Un seuil plus bas déclenche la détection et les réactions plus tôt. Le minimum de 500 actifs reste applicable. Le remède, les réactions et le climat se combinent ; les difficultés ne modifient pas directement la croissance de base. Reprendre conserve les choix de la partie en cours ; Recommencer les réutilise, même si les sélections du menu ont changé.
 
-**Quitter l'application perd la partie.** Les sauvegardes et le tutoriel restent à développer. Le remède a été ralenti pour la carte étendue ; les chiffres, le contenu et le rythme restent provisoires et doivent être éprouvés avec des joueurs.
+## Sauvegarder et reprendre
+
+Ouvrir « Sauvegardes » depuis le menu, la partie ou le bilan. L'écran met le jeu en pause. Trois emplacements manuels proposent « Enregistrer ici » ; chaque ligne affiche le scénario, la difficulté, le jour et la date locale d'enregistrement. Remplacer un fichier existant demande confirmation. « Charger » demande confirmation si une partie est déjà en mémoire.
+
+La sauvegarde automatique est actualisée tous les dix jours simulés, à la fin de partie, au retour au menu depuis le jeu ou le bilan, et à la fermeture normale de l'application. Une fermeture forcée ou une coupure ne déclenche pas de sauvegarde : les changements depuis le dernier enregistrement peuvent être perdus. Une erreur d'enregistrement est signalée ; si elle survient à la fermeture, le jeu propose d'annuler ou de quitter sans sauvegarder.
+
+Le chargement conserve régions, détections, achats, points, remède, événements, phase, journal, région sélectionnée et vitesse. La partie reprend toujours en pause, au début de la journée affichée ; le temps d'affichage fractionnaire n'est pas conservé. Une partie terminée retrouve son bilan.
+
+Après un remplacement réussi, le fichier `.bak` contient la version précédente. Si le fichier principal manque ou est illisible, un secours valide est chargé avec un avertissement. Il peut être plus ancien. Si les deux fichiers sont invalides, la partie en mémoire est conservée. Les versions de format, données ou moteur incompatibles sont refusées sans écrasement ; aucune migration automatique n'est proposée dans ce prototype.
+
+Les fichiers restent locaux, dans `%APPDATA%/Godot/app_userdata/Pandemic Horizon/saves/` pour le jeu distribué. Ils ne sont pas synchronisés avec GitHub. Le lancement par `dev.ps1 Play` utilise un dossier isolé sous `.tools/user/`. Le tutoriel reste à développer ; les chiffres, le contenu et le rythme restent provisoires et doivent être éprouvés avec des joueurs.
