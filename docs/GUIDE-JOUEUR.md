@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.5
+# Jouer à Pandemic Horizon 0.6
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.5.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.6.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -14,6 +14,7 @@ La carte schématique présente 24 régions fictives, organisées en quatre rang
 | --- | --- |
 | Espace | Pause / reprise pendant la partie |
 | 1, 2, 4 | Choisir la vitesse |
+| F1 | Ouvrir ou fermer l'aide, en pause |
 | Échap | Menu et pause de la partie |
 | Tab / Maj + Tab | Parcourir les contrôles |
 | Entrée | Activer le contrôle sélectionné |
@@ -22,6 +23,23 @@ La carte schématique présente 24 régions fictives, organisées en quatre rang
 | Recommencer / Nouvelle partie | Abandonner la partie courante et repartir du jour zéro |
 
 « Retirés » signifie sortis de l'état actif. Le cumul touché additionne actifs et retirés, sans compter deux fois une personne. Les traits bleus indiquent les connexions ouvertes ; une croix et des pointillés ambre signalent une route fermée. Les barres indiquent la proportion touchée par région.
+
+## Tutoriel et aide
+
+« Tutoriel guidé », au menu, propose six exercices facultatifs avec les vrais contrôles et les vraies règles :
+
+1. Reprendre le temps avec Espace ; une journée passe, puis le jeu se remet en pause.
+2. Sélectionner Centrale pour lire ses statistiques.
+3. Au jour 10, acheter Diffusion avec les points normalement gagnés et observer le prérequis de Mobilité.
+4. Au jour 23, sélectionner Boréale et lire son état détecté.
+5. Reprendre jusqu'au jour 26, puis jusqu'au 32 : la fin de la tempête ne suffit pas à rouvrir une route encore fermée par une inspection.
+6. Ouvrir les sauvegardes d'essai, enregistrer dans un emplacement manuel puis le charger. Confirmer le chargement, puis choisir « Terminer ».
+
+Le focus clavier suit l'action demandée ; Entrée active le contrôle et Tab permet d'explorer les autres commandes. « Continuer » se débloque après l'action réussie. Le temps avance automatiquement entre certains exercices pour montrer les événements ; les valeurs ne sont pas truquées. Certaines actions sont réservées à la partie libre.
+
+L'entraînement conserve une partie et des fichiers séparés, dans `user://training`. Il ne remplace ni la partie en mémoire ni les sauvegardes du joueur. Les fichiers d'essai sont réinitialisés au prochain lancement du tutoriel. « Terminer », « Quitter l'entraînement » ou Échap restituent la session précédente en pause. Depuis l'aide ou les sauvegardes, un premier Échap ferme cet écran ; un second quitte l'entraînement. Fermer normalement l'application pendant l'entraînement sauvegarde la partie du joueur, si elle existe.
+
+« Aide [F1] » est accessible au menu, en partie et au bilan. F1 fonctionne aussi depuis les paramètres et les sauvegardes. « Situation actuelle » résume le scénario, la région sélectionnée, les raisons d'indisponibilité des évolutions et les effets actifs. Le sélecteur propose également sept sujets : commandes, régions, évolutions, détection, événements, sauvegardes et Dégel. Faire défiler le texte, ou le focaliser avec Tab et utiliser les flèches. F1, Échap ou « Retour » ramènent à l'écran précédent, en pause.
 
 ## Détection et réactions
 
@@ -68,4 +86,4 @@ Le chargement conserve régions, détections, achats, points, remède, événeme
 
 Après un remplacement réussi, le fichier `.bak` contient la version précédente. Si le fichier principal manque ou est illisible, un secours valide est chargé avec un avertissement. Il peut être plus ancien. Si les deux fichiers sont invalides, la partie en mémoire est conservée. Les versions de format, données ou moteur incompatibles sont refusées sans écrasement ; aucune migration automatique n'est proposée dans ce prototype.
 
-Les fichiers restent locaux, dans `%APPDATA%/Godot/app_userdata/Pandemic Horizon/saves/` pour le jeu distribué. Ils ne sont pas synchronisés avec GitHub. Le lancement par `dev.ps1 Play` utilise un dossier isolé sous `.tools/user/`. Le tutoriel reste à développer ; les chiffres, le contenu et le rythme restent provisoires et doivent être éprouvés avec des joueurs.
+Les fichiers restent locaux, dans `%APPDATA%/Godot/app_userdata/Pandemic Horizon/saves/` pour le jeu distribué. Ils ne sont pas synchronisés avec GitHub. Le lancement par `dev.ps1 Play` utilise un dossier isolé sous `.tools/user/`. Les chiffres, le contenu et le rythme restent provisoires et doivent être éprouvés avec des joueurs.

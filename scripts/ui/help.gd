@@ -1,0 +1,28 @@
+extends RefCounted
+const TITLES = ["Situation actuelle", "Temps et commandes", "Régions et objectif", "Évolutions et prérequis", "Détection et remède", "Événements et routes", "Sauvegardes", "Dégel 2042"]
+
+static func text_for(topic: int, world: RefCounted, selected: int, training_stage: int = -1) -> String:
+	match topic:
+		0:
+			if world.regions.is_empty(): return "Choisissez un scénario, une difficulté et une région, puis lancez Nouvelle partie.\n\nVous commencez en pause. Le tutoriel guidé est facultatif et accessible au menu."
+			var region = world.regions[selected]
+			var lines = ["%s · %s · Jour %d" % [world.scenario.name, world.difficulty.name, world.day],
+				"Objectif : toucher 90 % de la population avant 100 % de remède. L'extinction des cas actifs entraîne aussi une défaite.",
+				"%s : %s. %d actifs et %d retirés sur %d habitants." % [region.name, "détectée" if region.detected else "non détectée", region.active, region.removed, region.population],
+				"Évolutions"]
+			for id in world.evolutions:
+				var reason = world.purchase_reason(id)
+				if training_stage >= 0 and id not in world.purchased and (training_stage != 2 or id != "transmission"):
+					reason = "Hors exercice" + (" · " + reason if not reason.is_empty() else "")
+				lines.append("%s : %s" % [world.evolutions[id].name, "Disponible" if reason.is_empty() else reason])
+			lines.append("Événements actifs")
+			lines.append("Aucun effet temporaire." if world.active_events.is_empty() else "\n".join(world.active_event_lines()))
+			return "\n\n".join(lines)
+		1: return "Espace : pause ou reprise. 1, 2, 4 : vitesse. Une journée dure une demi-seconde à ×1.\n\nF1 : ouvrir ou fermer cette aide. Échap : fermer l'aide, revenir depuis Sauvegardes, ou rejoindre le menu depuis la partie. Tout retour à la partie se fait en pause.\n\nTab et Maj + Tab : parcourir les contrôles. Entrée : activer le contrôle sélectionné. Les panneaux défilants suivent le focus."
+		2: return "Sélectionnez une région pour voir les sains, actifs et retirés. Retirés signifie sortis de l'état actif.\n\nLe cumul touché additionne actifs et retirés ; une personne n'est comptée qu'une fois. Les barres de la carte montrent cette proportion par région.\n\nVictoire : 90 % de population touchée. Défaite : remède à 100 %, ou plus aucun actif avant l'objectif. Si plusieurs fins coïncident, le remède est prioritaire."
+		3: return "Les points augmentent de 3 tous les cinq jours. Une évolution s'achète une seule fois. Son coût, son effet et la raison d'un refus sont affichés à droite.\n\nDiffusion augmente la croissance locale. Mobilité multiplie les échanges et exige Diffusion. Discrétion ralentit le remède.\n\nUn prérequis doit déjà être acquis et les points doivent suffire. Aucun achat n'est possible après la fin de partie."
+		4: return "Dans le standard en difficulté normale, une région est détectée à partir de 500 actifs ET de 1,5 % de sa population active. La difficulté modifie le seuil proportionnel.\n\nLa première détection lance le remède ; chaque région détectée renforce sa progression. Une réaction réduit la croissance locale de 20 % pendant huit jours. Elle ne se déclenche qu'une fois par région.\n\nConsultez le compteur mondial, l'état de la région et les événements actifs pour distinguer détection permanente et réaction temporaire."
+		5: return "Bleu : route ouverte. Pointillés et croix ambre : route fermée. Une fermeture bloque les nouveaux cas importés par cette route ; les cas déjà présents continuent localement.\n\nLes effets peuvent se cumuler. Si deux événements ferment la même route, elle ne rouvre qu'après la fin des deux. Les jours restants et les fins sont annoncés dans les événements et le journal.\n\nUn effet de huit jours commencé au jour 18 s'applique du jour 18 au 25 inclus. Au jour 26, il a expiré."
+		6: return "Ouvrez Sauvegardes depuis le menu, la partie ou le bilan. Trois emplacements manuels et un automatique sont locaux à ce PC. Charger remplace la partie en mémoire, après confirmation, et reprend en pause.\n\nL'automatique est actualisée tous les dix jours, à la fin de partie, au menu depuis le jeu et à la fermeture normale. Une fermeture forcée ne garantit pas les changements récents.\n\nLe secours contient l'enregistrement précédent. Si le principal manque ou est endommagé, un secours valide est chargé avec avertissement. Une version incompatible est refusée sans écrasement.\n\nPendant le tutoriel, seuls des fichiers d'entraînement séparés sont utilisés."
+		7: return "Dégel 2042 impose Boréale et ajoute des évolutions climatiques.\n\nJour 0 : Isolement, une seule sortie ouverte. Jour 12 : Ouverture des routes saisonnières. Jour 28 : Instabilité et tempêtes. Jour 55 : Mobilisation du remède.\n\nUne ouverture saisonnière ne supprime pas une fermeture temporaire. Consultez la phase, les températures fictives et le multiplicateur Climat local.\n\nAdaptation polaire améliore la croissance froide. Mobilité saisonnière et Résilience climatique exigent cette adaptation."
+	return ""

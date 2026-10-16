@@ -1,4 +1,4 @@
-# Règles du prototype 0.5
+# Règles du prototype 0.6
 
 Ces règles sont provisoires et abstraites. Elles ne représentent aucun modèle biologique réel.
 

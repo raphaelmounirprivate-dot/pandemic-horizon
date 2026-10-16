@@ -190,5 +190,8 @@ func run() -> void:
 	var before_persistence = checks
 	await load("res://tests/test_persistence.gd").new().run(self, check)
 	check(checks - before_persistence >= 165, "Suite sauvegardes entièrement exécutée")
+	var before_onboarding = checks
+	await load("res://tests/test_onboarding.gd").new().run(self, check)
+	check(checks - before_onboarding >= 50, "Suite tutoriel et aide entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

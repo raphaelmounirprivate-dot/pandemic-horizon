@@ -3,6 +3,8 @@ extends Control
 const World = preload("res://scripts/simulation/world.gd")
 const MapView = preload("res://scripts/ui/region_map.gd")
 const SaveStore = preload("res://scripts/persistence/save_store.gd")
+const Tutorial = preload("res://scripts/ui/tutorial.gd")
+const Help = preload("res://scripts/ui/help.gd")
 const INK = Color("e1eee9")
 const MUTED = Color("a7c4c9")
 const ACCENT = Color("69d6bd")
@@ -38,15 +40,131 @@ var autosave_enabled = true
 var save_notice = ""
 var saves_return = "menu"
 var pending_dialog: ConfirmationDialog
+var tutorial: RefCounted
+var tutorial_session: Dictionary = {}
+var tutorial_next: Button
+var training_directory = "user://training"
+var help_return = "menu"
+var help_topic = 0
+var help_text: RichTextLabel
+
+func open_help() -> void:
+	if screen == "help":
+		close_help()
+		return
+	help_return = screen
+	help_topic = 0
+	show_help()
+
+func show_help() -> void:
+	screen = "help"
+	paused = true
+	elapsed = 0.0
+	_reset_screen("Aide", "Consultez un sujet, puis revenez à votre partie en pause. F1 ou Échap pour fermer.")
+	var topics = OptionButton.new()
+	topics.custom_minimum_size.y = 44
+	for title in Help.TITLES: topics.add_item(title)
+	topics.select(help_topic)
+	topics.item_selected.connect(func(index):
+		help_topic = index
+		help_text.text = Help.text_for(index, world, selected, tutorial.stage if tutorial != null else -1)
+	)
+	body.add_child(topics)
+	help_text = RichTextLabel.new()
+	help_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	help_text.focus_mode = Control.FOCUS_ALL
+	help_text.add_theme_font_size_override("normal_font_size", 20)
+	help_text.text = Help.text_for(help_topic, world, selected, tutorial.stage if tutorial != null else -1)
+	body.add_child(help_text)
+	_button("Retour [F1]", close_help, body)
+	topics.grab_focus()
+
+func close_help() -> void:
+	_return_to(help_return)
+
+func _return_to(target: String) -> void:
+	match target:
+		"game": show_game()
+		"result": show_result()
+		"saves": show_saves()
+		"settings": show_settings()
+		_: show_menu()
+
+func start_tutorial() -> void:
+	if tutorial != null: return
+	tutorial_session = {"world": world, "selected": selected, "speed": speed, "save_store": save_store,
+		"save_notice": save_notice, "saves_return": saves_return, "screen": screen,
+		"start_id": start_id, "scenario_id": scenario_id, "difficulty_id": difficulty_id}
+	world = World.new()
+	var error = world.start("boreale")
+	if not error.is_empty():
+		world = tutorial_session.world
+		tutorial_session.clear()
+		save_notice = error
+		show_menu()
+		return
+	tutorial = Tutorial.new()
+	save_store = SaveStore.new()
+	save_store.directory = training_directory
+	# Only the fixed training files are recycled; player slots are never touched.
+	for slot in SaveStore.SLOTS:
+		for suffix in ["", ".bak", ".tmp", ".bak.tmp"]:
+			var path = save_store._path(slot) + suffix
+			if FileAccess.file_exists(path): DirAccess.remove_absolute(path)
+	selected = 0
+	speed = 1
+	paused = true
+	elapsed = 0.0
+	save_notice = "Entraînement séparé · vos parties et sauvegardes sont conservées."
+	show_game()
+
+func _restore_tutorial_session() -> String:
+	var target: String = tutorial_session.screen
+	world = tutorial_session.world
+	selected = tutorial_session.selected
+	speed = tutorial_session.speed
+	save_store = tutorial_session.save_store
+	save_notice = tutorial_session.save_notice
+	saves_return = tutorial_session.saves_return
+	start_id = tutorial_session.start_id
+	scenario_id = tutorial_session.scenario_id
+	difficulty_id = tutorial_session.difficulty_id
+	tutorial = null
+	tutorial_session.clear()
+	paused = true
+	elapsed = 0.0
+	screen = target
+	return target
+
+func finish_tutorial() -> void:
+	if tutorial == null: return
+	_return_to(_restore_tutorial_session())
+
+func next_lesson() -> void:
+	if tutorial == null or not tutorial.ready: return
+	if tutorial.stage == 5:
+		finish_tutorial()
+		return
+	tutorial.next(world)
+	paused = true
+	elapsed = 0.0
+	show_game()
+
+func select_region(index: int) -> void:
+	selected = index
+	if is_instance_valid(map_view): map_view.selected = index
+	if tutorial != null: tutorial.select_region(index, world)
+	_refresh()
 
 func autosave() -> String:
-	if not autosave_enabled or world.regions.is_empty(): return ""
+	if tutorial != null or not autosave_enabled or world.regions.is_empty(): return ""
 	var error = save_store.save_slot("auto", world, selected, speed)
 	save_notice = "Sauvegarde automatique : " + ("jour %d." % world.day if error.is_empty() else error)
 	return error
 
 func request_quit() -> void:
 	if is_instance_valid(pending_dialog) and pending_dialog.visible: return
+	if tutorial != null: _return_to(_restore_tutorial_session())
 	if autosave().is_empty():
 		get_tree().quit()
 	else:
@@ -86,6 +204,7 @@ func close_saves() -> void:
 
 func save_manual(slot: String) -> void:
 	var error = save_store.save_slot(slot, world, selected, speed)
+	if error.is_empty() and tutorial != null and tutorial.stage == 5: tutorial.saved_slot = slot
 	save_notice = "Partie enregistrée dans l'emplacement %s." % slot.trim_prefix("slot") if error.is_empty() else error
 	show_saves()
 
@@ -96,6 +215,7 @@ func load_saved(slot: String) -> void:
 		show_saves()
 		return
 	world = result.world
+	if tutorial != null and tutorial.stage == 5 and tutorial.saved_slot == slot: tutorial.ready = true
 	selected = result.selected
 	speed = result.speed
 	start_id = world.start_region_id
@@ -111,13 +231,14 @@ func show_saves() -> void:
 	paused = true
 	elapsed = 0.0
 	screen = "saves"
-	_reset_screen("Sauvegardes", "Trois emplacements manuels et une sauvegarde automatique sur ce PC.")
-	body.add_child(_label("Le chargement remplace la partie en mémoire et reprend en pause.\nL'automatique est actualisée tous les 10 jours, au menu et à la fermeture.", 18, MUTED))
+	_reset_screen("Sauvegardes d'entraînement" if tutorial != null else "Sauvegardes", "Fichiers d'essai séparés : aucune sauvegarde du joueur n'est modifiée." if tutorial != null else "Trois emplacements manuels et une sauvegarde automatique sur ce PC.")
+	body.add_child(_label("Enregistrez dans un emplacement manuel, puis chargez-le pour terminer l'exercice." if tutorial != null else "Le chargement remplace la partie en mémoire et reprend en pause.\nL'automatique est actualisée tous les 10 jours, au menu et à la fermeture.", 18, MUTED))
 	var scroll = ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.follow_focus = true
 	body.add_child(scroll)
 	var rows = VBoxContainer.new()
+	var training_action: Button
 	rows.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	rows.add_theme_constant_override("separation", 20)
 	scroll.add_child(rows)
@@ -142,16 +263,19 @@ func show_saves() -> void:
 				else: save_manual(slot)
 			, actions)
 			save_button.disabled = world.regions.is_empty()
+			if tutorial != null and tutorial.saved_slot.is_empty() and training_action == null: training_action = save_button
 		var load_button = _button("Charger", func():
 			if not world.regions.is_empty():
 				confirm_action("Charger " + name_text.to_lower() + " et remplacer la partie en mémoire ?", func(): load_saved(slot))
 			else: load_saved(slot)
 		, actions)
 		load_button.disabled = not result.error.is_empty()
+		if tutorial != null and tutorial.saved_slot == slot: training_action = load_button
 	var notice = _label(save_notice if not save_notice.is_empty() else "Une copie de la sauvegarde précédente est conservée après chaque remplacement.", 16, AMBER)
 	notice.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	body.add_child(notice)
 	_button("Retour", close_saves, body).grab_focus()
+	if training_action != null: training_action.grab_focus()
 
 func _ready() -> void:
 	autosave_enabled = not ("--no-autosave" in OS.get_cmdline_user_args() or "--smoke-test" in OS.get_cmdline_user_args())
@@ -249,12 +373,44 @@ func _smoke_test() -> void:
 		get_tree().quit(1)
 		return
 	DirAccess.remove_absolute(smoke_store._path("slot1"))
+	var player_world = world
+	training_directory = "user://smoke-training"
+	start_tutorial()
+	toggle_pause()
+	advance_time(0.5)
+	next_lesson()
+	select_region(2)
+	next_lesson()
+	buy_evolution("transmission")
+	next_lesson()
+	select_region(0)
+	next_lesson()
+	toggle_pause()
+	advance_time(20)
+	toggle_pause()
+	advance_time(20)
+	next_lesson()
+	open_saves()
+	save_manual("slot1")
+	load_saved("slot1")
+	if tutorial == null or not tutorial.ready or world.day != 32:
+		get_tree().quit(1)
+		return
+	next_lesson()
+	if tutorial != null or world != player_world or not paused:
+		get_tree().quit(1)
+		return
+	open_help()
+	if screen != "help" or help_text.text.is_empty():
+		get_tree().quit(1)
+		return
+	close_help()
 	show_settings()
 	show_menu()
 	if screen != "menu":
 		get_tree().quit(1)
 		return
-	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, persistence replay, restart, settings, menu")
+	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, persistence replay, six tutorial lessons, contextual help, restart, settings, menu")
 	get_tree().quit()
 
 func _apply_theme() -> void:
@@ -298,7 +454,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.5", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.6", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -317,6 +473,7 @@ func _button(text: String, action: Callable, parent: Node) -> Button:
 	return button
 
 func show_menu() -> void:
+	if tutorial != null: _restore_tutorial_session()
 	if screen == "game" or screen == "result": autosave()
 	screen = "menu"
 	paused = true
@@ -339,6 +496,10 @@ func show_menu() -> void:
 	presentation.add_child(menu_scenario_detail)
 	menu_difficulty_detail = _label("", 16, AMBER)
 	presentation.add_child(menu_difficulty_detail)
+	var learning = HBoxContainer.new()
+	presentation.add_child(learning)
+	_button("Tutoriel guidé", start_tutorial, learning)
+	_button("Aide [F1]", open_help, learning)
 	var actions = VBoxContainer.new()
 	actions.custom_minimum_size.x = 320
 	center.add_child(actions)
@@ -427,7 +588,7 @@ func show_settings() -> void:
 			status_label.text = "Préférence appliquée, mais impossible de l'enregistrer sur ce PC."
 	)
 	body.add_child(fullscreen)
-	body.add_child(_label("Clavier\nEspace : pause / reprise\n1, 2, 4 : vitesse de simulation\nÉchap : retour au menu, partie mise en pause\nTab et Maj + Tab : navigation · Entrée : activer", 22))
+	body.add_child(_label("Clavier\nEspace : pause / reprise\n1, 2, 4 : vitesse de simulation\nF1 : aide contextuelle\nÉchap : retour au menu, partie mise en pause\nTab et Maj + Tab : navigation · Entrée : activer", 22))
 	status_label = _label("Le prototype ne contient pas encore de son ni d'animations décoratives.", 18, MUTED)
 	body.add_child(status_label)
 	_button("Retour au menu", show_menu, body)
@@ -456,7 +617,7 @@ func restart_game() -> void:
 
 func show_game() -> void:
 	screen = "game"
-	_reset_screen("Pandemic Horizon", "%s · %s · Objectif : 90 %% avant le remède · Défaite si extinction." % [world.scenario.name, world.difficulty.name])
+	_reset_screen("Tutoriel guidé" if tutorial != null else "Pandemic Horizon", "Entraînement séparé · Six exercices courts · Quitter à tout moment sans perdre votre partie." if tutorial != null else "%s · %s · Objectif : 90 %% avant le remède · Défaite si extinction." % [world.scenario.name, world.difficulty.name])
 	metrics = _label("", 22, ACCENT)
 	body.add_child(metrics)
 	var content = HBoxContainer.new()
@@ -468,10 +629,7 @@ func show_game() -> void:
 	map_view = MapView.new()
 	map_view.setup(world)
 	map_view.selected = selected
-	map_view.region_selected.connect(func(index):
-		selected = index
-		_refresh()
-	)
+	map_view.region_selected.connect(select_region)
 	map_column.add_child(map_view)
 	map_column.add_child(_label("Routes : bleu ouvertes, ambre fermées · Barres : cumul touché", 16, MUTED))
 	effects_label = RichTextLabel.new()
@@ -509,24 +667,38 @@ func show_game() -> void:
 	var controls = HBoxContainer.new()
 	body.add_child(controls)
 	pause_button = _button("", toggle_pause, controls)
+	var initial_focus: Button = pause_button
 	for value in [1, 2, 4]:
 		_button("×%d" % value, func():
 			speed = value
 			_refresh()
 		, controls)
-	_button("Recommencer", restart_game, controls)
-	_button("Menu", show_menu, controls)
-	_button("Sauvegardes", open_saves, controls)
+	if tutorial == null:
+		_button("Recommencer", restart_game, controls)
+		_button("Menu", show_menu, controls)
+		_button("Sauvegardes", open_saves, controls)
+	else:
+		if tutorial.stage == 5: initial_focus = _button("Sauvegardes d'essai", open_saves, controls)
+		tutorial_next = _button("Terminer" if tutorial.stage == 5 else "Continuer", next_lesson, controls)
+		_button("Quitter l'entraînement", finish_tutorial, controls)
+		if tutorial.stage == 1: initial_focus = map_view.buttons[2]
+		elif tutorial.stage == 2: initial_focus = evolution_buttons.transmission
+		elif tutorial.stage == 3: initial_focus = map_view.buttons[0]
+		if tutorial.ready: initial_focus = tutorial_next
+	_button("Aide [F1]", open_help, controls)
 	_refresh()
-	pause_button.grab_focus()
+	initial_focus.grab_focus()
 
 func buy_evolution(id: String) -> void:
+	if tutorial != null and (tutorial.stage != 2 or id != "transmission"): return
 	var error = world.purchase(id)
+	if tutorial != null and error.is_empty(): tutorial.ready = true
 	_refresh()
 	if not error.is_empty():
 		status_label.text = error
 
 func toggle_pause() -> void:
+	if tutorial != null and not tutorial.can_run(): return
 	paused = not paused
 	elapsed = 0.0
 	_refresh()
@@ -544,8 +716,10 @@ func _refresh() -> void:
 		var acquired = id in world.purchased
 		evolution_buttons[id].text = "%s · %s" % [evolution.name, "acquise" if acquired else "%d pts" % evolution.cost]
 		# Keep insufficient purchases focusable so keyboard users can read the reason.
-		evolution_buttons[id].disabled = acquired
+		evolution_buttons[id].disabled = acquired or (tutorial != null and (tutorial.stage != 2 or id != "transmission"))
 		var reason = world.purchase_reason(id)
+		if tutorial != null and not acquired and (tutorial.stage != 2 or id != "transmission"):
+			reason = "Hors exercice" + (" · " + reason if not reason.is_empty() else "")
 		evolution_buttons[id].tooltip_text = evolution.effect + " " + reason
 		evolution_reasons[id].text = "Acquise" if acquired else ("Disponible" if reason.is_empty() else reason)
 		evolution_reasons[id].add_theme_color_override("font_color", ACCENT if acquired or reason.is_empty() else AMBER)
@@ -555,6 +729,15 @@ func _refresh() -> void:
 	status_label.clip_text = true
 	journal_label.text = "\n".join(world.journal.slice(maxi(0, world.journal.size() - 2)))
 	journal_label.clip_text = true
+	if tutorial != null:
+		status_label.text = "Étape %d / 6 · %s · %s" % [tutorial.stage + 1, Tutorial.TITLES[tutorial.stage], "Action réussie : continuez." if tutorial.ready else "À vous de jouer"]
+		journal_label.text = tutorial.instruction(world.day)
+		journal_label.clip_text = false
+		journal_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var just_completed = tutorial.ready and tutorial_next.disabled
+		tutorial_next.disabled = not tutorial.ready
+		if just_completed: tutorial_next.grab_focus()
+		pause_button.disabled = not tutorial.can_run()
 	var lines = world.active_event_lines()
 	var climate = "Phase %s · %.0f °C fictifs · Remède de phase ×%.2f\n" % [world.phase.name, world.phase.temperature, world.phase.cure_multiplier] if world.scenario.id != "standard" else ""
 	effects_label.text = climate + "Événements actifs\n" + ("Aucun effet temporaire." if lines.is_empty() else "\n".join(lines))
@@ -564,6 +747,7 @@ func _process(delta: float) -> void:
 	advance_time(delta)
 
 func advance_time(delta: float) -> void:
+	if tutorial != null and not tutorial.can_run(): return
 	if screen != "game" or paused or not world.outcome.is_empty():
 		return
 	elapsed += delta * speed
@@ -574,6 +758,10 @@ func advance_time(delta: float) -> void:
 		world.step()
 		if world.day % 10 == 0 or not world.outcome.is_empty(): autosave()
 		steps += 1
+		if tutorial != null and tutorial.after_step(world):
+			paused = true
+			elapsed = 0.0
+			break
 		if not world.outcome.is_empty():
 			paused = true
 			show_result()
@@ -593,6 +781,7 @@ func show_result() -> void:
 	var restart = _button("Rejouer avec les mêmes choix", restart_game, body)
 	_button("Choisir une autre région", show_menu, body)
 	_button("Sauvegardes", open_saves, body)
+	_button("Aide [F1]", open_help, body)
 	restart.grab_focus()
 
 func _input(event: InputEvent) -> void:
@@ -600,8 +789,13 @@ func _input(event: InputEvent) -> void:
 	if not event is InputEventKey or not event.pressed or event.echo:
 		return
 	if event.keycode == KEY_ESCAPE:
-		if screen == "saves": close_saves()
+		if screen == "help": close_help()
+		elif screen == "saves": close_saves()
+		elif tutorial != null: finish_tutorial()
 		else: show_menu()
+		get_viewport().set_input_as_handled()
+	elif event.keycode == KEY_F1:
+		open_help()
 		get_viewport().set_input_as_handled()
 	elif screen == "game":
 		if event.keycode == KEY_SPACE:

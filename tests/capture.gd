@@ -8,14 +8,46 @@ func capture() -> void:
 	var scene = load("res://scenes/main.tscn").instantiate()
 	root.add_child(scene)
 	scene.save_store.directory = "user://capture-saves"
+	scene.training_directory = "user://capture-training"
+	scene.set_process(false)
 	DirAccess.make_dir_recursive_absolute("res://build/qa")
 	for resolution in [Vector2i(1280, 720), Vector2i(1920, 1080)]:
+		if scene.tutorial != null: scene.finish_tutorial()
+		scene.world = scene.World.new()
 		for slot in scene.SaveStore.SLOTS:
 			for suffix in ["", ".bak", ".tmp", ".bak.tmp"]:
 				if FileAccess.file_exists(scene.save_store._path(slot) + suffix): DirAccess.remove_absolute(scene.save_store._path(slot) + suffix)
 		DisplayServer.window_set_size(resolution)
-		for surface in ["menu", "saves-empty", "degel-menu", "game", "isolation", "opening", "instability", "mobilization", "saves-filled", "save-confirm", "result"]:
+		for surface in ["menu", "saves-empty", "degel-menu", "game", "help", "isolation", "opening", "instability", "mobilization", "saves-filled", "save-confirm", "result", "menu-resume", "tutorial-1", "tutorial-2", "tutorial-3", "tutorial-4", "tutorial-5", "tutorial-6", "tutorial-saves"]:
 			match surface:
+				"help":
+					scene.open_help()
+				"menu-resume":
+					scene.start_game()
+					scene.show_menu()
+				"tutorial-1":
+					scene.start_tutorial()
+				"tutorial-2":
+					scene.toggle_pause()
+					scene.advance_time(0.5)
+					scene.next_lesson()
+				"tutorial-3":
+					scene.select_region(2)
+					scene.next_lesson()
+				"tutorial-4":
+					scene.buy_evolution("transmission")
+					scene.next_lesson()
+				"tutorial-5":
+					scene.select_region(0)
+					scene.next_lesson()
+					scene.toggle_pause()
+					scene.advance_time(20)
+				"tutorial-6":
+					scene.toggle_pause()
+					scene.advance_time(20)
+					scene.next_lesson()
+				"tutorial-saves":
+					scene.open_saves()
 				"saves-empty":
 					scene.open_saves()
 				"saves-filled":
