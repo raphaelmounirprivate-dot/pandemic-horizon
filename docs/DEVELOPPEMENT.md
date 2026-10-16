@@ -74,6 +74,20 @@ Le [point 08](suivi/08-specialisations.md) mesure les spécialisations 0.8 sur 1
 
 Le [point 09](suivi/09-ordres-achats.md) et le [rapport apparié](EQUILIBRAGE-0.8-ORDRES.md) comparent les deux ordres sans modifier les règles 0.8. `tests/test_strategy_comparison.gd` vérifie la conservation des résultats de l'ancienne boucle, la trace des achats, le rejeu, les appariements et les calculs du rapport.
 
+### Analyse des objectifs
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 BalanceObjectives
+```
+
+Cette commande explore **4 320 parties Standard**, soit 2 160 paires avec/sans Premiers relais : 24 départs, trois difficultés, graines 7/42/2042 et dix ordres d'achat. Les politiques sont partagées avec `Balance` dans `scripts/analysis/strategy_comparison.gd`. Les règles du jeu restent en 0.9.0.
+
+`build/qa/balance-objectives.csv` garde les résultats, achats réels, identifiant et état de l'objectif ainsi qu'une empreinte de l'état enregistrable. Pour chaque paire, la commande vérifie l'identité des champs de simulation (dont populations, remède exact, RNG, effets, points et achats), hors objectif, journal et date d'enregistrement. Elle compare aussi explicitement résultat, durée, couverture, score et trace d'achats ; toute dérive ou paire absente/dupliquée fait échouer la commande. Le témoin sans objectif n'est jamais compté comme un échec facultatif.
+
+`build/qa/balance-objectives.md` présente les quatre combinaisons objectif/victoire, le taux observé, les dates des seules réussites, puis les détails par difficulté, politique et départ. Moteur et empreinte normalisée du contenu sont indiqués pour reproduire la mesure. Les fichiers générés restent hors de Git ; le [rapport conservé](EQUILIBRAGE-0.9-OBJECTIFS.md) et le [point 11](suivi/11-analyse-objectifs.md) consignent la livraison.
+
+`tests/test_objective_comparison.gd` couvre les paires réelles, les quatre combinaisons synthétiques, les dates, les dénominateurs, les témoins sans objectif et le refus des dérives. Le script `scripts/balance_objectives.gd` et tous les modules d'analyse sont exclus de l'export Windows.
+
 Les essais automatiques et les captures ne prouvent pas la facilité d'utilisation, l'équilibrage final ou le fonctionnement sur toutes les configurations Windows.
 
 ## Organisation

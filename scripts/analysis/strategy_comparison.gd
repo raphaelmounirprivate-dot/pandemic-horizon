@@ -1,11 +1,29 @@
 extends RefCounted
 ## Paired observations, never a causal estimate or a human difficulty rating.
 const World = preload("res://scripts/simulation/world.gd")
+const Store = preload("res://scripts/persistence/save_store.gd")
 const CHOICES = {"terrestre":"land_network", "aerien":"air_bridge", "maritime":"sea_logistics"}
+const POLICIES = {
+	"attente": [],
+	"discretion": ["discretion", "transmission", "mobility"],
+	"diffusion": ["transmission", "discretion", "mobility"],
+	"mobilite": ["transmission", "mobility", "discretion"],
+	"polaire": ["polar", "transmission", "discretion", "seasonal", "mobility", "resilience"],
+	"terrestre": ["transmission", "mobility", "land_network", "discretion"],
+	"aerien": ["transmission", "mobility", "air_bridge", "discretion"],
+	"maritime": ["transmission", "mobility", "sea_logistics", "discretion"]
+}
 
-static func play(start: String, seed_value: int, scenario: String, difficulty: String, order: Array, limit: int = 500) -> Dictionary:
+static func policies(include_polar: bool = true) -> Dictionary:
+	var result = POLICIES.duplicate(true)
+	if not include_polar: result.erase("polaire")
+	for choice in CHOICES:
+		result[choice + "_discretion_avant"] = ["transmission", "mobility", "discretion", CHOICES[choice]]
+	return result
+
+static func play(start: String, seed_value: int, scenario: String, difficulty: String, order: Array, limit: int = 500, objective_id: String = "") -> Dictionary:
 	var world = World.new()
-	var error = world.start(start, seed_value, null, null, scenario, difficulty)
+	var error = world.start(start, seed_value, null, null, scenario, difficulty, null, null, objective_id)
 	if not error.is_empty(): return {"error":error}
 	# Reject impossible policies instead of silently waiting forever on bad IDs/order.
 	var seen: Array = []
@@ -35,8 +53,12 @@ static func play(start: String, seed_value: int, scenario: String, difficulty: S
 		ticks += 1
 		if not world.outcome.is_empty(): break
 	if world.outcome.is_empty(): return {"error":"Partie sans résultat après %d jours." % limit}
+	var state = Store.new().encode(world)
+	# Objective announcements intentionally differ; all simulation/save fields remain.
+	for key in ["saved_at", "objective", "journal"]: state.erase(key)
 	return {"error":"", "scenario":scenario, "difficulty":difficulty, "start":start, "seed":seed_value,
 		"outcome":world.outcome, "days":world.day, "coverage":world.coverage(), "score":world.score(),
+		"objective_id":objective_id, "objective":world.objective.duplicate(true), "state_hash":JSON.stringify(state, "", true, true).sha256_text(),
 		"purchases":purchases, "ticks":ticks, "total_usec":total_usec, "max_usec":max_usec}
 
 static func pair_rows(rows: Array) -> Dictionary:

@@ -13,6 +13,7 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 - [Point 08 — Spécialisations](08-specialisations.md) : prototype 0.8, compatibilité 0.7 et première exploration d'équilibrage.
 - [Point 09 — Ordres d'achat](09-ordres-achats.md) : comparaison appariée des stratégies et traces d'achats ; règles du jeu toujours en 0.8.
 - [Point 10 — Objectif facultatif](10-objectif-facultatif.md) : prototype 0.9, Premiers relais et compatibilité des parties 0.7/0.8.
+- [Point 11 — Analyse des objectifs](11-analyse-objectifs.md) : mesures par départ et stratégie, témoins sans objectif et matrice des deux résultats ; jeu toujours en 0.9.
 - [Règles effectives](../REGLES.md) : paramètres du code actuel.
 - [Développement](../DEVELOPPEMENT.md) : préparation, tests et export.
 - [Guide joueur](../GUIDE-JOUEUR.md) : parcours et limites.
@@ -21,7 +22,7 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 
 1. Compléter l'essai physique souris/clavier, plein écran et défilement du journal ; organiser un essai sur un autre PC Windows. Le parcours synthétique Godot est testé.
 2. Éprouver le tutoriel et l'aide contextuelle auprès de joueurs débutants. Les fonctionnalités de J5 sont implémentées : sauvegardes en 0.5, tutoriel facultatif et aide F1 en 0.6 ; la compréhension et le confort réels restent à valider.
-3. Éprouver Premiers relais et les spécialisations, puis enrichir les décisions et événements. L'objectif Standard facultatif est livré en 0.9 ; mesurer sa réussite selon les départs et les ordres d'achat avant de généraliser à Dégel. Le lot 09 conserve l'analyse appariée des spécialisations, dont les coefficients restent inchangés. Conserver les références de compatibilité 0.7 et 0.8 lors des prochaines modifications.
+3. Éprouver Premiers relais et les spécialisations, puis enrichir les décisions et événements. Le lot 11 mesure 2 160 paires avec/sans objectif : 96,4 % de réussite facultative dans l'échantillon, sans garantie de victoire principale. Les coefficients restent inchangés. Préparer un objectif Dégel lié aux phases/routes, avec trajectoires vérifiées et compatibilité 0.9 définie avant modification du catalogue. Conserver les références de compatibilité 0.7 et 0.8.
 4. J6/J7 : finition et release distribuable.
 
-Créer `11-<lot>.md` pour la prochaine livraison. Y noter périmètre, fichiers principaux, tests exécutés, limites et prochaine action. Mettre à jour cet index à chaque lot livré.
+Créer `12-<lot>.md` pour la prochaine livraison. Y noter périmètre, fichiers principaux, tests exécutés, limites et prochaine action. Mettre à jour cet index à chaque lot livré.

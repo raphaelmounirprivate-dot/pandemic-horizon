@@ -83,3 +83,5 @@ Le [plan de développement](docs/plan-developpement.md) définit le périmètre 
 6. Générer et tester l'exécutable Windows.
 
 Le suivi des spécialisations figure dans [le point de contrôle 08](docs/suivi/08-specialisations.md). Le [point 09](docs/suivi/09-ordres-achats.md) et le [rapport des ordres d'achat](docs/EQUILIBRAGE-0.8-ORDRES.md) approfondissent leur équilibrage. Les mesures de la carte 0.4 restent dans [le rapport historique](docs/EQUILIBRAGE-0.4.md). Le contenu final et les essais avec des joueurs restent à réaliser.
+
+Le [point 11](docs/suivi/11-analyse-objectifs.md) et le [rapport Premiers relais](docs/EQUILIBRAGE-0.9-OBJECTIFS.md) comparent l'objectif et la victoire principale selon les départs, difficultés et stratégies, avec des témoins sans objectif. L'outil se lance avec `dev.ps1 BalanceObjectives`.

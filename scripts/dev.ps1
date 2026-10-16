@@ -1,5 +1,5 @@
 ﻿param(
-    [ValidateSet('Import', 'Test', 'Play', 'Export', 'Capture', 'CaptureObjectives', 'Balance')]
+    [ValidateSet('Import', 'Test', 'Play', 'Export', 'Capture', 'CaptureObjectives', 'Balance', 'BalanceObjectives')]
     [string]$Action = 'Test',
     [string]$Godot = "$PSScriptRoot/../.tools/godot/Godot_v4.7.2-stable_win64_console.exe"
 )
@@ -27,6 +27,7 @@ switch ($Action) {
     'Import' { Invoke-Godot ($baseArgs + @('--editor', '--import', '--quit')) }
     'Test' { Invoke-Godot ($baseArgs + @('--script', 'res://tests/run_tests.gd', '--', '--no-autosave')) }
     'Balance' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/balance.gd')) }
+    'BalanceObjectives' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/balance_objectives.gd')) }
     'Play' { & $engine --path $projectRoot }
     'Export' {
         $version = [regex]::Match((Get-Content -LiteralPath (Join-Path $projectRoot 'project.godot') -Raw), 'config/version="([0-9]+\.[0-9]+\.[0-9]+)"').Groups[1].Value

@@ -2,24 +2,12 @@ extends SceneTree
 ## Reproducible automated exploration, not a human difficulty rating.
 const World = preload("res://scripts/simulation/world.gd")
 const Comparison = preload("res://scripts/analysis/strategy_comparison.gd")
-const POLICIES = {
-	"attente": [],
-	"discretion": ["discretion", "transmission", "mobility"],
-	"diffusion": ["transmission", "discretion", "mobility"],
-	"mobilite": ["transmission", "mobility", "discretion"],
-	"polaire": ["polar", "transmission", "discretion", "seasonal", "mobility", "resilience"],
-	"terrestre": ["transmission", "mobility", "land_network", "discretion"],
-	"aerien": ["transmission", "mobility", "air_bridge", "discretion"],
-	"maritime": ["transmission", "mobility", "sea_logistics", "discretion"]
-}
 
 func _initialize() -> void:
 	call_deferred("run")
 
 func run() -> void:
-	var policies = POLICIES.duplicate(true)
-	for choice in Comparison.CHOICES:
-		policies[choice + "_discretion_avant"] = ["transmission", "mobility", "discretion", Comparison.CHOICES[choice]]
+	var policies = Comparison.policies()
 	DirAccess.make_dir_recursive_absolute("res://build/qa")
 	var csv = FileAccess.open("res://build/qa/balance.csv", FileAccess.WRITE)
 	if csv == null:
