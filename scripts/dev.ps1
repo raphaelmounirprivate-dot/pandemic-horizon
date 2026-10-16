@@ -1,5 +1,5 @@
 ﻿param(
-    [ValidateSet('Import', 'Test', 'Play', 'Export', 'Capture', 'Balance')]
+    [ValidateSet('Import', 'Test', 'Play', 'Export', 'Capture', 'CaptureObjectives', 'Balance')]
     [string]$Action = 'Test',
     [string]$Godot = "$PSScriptRoot/../.tools/godot/Godot_v4.7.2-stable_win64_console.exe"
 )
@@ -40,5 +40,8 @@ switch ($Action) {
     }
     'Capture' {
         Invoke-Godot @('--path', $projectRoot, '--script', 'res://tests/capture.gd', '--', '--no-autosave')
+    }
+    'CaptureObjectives' {
+        Invoke-Godot @('--path', $projectRoot, '--script', 'res://tests/capture_objectives.gd', '--', '--no-autosave')
     }
 }

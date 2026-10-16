@@ -35,7 +35,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 	for mutation in ["format", "content", "engine", "day", "points", "cure", "population", "detected", "purchased", "phase", "rng", "seed", "outcome", "selected", "speed", "journal", "events", "activated", "event_end", "event_id", "missing", "scenario"]:
 		var bad = valid.duplicate(true)
 		match mutation:
-			"format": bad.format = 2
+			"format": bad.format = 99
 			"content": bad.content = "wrong"
 			"engine": bad.engine = "unknown"
 			"day": bad.day = -1

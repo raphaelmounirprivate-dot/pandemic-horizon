@@ -1,0 +1,6 @@
+{
+  "schema_version": 1,
+  "objectives": [
+    {"id": "first_relays", "name": "Premiers relais", "scenario": "standard", "regions": 3, "coverage_percent": 10, "deadline": 50}
+  ]
+}

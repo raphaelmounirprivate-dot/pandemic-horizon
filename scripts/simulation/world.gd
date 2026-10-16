@@ -7,6 +7,8 @@ const Content = preload("res://scripts/gameplay/content.gd")
 const Scenarios = preload("res://scripts/gameplay/scenarios.gd")
 const Transports = preload("res://scripts/gameplay/transports.gd")
 const SPECIALIZATIONS = ["land_network", "air_bridge", "sea_logistics"]
+const Objectives = preload("res://scripts/gameplay/objectives.gd")
+var objective: Dictionary = {}
 
 var regions: Array = []
 var connections: Array = []
@@ -78,7 +80,10 @@ static func validate_data(data: Variant) -> String:
 		edges.append(pair)
 	return ""
 
-func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null, transport_source: Variant = null) -> String:
+func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null, transport_source: Variant = null, objective_id: String = "") -> String:
+	if not objective_id.is_empty():
+		var item = Objectives.definition(objective_id)
+		if item.is_empty() or item.scenario != scenario_id: return "Objectif facultatif indisponible pour ce scénario."
 	var data: Variant = source
 	if data == null:
 		if not FileAccess.file_exists(DATA_PATH):
@@ -138,6 +143,7 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	outcome = ""
 	purchased.clear()
 	journal.clear()
+	objective = Objectives.initial(objective_id)
 	rng.seed = seed_value
 	for region in regions:
 		region["active"] = 200 if region.id == start_id else 0
@@ -146,6 +152,7 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 		region["detected"] = false
 	journal.append("Jour 0 · Départ dans la région %s." % region_name(start_id))
 	journal.append("Jour 0 · %s · Difficulté %s · Phase %s." % [scenario.name, difficulty.name, phase.name])
+	if not objective.is_empty(): journal.append("Jour 0 · Objectif facultatif · " + Objectives.description(Objectives.definition(objective_id)))
 	return ""
 
 func region_name(id: String) -> String:
@@ -392,6 +399,7 @@ func step() -> void:
 	if day % 5 == 0:
 		points += 3
 	resolve_outcome()
+	Objectives.update(self)
 
 func resolve_outcome() -> void:
 	if cure >= 100.0:

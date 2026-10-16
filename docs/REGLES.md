@@ -1,4 +1,4 @@
-# Règles du prototype 0.8
+# Règles du prototype 0.9
 
 Ces règles sont provisoires et abstraites. Elles ne représentent aucun modèle biologique réel.
 
@@ -18,6 +18,14 @@ Ces règles sont provisoires et abstraites. Elles ne représentent aucun modèle
 - Une journée dure 0,5 seconde à vitesse ×1 ; ×2 et ×4 exécutent les mêmes pas. Pause sans progression. La durée des parties n'est pas encore équilibrée pour la cible finale de 15 à 30 minutes.
 
 Le prototype démarre en pause pour laisser le temps de lire et de choisir. Changer le départ ou recommencer réinitialise entièrement le monde. Le menu pendant une partie conserve le monde en mémoire ; quitter l'application le perd.
+
+## Objectif facultatif Standard
+
+`data/objectives.json` définit Premiers relais : trois régions ayant chacune au moins 10 % de population touchée à la fin du jour 50 au plus tard. Le décompte utilise actifs + retirés et compare les entiers `(actifs + retirés) × 100 >= population × 10`. L'objectif est désactivé par défaut, activable seulement avant une nouvelle partie Standard. Dégel et le tutoriel n'en ajoutent pas.
+
+Après les pas régionaux, le remède, les points et la résolution de la fin principale, le suivi compte les régions qualifiées. Atteindre le seuil au jour 50 réussit ; sinon le jour 50 clôt en échec. Une fin principale anticipée clôt aussi le suivi, après avoir vérifié une éventuelle réussite ce jour-là. La réussite facultative reste indépendante de la victoire principale : le remède garde sa priorité pour celle-ci.
+
+L'état `pending`, `completed` ou `failed`, le progrès borné à trois, la date et le motif de résolution sont conservés dans le format de sauvegarde 2. Une résolution fige le compteur et ajoute une annonce unique au journal. Aucun changement de population, d'échanges, de recherche, de points, de score ou d'état aléatoire. Rejouer conserve le choix et réinitialise le suivi. Les anciennes parties de format 1 reconnues sont reprises sans objectif rétroactif.
 
 ## Événements temporaires
 

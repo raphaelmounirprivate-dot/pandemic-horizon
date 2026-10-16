@@ -19,6 +19,10 @@ var elapsed: float = 0.0
 var start_id: String = "boreale"
 var scenario_id: String = "standard"
 var difficulty_id: String = "normal"
+var objective_id: String = ""
+var objective_choice: CheckButton
+var menu_objective_detail: Label
+var objective_details: Label
 var scenario_choice: OptionButton
 var difficulty_choice: OptionButton
 var start_choice: OptionButton
@@ -97,7 +101,7 @@ func start_tutorial() -> void:
 	if tutorial != null: return
 	tutorial_session = {"world": world, "selected": selected, "speed": speed, "save_store": save_store,
 		"save_notice": save_notice, "saves_return": saves_return, "screen": screen,
-		"start_id": start_id, "scenario_id": scenario_id, "difficulty_id": difficulty_id}
+		"start_id": start_id, "scenario_id": scenario_id, "difficulty_id": difficulty_id, "objective_id":objective_id}
 	world = World.new()
 	var error = world.start("boreale")
 	if not error.is_empty():
@@ -132,6 +136,7 @@ func _restore_tutorial_session() -> String:
 	start_id = tutorial_session.start_id
 	scenario_id = tutorial_session.scenario_id
 	difficulty_id = tutorial_session.difficulty_id
+	objective_id = tutorial_session.objective_id
 	tutorial = null
 	tutorial_session.clear()
 	paused = true
@@ -234,6 +239,7 @@ func load_saved(slot: String) -> void:
 	start_id = world.start_region_id
 	scenario_id = world.scenario.id
 	difficulty_id = world.difficulty.id
+	if tutorial == null: objective_id = world.objective.get("id", "")
 	paused = true
 	elapsed = 0.0
 	save_notice = result.get("warning", "Partie chargée en pause.")
@@ -244,7 +250,7 @@ func show_saves() -> void:
 	paused = true
 	elapsed = 0.0
 	screen = "saves"
-	_reset_screen("Sauvegardes d'entraînement" if tutorial != null else "Sauvegardes", "Fichiers d'essai séparés : aucune sauvegarde du joueur n'est modifiée." if tutorial != null else "Sauvegardes 0.8 · Parties 0.7 compatibles · Parties 0.6 : ancien exécutable.")
+	_reset_screen("Sauvegardes d'entraînement" if tutorial != null else "Sauvegardes", "Fichiers d'essai séparés : aucune sauvegarde du joueur n'est modifiée." if tutorial != null else "Sauvegardes 0.9 · Parties 0.7 et 0.8 compatibles, sans objectif facultatif.")
 	body.add_child(_label("Enregistrez dans un emplacement manuel, puis chargez-le pour terminer l'exercice." if tutorial != null else "Le chargement remplace la partie en mémoire et reprend en pause.\nL'automatique est actualisée tous les 10 jours, au menu et à la fermeture.", 18, MUTED))
 	var scroll = ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -264,7 +270,7 @@ func show_saves() -> void:
 		if result.error.is_empty():
 			summary = "%s · %s · Jour %d · %s" % [result.world.scenario.name, result.world.difficulty.name, result.world.day, result.saved_at.replace("T", " à ")]
 			if result.get("backup", false): summary += " · Copie de secours"
-			elif result.has("warning"): summary += " · Partie 0.7 compatible"
+			elif result.has("warning"): summary += " · Ancienne partie compatible"
 		var label = _label(name_text + " — " + summary, 18)
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		group.add_child(label)
@@ -430,7 +436,26 @@ func _smoke_test() -> void:
 	if screen != "menu":
 		get_tree().quit(1)
 		return
-	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, persistence replay, six tutorial lessons, contextual help, restart, settings, menu")
+	var optional_world = World.new()
+	if not optional_world.start("boreale", 2042, null, null, "standard", "normal", null, null, "first_relays").is_empty():
+		get_tree().quit(1)
+		return
+	for i in range(60):
+		for id in ["transmission", "mobility", "discretion"]:
+			if id not in optional_world.purchased:
+				optional_world.purchase(id)
+				break
+		optional_world.step()
+	var optional_loaded = smoke_store.decode(smoke_store.encode(optional_world))
+	if optional_world.objective.status != "completed" or optional_world.objective.resolved_day != 49 or not optional_loaded.error.is_empty() or optional_loaded.world.objective != optional_world.objective:
+		get_tree().quit(1)
+		return
+	optional_world.start("boreale", 2042, null, null, "standard", "normal", null, null, "first_relays")
+	for i in range(60): optional_world.step()
+	if optional_world.objective.status != "failed" or optional_world.objective.resolved_day != 50:
+		get_tree().quit(1)
+		return
+	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, persistence replay, six tutorial lessons, contextual help, optional objective success/failure and persistence, restart, settings, menu")
 	get_tree().quit()
 
 func _apply_theme() -> void:
@@ -474,7 +499,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.8", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.9", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -516,6 +541,15 @@ func show_menu() -> void:
 	presentation.add_child(menu_scenario_detail)
 	menu_difficulty_detail = _label("", 16, AMBER)
 	presentation.add_child(menu_difficulty_detail)
+	objective_choice = CheckButton.new()
+	objective_choice.text = "Objectif facultatif : Premiers relais"
+	objective_choice.custom_minimum_size.y = 44
+	objective_choice.button_pressed = not objective_id.is_empty()
+	objective_choice.toggled.connect(func(enabled): objective_id = "first_relays" if enabled else "")
+	presentation.add_child(objective_choice)
+	menu_objective_detail = _label("", 16, MUTED)
+	menu_objective_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	presentation.add_child(menu_objective_detail)
 	var learning = HBoxContainer.new()
 	presentation.add_child(learning)
 	_button("Tutoriel guidé", start_tutorial, learning)
@@ -580,6 +614,11 @@ func show_menu() -> void:
 	launch.grab_focus()
 
 func _update_menu_choices(catalog: Dictionary) -> void:
+	objective_choice.disabled = scenario_id != "standard"
+	if objective_choice.disabled:
+		objective_id = ""
+		objective_choice.set_pressed_no_signal(false)
+	menu_objective_detail.text = World.Objectives.description(World.Objectives.definition("first_relays")) if scenario_id == "standard" else "Premiers relais est disponible uniquement en Standard."
 	for item in catalog.scenarios:
 		if item.id == scenario_id:
 			start_choice.disabled = item.forced_start != ""
@@ -615,7 +654,7 @@ func show_settings() -> void:
 	fullscreen.grab_focus()
 
 func start_game() -> void:
-	var error = world.start(start_id, 2042, null, null, scenario_id, difficulty_id)
+	var error = world.start(start_id, 2042, null, null, scenario_id, difficulty_id, null, null, objective_id)
 	if not error.is_empty():
 		show_menu()
 		body.add_child(_label("Impossible de démarrer : " + error))
@@ -633,6 +672,7 @@ func restart_game() -> void:
 	scenario_id = world.scenario.id
 	difficulty_id = world.difficulty.id
 	start_id = world.start_region_id
+	objective_id = world.objective.get("id", "")
 	start_game()
 
 func show_game() -> void:
@@ -640,6 +680,10 @@ func show_game() -> void:
 	_reset_screen("Tutoriel guidé" if tutorial != null else "Pandemic Horizon", "Entraînement séparé · Six exercices courts · Quitter à tout moment sans perdre votre partie." if tutorial != null else "%s · %s · Objectif : 90 %% avant le remède · Défaite si extinction." % [world.scenario.name, world.difficulty.name])
 	metrics = _label("", 22, ACCENT)
 	body.add_child(metrics)
+	objective_details = _label("", 14, MUTED)
+	objective_details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	objective_details.visible = not world.objective.is_empty()
+	body.add_child(objective_details)
 	var content = HBoxContainer.new()
 	content.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	body.add_child(content)
@@ -743,6 +787,7 @@ func _refresh() -> void:
 	if screen != "game":
 		return
 	metrics.text = "Jour %d     Touchés : %.1f %%     Remède : %.1f %%     Points : %d     Détectées : %d/%d" % [world.day, world.coverage() * 100, world.cure, world.points, world.detected_count(), world.regions.size()]
+	objective_details.text = World.Objectives.summary(world)
 	var region = world.regions[selected]
 	region_details.text = "%s · Population : %d\nSains : %d · Actifs : %d\nRetirés : %d · %s" % [region.name, region.population, region.healthy, region.active, region.removed, "Détectée" if region.detected else "Non détectée"]
 	if world.scenario.id != "standard":
@@ -813,6 +858,10 @@ func show_result() -> void:
 	_reset_screen("Objectif atteint" if world.outcome == "victory" else "Fin de partie", world.outcome_text())
 	body.add_child(_label("Jour %d\nPopulation touchée : %.1f %%\nRemède : %.1f %%\nScore : %d" % [world.day, world.coverage() * 100, world.cure, world.score()], 28))
 	body.add_child(_label("%s · %s · Score = max(0, couverture × 10 000 − jours × 10) ×%.2f." % [world.scenario.name, world.difficulty.name, world.difficulty.score_multiplier], 16, MUTED))
+	if not world.objective.is_empty():
+		var optional = _label("Objectif facultatif · " + World.Objectives.summary(world), 16, MUTED)
+		optional.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		body.add_child(optional)
 	var log = RichTextLabel.new()
 	log.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	log.text = "\n".join(world.journal)
