@@ -3,25 +3,36 @@ const Comparison = preload("res://scripts/analysis/strategy_comparison.gd")
 const Objectives = preload("res://scripts/gameplay/objectives.gd")
 const ID = "first_relays"
 
-static func pair_rows(rows: Array) -> Dictionary:
+static func pair_rows(rows: Array, objective_id: String = ID, allowed_policies: Dictionary = {}) -> Dictionary:
 	var groups: Dictionary = {}
-	var item = Objectives.definition(ID)
+	var item = Objectives.definition(objective_id)
 	if item.is_empty(): return {"error":"Objectif d'analyse indisponible."}
+	var policies = Comparison.policies(item.scenario != "standard") if allowed_policies.is_empty() else allowed_policies
 	for row in rows:
 		if not row is Dictionary: return {"error":"Observation invalide."}
 		for key in ["scenario", "difficulty", "start", "seed", "policy", "objective_id", "objective", "state_hash", "outcome", "days", "coverage", "score", "purchases"]:
 			if not row.has(key): return {"error":"Observation incomplète : " + key}
-		if row.scenario != "standard" or row.difficulty not in ["easy", "normal", "hard"] or not row.start is String or row.start.is_empty() or not row.seed is int or not Comparison.policies(false).has(row.policy): return {"error":"Identité d'observation invalide."}
-		if row.objective_id not in ["", ID] or not row.objective is Dictionary: return {"error":"Mode objectif invalide."}
+		if row.scenario != item.scenario or row.difficulty not in ["easy", "normal", "hard"] or not row.start is String or row.start.is_empty() or not row.seed is int or not policies.has(row.policy): return {"error":"Identité d'observation invalide."}
+		if item.scenario == "degel2042" and row.start != "boreale": return {"error":"Départ Dégel invalide."}
+		if row.objective_id not in ["", objective_id] or not row.objective is Dictionary: return {"error":"Mode objectif invalide."}
 		if not row.state_hash is String or row.state_hash.length() != 64 or row.outcome not in ["victory", "defeat_cure", "defeat_extinction"] or not Objectives.integer(row.days, 1, 500) or not row.purchases is Array: return {"error":"Résultat d'observation invalide."}
 		if row.objective_id == "":
 			if not row.objective.is_empty(): return {"error":"Témoin avec objectif."}
 		else:
 			var state = row.objective
-			if state.get("id") != ID or state.get("status") not in ["completed", "failed"] or not Objectives.integer(state.get("progress"), 0, int(item.regions)) or not Objectives.integer(state.get("resolved_day"), 1, int(row.days)): return {"error":"Objectif non résolu ou invalide."}
+			var required = int(item.regions) if item.kind == "coverage" else item.routes.size()
+			var earliest = 1
+			if item.kind == "seasonal_flow":
+				if not state.get("routes") is Dictionary or state.routes.size() != item.routes.size(): return {"error":"Compteurs arctiques invalides."}
+				for route in item.routes:
+					if not Objectives.integer(state.routes.get(route.target),0,int(item.quota)): return {"error":"Compteur hors bornes."}
+					if row.days < route.start_day and state.routes[route.target] != 0: return {"error":"Flux avant sa fenêtre."}
+					earliest = maxi(earliest,int(route.start_day))
+				if state.get("progress") != Objectives.route_progress(state,item): return {"error":"Progression arctique incohérente."}
+			if state.get("id") != objective_id or state.get("status") not in ["completed", "failed"] or not Objectives.integer(state.get("progress"), 0, required) or not Objectives.integer(state.get("resolved_day"), 1, int(row.days)): return {"error":"Objectif non résolu ou invalide."}
 			if state.status == "completed":
-				if state.progress != item.regions or state.resolved_day > item.deadline or state.get("reason") != "": return {"error":"Réussite incohérente."}
-			elif state.progress >= item.regions or not ((state.get("reason") == "deadline" and state.resolved_day == item.deadline) or (state.get("reason") == "game_over" and state.resolved_day == row.days and row.days < item.deadline)):
+				if state.progress != required or state.resolved_day < earliest or state.resolved_day > item.deadline or state.get("reason") != "": return {"error":"Réussite incohérente."}
+			elif state.progress >= required or not ((state.get("reason") == "deadline" and state.resolved_day == item.deadline) or (state.get("reason") == "game_over" and state.resolved_day == row.days and row.days < item.deadline)):
 				return {"error":"Échec incohérent."}
 		var key = JSON.stringify([row.scenario, row.difficulty, row.start, row.seed, row.policy])
 		var side = "control" if row.objective_id == "" else "active"

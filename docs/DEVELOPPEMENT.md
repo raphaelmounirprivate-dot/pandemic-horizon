@@ -92,6 +92,14 @@ Les essais automatiques et les captures ne prouvent pas la facilité d'utilisati
 
 Le [point 12](suivi/12-relais-arctiques.md) livre Relais arctiques en 0.10. `tests/test_arctic_relays.gd` vérifie fenêtres, routes fermées, sens, quotas, reprise, références 0.9 et 99 paires Dégel avec/sans objectif, sur trois graines/difficultés et onze politiques. `dev.ps1 CaptureArctic` rend 22 vues ciblées dans `.impeccable/review/`. Le catalogue d'objectifs est lu et validé depuis une copie en mémoire ; redémarrer le processus après une modification de `data/objectives.json`.
 
+### Stratégies climatiques précoces
+
+`dev.ps1 BalanceArctic` génère `build/qa/balance-arctic.csv` et `.md` : 270 parties Dégel, soit 135 paires avec/sans Relais arctiques, trois difficultés, graines 7/42/2042 et quinze politiques. Les onze politiques historiques sont conservées ; quatre ordres précoces sont ajoutés dans `scripts/analysis/arctic_analysis.gd` sans modifier le catalogue historique.
+
+Le comparateur commun prend l'identifiant d'objectif et la liste de politiques autorisées. Il vérifie les compteurs arctiques, leurs bornes/fenêtres et la cohérence de la résolution, puis les mêmes empreintes, résultats et achats entre modes. Les comportements Standard restent couverts par leurs tests existants.
+
+Le rapport sépare les quatre résultats objectif/victoire et détaille les achats climatiques et de base : nombre acquis, nombre acquis avant la fin du jour 54 et dates min–max des seules acquisitions réelles. Les compteurs de l'objectif restent plafonnés et figés ; ils ne représentent pas le trafic total après sa résolution. Le [rapport conservé](EQUILIBRAGE-0.10-CLIMATIQUE.md) et le [point 13](suivi/13-strategies-climatiques.md) consignent les mesures. `tests/test_arctic_analysis.gd` vérifie nouveaux ordres légaux, témoins, chronologie et refus des incohérences. Ce lot ne change ni le jeu 0.10.0, ni son interface, ni ses sauvegardes ; les outils restent exclus de l'exécutable.
+
 ## Organisation
 
 - `scripts/simulation/world.gd` : état du monde et règles ; aucune dépendance aux scènes.

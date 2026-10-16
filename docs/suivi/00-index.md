@@ -15,6 +15,7 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 - [Point 10 — Objectif facultatif](10-objectif-facultatif.md) : prototype 0.9, Premiers relais et compatibilité des parties 0.7/0.8.
 - [Point 11 — Analyse des objectifs](11-analyse-objectifs.md) : mesures par départ et stratégie, témoins sans objectif et matrice des deux résultats ; jeu toujours en 0.9.
 - [Point 12 — Relais arctiques](12-relais-arctiques.md) : prototype 0.10, objectif Dégel sur les flux saisonniers et compatibilité 0.9.
+- [Point 13 — Stratégies climatiques](13-strategies-climatiques.md) : ordres précoces, chronologie des achats et résultats appariés ; jeu toujours en 0.10.
 - [Règles effectives](../REGLES.md) : paramètres du code actuel.
 - [Développement](../DEVELOPPEMENT.md) : préparation, tests et export.
 - [Guide joueur](../GUIDE-JOUEUR.md) : parcours et limites.
@@ -23,7 +24,7 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 
 1. Compléter l'essai physique souris/clavier, plein écran et défilement du journal ; organiser un essai sur un autre PC Windows. Le parcours synthétique Godot est testé.
 2. Éprouver le tutoriel et l'aide contextuelle auprès de joueurs débutants. Les fonctionnalités de J5 sont implémentées : sauvegardes en 0.5, tutoriel facultatif et aide F1 en 0.6 ; la compréhension et le confort réels restent à valider.
-3. Éprouver les deux objectifs et les spécialisations, puis enrichir les décisions et événements. Relais arctiques est livré en 0.10 ; ses quotas encouragent des échanges après les tempêtes. Mesurer davantage d'ordres climatiques précoces avant de régler quotas ou fenêtres. Conserver les références de compatibilité 0.7 à 0.9 et la distinction entre objectif facultatif et victoire principale.
+3. Éprouver les deux objectifs et les spécialisations, puis enrichir les décisions et événements. Le lot 13 compare quinze politiques Dégel, dont quatre climatiques précoces : l'objectif et la victoire restent distincts. Les quotas et fenêtres sont conservés. Préparer un événement à choix explicites, avec coûts et contreparties visibles, en définissant d'abord la persistance et les trajectoires possibles. Conserver les références de compatibilité 0.7 à 0.9.
 4. J6/J7 : finition et release distribuable.
 
-Créer `13-<lot>.md` pour la prochaine livraison. Y noter périmètre, fichiers principaux, tests exécutés, limites et prochaine action. Mettre à jour cet index à chaque lot livré.
+Créer `14-<lot>.md` pour la prochaine livraison. Y noter périmètre, fichiers principaux, tests exécutés, limites et prochaine action. Mettre à jour cet index à chaque lot livré.
