@@ -218,5 +218,8 @@ func run() -> void:
 	var before_decisions = checks
 	await load("res://tests/test_decisions.gd").new().run(self,check)
 	check(checks - before_decisions >= 210,"Suite décisions et compatibilité 0.10 entièrement exécutée")
+	var before_decision_comparison = checks
+	load("res://tests/test_decision_comparison.gd").new().run(check)
+	check(checks - before_decision_comparison >= 50,"Suite comparaison des décisions entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
