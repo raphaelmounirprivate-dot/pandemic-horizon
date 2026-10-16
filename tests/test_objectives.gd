@@ -177,7 +177,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 		check.call(scene.world.objective.status == "pending" and scene.world.day == 0, "Rejouer conserve le choix et réinitialise le suivi")
 		scene.scenario_id = "degel2042"
 		scene.show_menu()
-		check.call(scene.objective_choice.disabled and not scene.objective_choice.button_pressed and scene.objective_id == "", "Dégel désactive et décoche l'objectif Standard")
+		check.call(not scene.objective_choice.disabled and not scene.objective_choice.button_pressed and scene.objective_id == "" and scene.objective_choice.text.contains("Relais arctiques"), "Dégel remplace le choix Standard et le décoche")
 		scene.scenario_id = "standard"
 	scene.queue_free()
 	await tree.process_frame

@@ -1,4 +1,4 @@
-# Règles du prototype 0.9
+# Règles du prototype 0.10
 
 Ces règles sont provisoires et abstraites. Elles ne représentent aucun modèle biologique réel.
 
@@ -26,6 +26,14 @@ Le prototype démarre en pause pour laisser le temps de lire et de choisir. Chan
 Après les pas régionaux, le remède, les points et la résolution de la fin principale, le suivi compte les régions qualifiées. Atteindre le seuil au jour 50 réussit ; sinon le jour 50 clôt en échec. Une fin principale anticipée clôt aussi le suivi, après avoir vérifié une éventuelle réussite ce jour-là. La réussite facultative reste indépendante de la victoire principale : le remède garde sa priorité pour celle-ci.
 
 L'état `pending`, `completed` ou `failed`, le progrès borné à trois, la date et le motif de résolution sont conservés dans le format de sauvegarde 2. Une résolution fige le compteur et ajoute une annonce unique au journal. Aucun changement de population, d'échanges, de recherche, de points, de score ou d'état aléatoire. Rejouer conserve le choix et réinitialise le suivi. Les anciennes parties de format 1 reconnues sont reprises sans objectif rétroactif.
+
+## Objectif facultatif Dégel : flux saisonniers
+
+Relais arctiques compte les unités d'échange ajoutées à l'entrée régionale par Boréale → Orient de J36 à J54, et Boréale → Centrale de J39 à J54. Les dates suivent la fin des fermetures cumulées dans la phase Instabilité. Chaque compteur est plafonné à 1 000 ; les deux quotas sont nécessaires. La route doit être ouverte et le sens correct. Aucune unité avant sa fenêtre, après résolution ou après J54 ; les autres routes et le sens inverse sont exclus.
+
+Il s'agit du flux calculé avant la progression locale et sa borne par les habitants sains : pas d'un transfert de population ni d'une mesure de nouveaux touchés. Le calcul des imports reste exactement celui de 0.9 ; seule l'observation de sa valeur est ajoutée. L'objectif ne consomme aucune unité et ne modifie aucun résultat de simulation.
+
+Le format 2 conserve les deux compteurs et le nombre de quotas atteints, en plus de l'état, de la date et du motif de résolution. Les fenêtres sont validées contre les routes saisonnières, la phase et les fermetures planifiées. Les anciennes parties 0.9 gardent Premiers relais s'il était activé ; aucune ne reçoit Relais arctiques rétroactivement.
 
 ## Événements temporaires
 

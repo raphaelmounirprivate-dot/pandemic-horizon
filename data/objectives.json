@@ -1,6 +1,7 @@
 {
   "schema_version": 1,
   "objectives": [
-    {"id": "first_relays", "name": "Premiers relais", "scenario": "standard", "regions": 3, "coverage_percent": 10, "deadline": 50}
+    {"id": "first_relays", "name": "Premiers relais", "kind": "coverage", "scenario": "standard", "regions": 3, "coverage_percent": 10, "deadline": 50},
+    {"id": "arctic_relays", "name": "Relais arctiques", "kind": "seasonal_flow", "scenario": "degel2042", "source": "boreale", "phase": "instability", "quota": 1000, "deadline": 54, "routes": [{"target":"orient", "start_day":36}, {"target":"centrale", "start_day":39}]}
   ]
 }

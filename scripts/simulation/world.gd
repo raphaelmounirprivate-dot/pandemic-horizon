@@ -113,6 +113,9 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 		if item.id == difficulty_id: chosen_difficulty = item
 	if chosen_scenario.is_empty() or chosen_difficulty.is_empty():
 		return "Scénario ou difficulté inconnu."
+	if not objective_id.is_empty():
+		error = Objectives.validate_context(Objectives.definition(objective_id),chosen_scenario,Scenarios.gameplay_for(gameplay,chosen_scenario).events.events)
+		if not error.is_empty(): return error
 	if chosen_scenario.forced_start != "" and chosen_scenario.forced_start != start_id:
 		return "Ce scénario impose un départ en " + chosen_scenario.forced_start + "."
 	var transports: Variant = transport_source
@@ -380,7 +383,9 @@ func step() -> void:
 			if source.active >= 1000:
 				var seasonal = upgrade_modifier("seasonal_multiplier") if route_is_seasonal(edge) else 1.0
 				# Preserve the 0.7 operation order; apply the new specialization last.
-				incoming[direction[1]] += maxi(1, int(source.active * 0.001 * upgrade_modifier("exchange_multiplier") * seasonal * transport_base_factor(edge) * upgrade_modifier(route_mode(edge) + "_multiplier")))
+				var units = maxi(1, int(source.active * 0.001 * upgrade_modifier("exchange_multiplier") * seasonal * transport_base_factor(edge) * upgrade_modifier(route_mode(edge) + "_multiplier")))
+				incoming[direction[1]] += units
+				Objectives.record_exchange(self,direction[0],direction[1],units)
 	for index in range(regions.size()):
 		var before = snapshot[index]
 		var region = regions[index]

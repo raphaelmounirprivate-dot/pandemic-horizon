@@ -4,7 +4,7 @@ Date : 16 octobre 2026.
 
 Dépôt : [raphaelmounirprivate-dot/plague-inc-evolved](https://github.com/raphaelmounirprivate-dot/plague-inc-evolved).
 
-**État actuel :** prototype 0.9 de 24 régions, Standard et Dégel 2042, trois difficultés, phases et évolutions climatiques ; export Windows testé localement. Voir le [point de contrôle 10](suivi/10-objectif-facultatif.md) pour les validations et les limites. Diversité du contenu et validation humaine de l'équilibrage restent à réaliser. Ce document conserve la feuille de route complète de la version 1.0 ; ses jalons décrivent les objectifs, pas une liste de fonctionnalités toutes livrées.
+**État actuel :** prototype 0.10 de 24 régions, Standard et Dégel 2042, trois difficultés, phases et évolutions climatiques ; export Windows testé localement. Voir le [point de contrôle 12](suivi/12-relais-arctiques.md) pour les validations et les limites. Diversité du contenu et validation humaine de l'équilibrage restent à réaliser. Ce document conserve la feuille de route complète de la version 1.0 ; ses jalons décrivent les objectifs, pas une liste de fonctionnalités toutes livrées.
 
 ## 1. Résultat à livrer
 

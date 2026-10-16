@@ -7,6 +7,7 @@ const MAX_BYTES = 2097152
 const LEGACY_07_HASHES = ["0285d7ef5812b9c4df607215fad53b9266dfff0b74cc0d661b6ccf4c6f132d19", "10c7d2193c11a8db4fcbc136af2244af17cdf7482ca893586cc3edc8f7e06d2b", "0cb9cea463f2a6883e28c3024475f26e7c7eda527db69a3074cc1c580305e829"]
 const LEGACY_07_UPGRADES = ["transmission", "mobility", "discretion", "polar", "seasonal", "resilience"]
 const LEGACY_08_HASH = "7030c81500cac55fcb5656cc286cf0f965a559f3c4f8e0cee8df54b9cfd67b19"
+const LEGACY_09_HASH = "ae93560e93e6e89e97c7efb0d0ed393f0338bfb3127088cf58fb4c06197655a9"
 var directory = "user://saves/transports-1"
 
 func content_hash() -> String:
@@ -48,10 +49,12 @@ func decode(data: Variant) -> Dictionary:
 		if not data.has(key): return invalid
 	var legacy = data.get("content") in LEGACY_07_HASHES
 	var old_format = data.get("format") == 1 and (legacy or data.get("content") == LEGACY_08_HASH)
-	var current_format = data.get("format") == 2 and data.get("content") == content_hash()
+	var legacy09 = data.get("format") == 2 and data.get("content") == LEGACY_09_HASH
+	var current_format = data.get("format") == 2 and (data.get("content") == content_hash() or legacy09)
 	if (not old_format and not current_format) or data.get("engine") != Engine.get_version_info().string:
 		return {"error": "Sauvegarde incompatible avec cette version du jeu.", "incompatible": true}
 	if old_format and data.has("objective"): return invalid
+	if legacy09 and (not data.get("objective") is Dictionary or data.objective.get("id","") not in ["","first_relays"]): return invalid
 	for key in ["scenario", "difficulty", "start", "phase", "outcome", "selected", "saved_at", "seed", "rng"]:
 		if not data.get(key) is String or data[key].length() > 100: return invalid
 	for key in ["seed", "rng"]:
@@ -141,9 +144,12 @@ func decode(data: Variant) -> Dictionary:
 		if not world.objective.is_empty():
 			world.objective.progress = int(world.objective.progress)
 			world.objective.resolved_day = int(world.objective.resolved_day)
+			if world.objective.has("routes"):
+				for target in world.objective.routes: world.objective.routes[target] = int(world.objective.routes[target])
 	var result = {"error": "", "world": world, "selected": ids.find(data.selected), "speed": int(data.speed), "saved_at": data.saved_at}
 	if legacy: result["warning"] = "Partie 0.7 chargée en pause ; nouvelles spécialisations disponibles."
 	elif old_format: result["warning"] = "Partie 0.8 chargée en pause, sans objectif facultatif."
+	elif legacy09: result["warning"] = "Partie 0.9 chargée en pause ; objectif facultatif conservé."
 	return result
 
 func _path(slot: String) -> String:

@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.9
+# Jouer à Pandemic Horizon 0.10
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.9.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.10.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -26,11 +26,19 @@ La carte schématique présente 24 régions fictives, organisées en quatre rang
 
 ## Objectif facultatif : Premiers relais
 
-Avant une nouvelle partie Standard, activer « Objectif facultatif : Premiers relais » au menu. Ce choix est désactivé par défaut et indisponible dans Dégel 2042. Il demande **trois régions ayant chacune au moins 10 % de population touchée, au plus tard à la fin du jour 50**. « Touchée » compte actifs et retirés ; les mêmes trois régions ne sont pas imposées.
+Avant une nouvelle partie Standard, activer « Objectif facultatif : Premiers relais » au menu. Ce choix est désactivé par défaut ; Dégel propose son propre objectif décrit ci-dessous. Premiers relais demande **trois régions ayant chacune au moins 10 % de population touchée, au plus tard à la fin du jour 50**. « Touchée » compte actifs et retirés ; les mêmes trois régions ne sont pas imposées.
 
 Le suivi sous les compteurs mondiaux indique la progression et l'échéance. Il se fige à la réussite, au jour limite ou à la fin de partie. Atteindre le seuil exactement au jour 50 réussit ; l'atteindre plus tard ne transforme pas un objectif manqué. Une fin de partie anticipée clôt le suivi. Le journal et le bilan gardent le résultat et sa date.
 
 Cet objectif ne rapporte aucun point ni bonus de score et ne remplace pas la victoire principale à 90 %. Une réussite facultative peut accompagner une défaite principale. « Rejouer avec les mêmes choix » conserve son activation et remet son suivi à zéro. Les anciennes parties sont chargées sans objectif facultatif ; le tutoriel conserve une session distincte.
+
+## Objectif facultatif Dégel : Relais arctiques
+
+Avant une nouvelle partie Dégel 2042, activer « Objectif facultatif : Relais arctiques ». Après les tempêtes, atteindre **1 000 unités d'échange sur chacune des deux routes**, dans le sens sortant de Boréale : vers Orient du jour **36 au 54 inclus**, vers Centrale du jour **39 au 54 inclus**. L'inspection maintient Centrale fermée après la fin de la tempête ; seule sa dernière réouverture permet de compter.
+
+Les unités sont les échanges abstraits calculés par les routes ouvertes, même vers une région déjà touchée. Elles ne représentent pas des personnes transportées ou le nombre de nouveaux touchés. Mobilité, les effets saisonniers et la spécialisation maritime peuvent modifier ces flux. Une autre route, le sens inverse ou un échange hors fenêtre ne compte pas.
+
+Le suivi affiche un compteur par destination, plafonné à 1 000. Les deux doivent atteindre leur quota avant la mobilisation du jour 55 ; une réussite au jour 54 est valide. Le résultat se fige ensuite, même si les routes continuent à fonctionner. Aucun bonus de points ou de score ; l'objectif principal reste inchangé. Changer de scénario décoche le choix et demande une nouvelle activation. Rejouer conserve le choix et réinitialise les compteurs.
 
 ## Tutoriel et aide
 
@@ -116,6 +124,6 @@ Le chargement conserve régions, détections, achats, points, remède, événeme
 
 Après un remplacement réussi, le fichier `.bak` contient la version précédente. Si le fichier principal manque ou est illisible, un secours valide est chargé avec un avertissement. Il peut être plus ancien. Si les deux fichiers sont invalides, la partie en mémoire est conservée. Les versions de format, données ou moteur incompatibles sont refusées sans écrasement ; aucune migration automatique n'est proposée dans ce prototype.
 
-Les fichiers 0.9, 0.8 et 0.7 restent locaux, dans `%APPDATA%/Godot/app_userdata/Pandemic Horizon/saves/transports-1/`. Les sauvegardes 0.7 et 0.8 reconnues sont signalées, chargées en pause et vérifiées avant utilisation, sans objectif facultatif ajouté. La lecture ne réécrit pas le fichier. Au premier enregistrement 0.9, le fichier ancien devient la copie de secours précédente ; les sauvegardes suivantes font tourner ce secours normalement. Les spécialisations restent disponibles selon les prérequis et points de la partie reprise. Les règles de propagation et le remède restent identiques.
+Les fichiers 0.7 à 0.10 restent locaux, dans `%APPDATA%/Godot/app_userdata/Pandemic Horizon/saves/transports-1/`. Les sauvegardes reconnues sont signalées, chargées en pause et vérifiées avant utilisation. Les parties 0.7/0.8 restent sans objectif ; les parties 0.9 conservent leur suivi de Premiers relais ou l'absence d'objectif dans Dégel. Relais arctiques n'est jamais ajouté rétroactivement. La lecture ne réécrit pas le fichier. Au premier enregistrement 0.10, le fichier ancien devient la copie de secours précédente ; les sauvegardes suivantes font tourner ce secours normalement. Les règles de propagation et le remède restent identiques.
 
-Une partie enregistrée en 0.9 utilise le format 2 et n'est pas compatible avec les exécutables 0.7 et 0.8. Les anciennes sauvegardes 0.6 restent dans le dossier `saves/` et nécessitent leur ancien exécutable. Les versions et empreintes inconnues restent refusées, sans écrasement automatique. Les fichiers ne sont pas synchronisés avec GitHub. `dev.ps1 Play` utilise un dossier isolé sous `.tools/user/`. Le rythme et le contenu restent provisoires et doivent être éprouvés avec des joueurs.
+Une partie enregistrée en 0.10 utilise toujours le format 2, avec une nouvelle empreinte de contenu ; elle n'est pas compatible avec les exécutables 0.7 à 0.9. Les anciennes sauvegardes 0.6 restent dans le dossier `saves/` et nécessitent leur ancien exécutable. Les versions et empreintes inconnues restent refusées, sans écrasement automatique. Les fichiers ne sont pas synchronisés avec GitHub. `dev.ps1 Play` utilise un dossier isolé sous `.tools/user/`. Le rythme et le contenu restent provisoires et doivent être éprouvés avec des joueurs.

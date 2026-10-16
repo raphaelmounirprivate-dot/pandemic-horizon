@@ -250,7 +250,7 @@ func show_saves() -> void:
 	paused = true
 	elapsed = 0.0
 	screen = "saves"
-	_reset_screen("Sauvegardes d'entraînement" if tutorial != null else "Sauvegardes", "Fichiers d'essai séparés : aucune sauvegarde du joueur n'est modifiée." if tutorial != null else "Sauvegardes 0.9 · Parties 0.7 et 0.8 compatibles, sans objectif facultatif.")
+	_reset_screen("Sauvegardes d'entraînement" if tutorial != null else "Sauvegardes", "Fichiers d'essai séparés : aucune sauvegarde du joueur n'est modifiée." if tutorial != null else "Sauvegardes 0.10 · Parties 0.7 à 0.9 compatibles · Objectifs 0.9 conservés.")
 	body.add_child(_label("Enregistrez dans un emplacement manuel, puis chargez-le pour terminer l'exercice." if tutorial != null else "Le chargement remplace la partie en mémoire et reprend en pause.\nL'automatique est actualisée tous les 10 jours, au menu et à la fermeture.", 18, MUTED))
 	var scroll = ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -455,7 +455,18 @@ func _smoke_test() -> void:
 	if optional_world.objective.status != "failed" or optional_world.objective.resolved_day != 50:
 		get_tree().quit(1)
 		return
-	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, persistence replay, six tutorial lessons, contextual help, optional objective success/failure and persistence, restart, settings, menu")
+	optional_world.start("boreale",2042,null,null,"degel2042","normal",null,null,"arctic_relays")
+	for i in range(55):
+		for id in ["transmission","mobility","discretion"]:
+			if id not in optional_world.purchased:
+				optional_world.purchase(id)
+				break
+		optional_world.step()
+	optional_loaded = smoke_store.decode(smoke_store.encode(optional_world))
+	if optional_world.objective.status != "completed" or not optional_loaded.error.is_empty() or optional_loaded.world.objective != optional_world.objective:
+		get_tree().quit(1)
+		return
+	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, persistence replay, six tutorial lessons, contextual help, optional objectives and arctic flows, restart, settings, menu")
 	get_tree().quit()
 
 func _apply_theme() -> void:
@@ -499,7 +510,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.9", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.10", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -545,7 +556,7 @@ func show_menu() -> void:
 	objective_choice.text = "Objectif facultatif : Premiers relais"
 	objective_choice.custom_minimum_size.y = 44
 	objective_choice.button_pressed = not objective_id.is_empty()
-	objective_choice.toggled.connect(func(enabled): objective_id = "first_relays" if enabled else "")
+	objective_choice.toggled.connect(func(enabled): objective_id = World.Objectives.for_scenario(scenario_id).get("id","") if enabled else "")
 	presentation.add_child(objective_choice)
 	menu_objective_detail = _label("", 16, MUTED)
 	menu_objective_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -614,11 +625,13 @@ func show_menu() -> void:
 	launch.grab_focus()
 
 func _update_menu_choices(catalog: Dictionary) -> void:
-	objective_choice.disabled = scenario_id != "standard"
-	if objective_choice.disabled:
+	var optional = World.Objectives.for_scenario(scenario_id)
+	objective_choice.disabled = optional.is_empty()
+	objective_choice.text = "Objectif facultatif : " + optional.get("name","indisponible")
+	if objective_id != optional.get("id",""):
 		objective_id = ""
-		objective_choice.set_pressed_no_signal(false)
-	menu_objective_detail.text = World.Objectives.description(World.Objectives.definition("first_relays")) if scenario_id == "standard" else "Premiers relais est disponible uniquement en Standard."
+	objective_choice.set_pressed_no_signal(not objective_id.is_empty())
+	menu_objective_detail.text = World.Objectives.description(optional)
 	for item in catalog.scenarios:
 		if item.id == scenario_id:
 			start_choice.disabled = item.forced_start != ""

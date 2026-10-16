@@ -209,5 +209,8 @@ func run() -> void:
 	var before_objective_comparison = checks
 	load("res://tests/test_objective_comparison.gd").new().run(check)
 	check(checks - before_objective_comparison >= 50, "Suite analyse des objectifs entièrement exécutée")
+	var before_arctic = checks
+	await load("res://tests/test_arctic_relays.gd").new().run(self,check)
+	check(checks - before_arctic >= 170,"Suite relais arctiques entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
