@@ -1,4 +1,4 @@
-# Règles du prototype 0.6
+# Règles du prototype 0.7
 
 Ces règles sont provisoires et abstraites. Elles ne représentent aucun modèle biologique réel.
 
@@ -6,7 +6,8 @@ Ces règles sont provisoires et abstraites. Elles ne représentent aucun modèle
 - 200 cas actifs au départ ; chaque personne passe de saine à active puis retirée, sans réinfection. Le cumul touché est actif + retiré.
 - Une journée expire les effets terminés, active les événements planifiés et vérifie les seuils de détection. Ensuite elle lit un instantané commun des 24 régions : échanges par routes ouvertes, progression locale, retrait, puis remède, points et fin de partie. Aucun transfert de population lors des échanges : les connexions produisent des cas locaux. La détection utilise les actifs de la veille, avant la progression du jour.
 - Progression locale de base : 22 % des actifs, modulée par un tirage entre 0,92 et 1,08. Retrait : 2,5 % des actifs, au moins un lorsque des cas existent. Les entiers sont tronqués et les nouveaux cas bornés par la population saine.
-- Une connexion reçoit 0,1 % des actifs de la source, au moins un, si la source compte au moins 1 000 actifs.
+- Sur une connexion ouverte, si la source compte au moins 1 000 actifs, les imports valent `max(1, entier(actifs × 0,001 × Mobilité × bonus saisonnier × profil transport × effets du type))`. Le minimum d'un s'applique après multiplication et troncature. Les sains disponibles bornent ensuite les nouveaux cas.
+- `data/transports.json` classe les 38 liaisons standards : 22 terrestres (×1), 8 aériennes (×1,2), 8 maritimes (×0,8). Dégel ajoute une neuvième maritime. Les deux routes saisonnières sont maritimes. Chaque arête a un type unique et symétrique ; références, doublons, couverture du réseau et bornes des coefficients sont validés avant mutation du monde.
 - Graine par défaut : 2042. Les sauvegardes conservent la graine et l'état aléatoire sur 64 bits, ainsi que la valeur exacte du remède. Le chargement reprend en pause avec les mêmes journées suivantes. Voir le [guide](GUIDE-JOUEUR.md#sauvegarder-et-reprendre).
 - 8 points au départ, puis 3 tous les cinq jours. Trois achats uniques définis dans `data/evolutions.json` : Diffusion (12 points, +8 points de croissance), Mobilité (10 points, échanges ×3, exige Diffusion), Discrétion (14 points, remède ×0,7). Coûts, effets et prérequis sont validés avant le lancement ; les cycles de prérequis sont refusés.
 - Détection régionale lorsque les actifs atteignent au moins 500 personnes ET 1,5 % de la population régionale. Une détection reste acquise jusqu'à la fin de la partie ; elle provoque une seule réaction locale de huit jours, multipliant la croissance locale par 0,8.
@@ -19,7 +20,7 @@ Le prototype démarre en pause pour laisser le temps de lire et de choisir. Chan
 
 ## Événements temporaires
 
-Les événements du standard sont déterministes, à des jours fixes, et définis dans `data/events.json`. Dégel 2042 possède son propre calendrier dans `data/scenarios.json` et remplace ces quatre événements standards.
+Les événements du standard sont déterministes, à des jours fixes, et définis dans `data/events.json`. Dégel 2042 possède son propre calendrier dans `data/scenarios.json` et remplace les événements standards.
 
 | Événement | Jours d'application inclus | Effet |
 | --- | --- | --- |
@@ -27,12 +28,14 @@ Les événements du standard sont déterministes, à des jours fixes, et défini
 | Contrôle des transports | 22 à 31 | Ferme la même route indépendamment de la tempête |
 | Mesures de prudence | 35 à 41 | Croissance de Centrale ×0,65 |
 | Mobilisation scientifique | 44 à 51 | Gain de remède ×1,35 |
+| Contrôles aériens | 40 à 47 | Échanges du type aérien ×0,6 |
+| Retards portuaires | 45 à 51 | Échanges du type maritime ×0,7 |
 
 Un effet de durée huit jours activé au jour 18 possède une borne de fin exclusive au jour 26. Le panneau indique le nombre de pas quotidiens restant avant cette expiration. La pause suspend ce compte à rebours.
 
 Chaque cause de fermeture conserve son propre délai. La route est fermée dès qu'au moins une cause est active : elle ne se rouvre ici qu'au jour 32. Les multiplicateurs ayant la même cible se multiplient ; par exemple une réaction ×0,8 et des mesures ×0,65 donnent ×0,52. Ils sont recalculés depuis les effets actifs, sans altérer les coefficients de base. Leur expiration ne retire donc pas un autre effet encore actif.
 
-Le journal annonce activation, conséquence, fin et rétablissement réel des routes. Les événements et réactions se déclenchent une seule fois chacun. L'état des effets est conservé en mémoire, mais aucune sérialisation sur disque n'est encore livrée.
+Le journal annonce activation, conséquence, fin et rétablissement réel des routes. Les événements et réactions se déclenchent une seule fois chacun. Les sauvegardes conservent les effets actifs et déjà déclenchés, leurs bornes et la suite aléatoire. La congestion des ports arctiques de Dégel s'applique du jour 34 au 39 inclus, avec un facteur maritime ×0,5 ; les fermetures restent prioritaires.
 
 ## Scénarios, climat et difficultés
 

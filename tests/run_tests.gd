@@ -193,5 +193,8 @@ func run() -> void:
 	var before_onboarding = checks
 	await load("res://tests/test_onboarding.gd").new().run(self, check)
 	check(checks - before_onboarding >= 50, "Suite tutoriel et aide entièrement exécutée")
+	var before_transports = checks
+	await load("res://tests/test_transports.gd").new().run(self, check)
+	check(checks - before_transports >= 80, "Suite transports entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

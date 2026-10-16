@@ -1,5 +1,5 @@
 extends RefCounted
-const TITLES = ["Situation actuelle", "Temps et commandes", "Régions et objectif", "Évolutions et prérequis", "Détection et remède", "Événements et routes", "Sauvegardes", "Dégel 2042"]
+const TITLES = ["Situation actuelle", "Temps et commandes", "Régions et objectif", "Évolutions et prérequis", "Détection et remède", "Événements et routes", "Sauvegardes", "Dégel 2042", "Transports"]
 
 static func text_for(topic: int, world: RefCounted, selected: int, training_stage: int = -1) -> String:
 	match topic:
@@ -25,4 +25,8 @@ static func text_for(topic: int, world: RefCounted, selected: int, training_stag
 		5: return "Bleu : route ouverte. Pointillés et croix ambre : route fermée. Une fermeture bloque les nouveaux cas importés par cette route ; les cas déjà présents continuent localement.\n\nLes effets peuvent se cumuler. Si deux événements ferment la même route, elle ne rouvre qu'après la fin des deux. Les jours restants et les fins sont annoncés dans les événements et le journal.\n\nUn effet de huit jours commencé au jour 18 s'applique du jour 18 au 25 inclus. Au jour 26, il a expiré."
 		6: return "Ouvrez Sauvegardes depuis le menu, la partie ou le bilan. Trois emplacements manuels et un automatique sont locaux à ce PC. Charger remplace la partie en mémoire, après confirmation, et reprend en pause.\n\nL'automatique est actualisée tous les dix jours, à la fin de partie, au menu depuis le jeu et à la fermeture normale. Une fermeture forcée ne garantit pas les changements récents.\n\nLe secours contient l'enregistrement précédent. Si le principal manque ou est endommagé, un secours valide est chargé avec avertissement. Une version incompatible est refusée sans écrasement.\n\nPendant le tutoriel, seuls des fichiers d'entraînement séparés sont utilisés."
 		7: return "Dégel 2042 impose Boréale et ajoute des évolutions climatiques.\n\nJour 0 : Isolement, une seule sortie ouverte. Jour 12 : Ouverture des routes saisonnières. Jour 28 : Instabilité et tempêtes. Jour 55 : Mobilisation du remède.\n\nUne ouverture saisonnière ne supprime pas une fermeture temporaire. Consultez la phase, les températures fictives et le multiplicateur Climat local.\n\nAdaptation polaire améliore la croissance froide. Mobilité saisonnière et Résilience climatique exigent cette adaptation."
+		8:
+			var intro = "T : terrestre, trait plein, coefficient ×1. A : aérien, tirets, ×1,2. M : maritime, points, ×0,8. Les croix ambre signalent les fermetures.\n\nLe coefficient de transport se multiplie avec Mobilité, les effets temporaires du même type et les bonus saisonniers. Une route fermée ne laisse passer aucun échange. Les facteurs sont des paramètres fictifs du jeu."
+			if world.regions.is_empty(): return intro
+			return intro + "\n\nLiaisons de " + world.regions[selected].name + " (coefficient transport, hors Mobilité et bonus saisonnier)\n\n" + "\n\n".join(world.transport_lines(world.regions[selected].id))
 	return ""

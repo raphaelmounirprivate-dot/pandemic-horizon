@@ -38,7 +38,7 @@ func refresh() -> void:
 		buttons[i].position = map_position(region) - Vector2(56, 22)
 		buttons[i].size = Vector2(112, 44)
 		buttons[i].modulate = ACCENT if i == selected else Color.WHITE
-		buttons[i].tooltip_text = "%s : %d cas actifs. Entrée pour sélectionner." % [region.name, region.active]
+		buttons[i].tooltip_text = "%s : %d cas actifs. Entrée pour sélectionner.\n%s" % [region.name, region.active, world.transport_summary(region.id)]
 	queue_redraw()
 
 func _draw() -> void:
@@ -55,7 +55,9 @@ func _draw() -> void:
 	for edge in world.connections:
 		var open = world.route_is_open(edge)
 		if open:
-			draw_line(positions[edge[0]], positions[edge[1]], Color("3e6e7c"), 2.0, true)
+			var mode = world.route_mode(edge)
+			if mode == "land": draw_line(positions[edge[0]], positions[edge[1]], Color("3e6e7c"), 2.0, true)
+			else: draw_dashed_line(positions[edge[0]], positions[edge[1]], Color("3e6e7c"), 2.0, 8.0 if mode == "air" else 2.0, true)
 		else:
 			draw_dashed_line(positions[edge[0]], positions[edge[1]], Color("efbc70"), 3.0, 8.0, true)
 	for i in range(world.regions.size()):

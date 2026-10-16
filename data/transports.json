@@ -1,0 +1,283 @@
+{
+    "schema_version":  1,
+    "profiles":  {
+                     "land":  1,
+                     "air":  1.2,
+                     "sea":  0.8
+                 },
+    "routes":  [
+                   {
+                       "edge":  [
+                                    "boreale",
+                                    "occident"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "boreale",
+                                    "centrale"
+                                ],
+                       "mode":  "sea"
+                   },
+                   {
+                       "edge":  [
+                                    "toundra",
+                                    "occident"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "toundra",
+                                    "hauts_pays"
+                                ],
+                       "mode":  "air"
+                   },
+                   {
+                       "edge":  [
+                                    "taiga",
+                                    "hauts_pays"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "taiga",
+                                    "steppes"
+                                ],
+                       "mode":  "air"
+                   },
+                   {
+                       "edge":  [
+                                    "steppes",
+                                    "levant"
+                                ],
+                       "mode":  "air"
+                   },
+                   {
+                       "edge":  [
+                                    "levant",
+                                    "pacifique"
+                                ],
+                       "mode":  "air"
+                   },
+                   {
+                       "edge":  [
+                                    "occident",
+                                    "hauts_pays"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "hauts_pays",
+                                    "centrale"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "centrale",
+                                    "meridien"
+                                ],
+                       "mode":  "air"
+                   },
+                   {
+                       "edge":  [
+                                    "meridien",
+                                    "orient"
+                                ],
+                       "mode":  "air"
+                   },
+                   {
+                       "edge":  [
+                                    "orient",
+                                    "littoral"
+                                ],
+                       "mode":  "air"
+                   },
+                   {
+                       "edge":  [
+                                    "levant",
+                                    "orient"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "pacifique",
+                                    "littoral"
+                                ],
+                       "mode":  "sea"
+                   },
+                   {
+                       "edge":  [
+                                    "steppes",
+                                    "meridien"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "occident",
+                                    "peninsule"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "hauts_pays",
+                                    "plateaux"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "centrale",
+                                    "savane"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "meridien",
+                                    "delta"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "orient",
+                                    "jade"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "littoral",
+                                    "corail"
+                                ],
+                       "mode":  "sea"
+                   },
+                   {
+                       "edge":  [
+                                    "peninsule",
+                                    "plateaux"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "plateaux",
+                                    "savane"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "savane",
+                                    "delta"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "delta",
+                                    "jade"
+                                ],
+                       "mode":  "air"
+                   },
+                   {
+                       "edge":  [
+                                    "jade",
+                                    "corail"
+                                ],
+                       "mode":  "sea"
+                   },
+                   {
+                       "edge":  [
+                                    "peninsule",
+                                    "atlantide"
+                                ],
+                       "mode":  "sea"
+                   },
+                   {
+                       "edge":  [
+                                    "plateaux",
+                                    "equateur"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "savane",
+                                    "australe"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "delta",
+                                    "cap_sud"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "jade",
+                                    "mousson"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "corail",
+                                    "archipel"
+                                ],
+                       "mode":  "sea"
+                   },
+                   {
+                       "edge":  [
+                                    "atlantide",
+                                    "equateur"
+                                ],
+                       "mode":  "sea"
+                   },
+                   {
+                       "edge":  [
+                                    "equateur",
+                                    "australe"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "australe",
+                                    "cap_sud"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "cap_sud",
+                                    "mousson"
+                                ],
+                       "mode":  "land"
+                   },
+                   {
+                       "edge":  [
+                                    "mousson",
+                                    "archipel"
+                                ],
+                       "mode":  "sea"
+                   },
+                   {
+                       "edge":  [
+                                    "boreale",
+                                    "orient"
+                                ],
+                       "mode":  "sea"
+                   }
+               ]
+}

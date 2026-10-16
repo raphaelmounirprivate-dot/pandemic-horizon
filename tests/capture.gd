@@ -18,8 +18,11 @@ func capture() -> void:
 			for suffix in ["", ".bak", ".tmp", ".bak.tmp"]:
 				if FileAccess.file_exists(scene.save_store._path(slot) + suffix): DirAccess.remove_absolute(scene.save_store._path(slot) + suffix)
 		DisplayServer.window_set_size(resolution)
-		for surface in ["menu", "saves-empty", "degel-menu", "game", "help", "isolation", "opening", "instability", "mobilization", "saves-filled", "save-confirm", "result", "menu-resume", "tutorial-1", "tutorial-2", "tutorial-3", "tutorial-4", "tutorial-5", "tutorial-6", "tutorial-saves"]:
+		for surface in ["menu", "saves-empty", "degel-menu", "game", "help", "transports", "isolation", "opening", "instability", "mobilization", "saves-filled", "save-confirm", "result", "menu-resume", "tutorial-1", "tutorial-2", "tutorial-3", "tutorial-4", "tutorial-5", "tutorial-6", "tutorial-saves"]:
 			match surface:
+				"transports":
+					scene.help_topic = 8
+					scene.show_help()
 				"help":
 					scene.open_help()
 				"menu-resume":

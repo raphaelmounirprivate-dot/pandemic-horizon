@@ -28,6 +28,7 @@ var selected: int = 0
 var body: VBoxContainer
 var metrics: Label
 var region_details: Label
+var transport_details: Label
 var journal_label: Label
 var status_label: Label
 var pause_button: Button
@@ -231,7 +232,7 @@ func show_saves() -> void:
 	paused = true
 	elapsed = 0.0
 	screen = "saves"
-	_reset_screen("Sauvegardes d'entraînement" if tutorial != null else "Sauvegardes", "Fichiers d'essai séparés : aucune sauvegarde du joueur n'est modifiée." if tutorial != null else "Trois emplacements manuels et une sauvegarde automatique sur ce PC.")
+	_reset_screen("Sauvegardes d'entraînement" if tutorial != null else "Sauvegardes", "Fichiers d'essai séparés : aucune sauvegarde du joueur n'est modifiée." if tutorial != null else "Sauvegardes 0.7 · Les parties 0.6 restent dans leur dossier et se jouent avec l'ancien exécutable.")
 	body.add_child(_label("Enregistrez dans un emplacement manuel, puis chargez-le pour terminer l'exercice." if tutorial != null else "Le chargement remplace la partie en mémoire et reprend en pause.\nL'automatique est actualisée tous les 10 jours, au menu et à la fermeture.", 18, MUTED))
 	var scroll = ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -294,6 +295,9 @@ func _smoke_test() -> void:
 	if screen != "game" or world.totals().active != 200 or world.regions.size() != 24 or map_view.buttons.size() != 24:
 		get_tree().quit(1)
 		return
+	if world.route_mode(["boreale", "centrale"]) != "sea" or not is_equal_approx(world.transport_factor(["centrale", "meridien"]), 1.2):
+		get_tree().quit(1)
+		return
 	world.points = 100
 	if world.purchase("mobility").is_empty():
 		get_tree().quit(1)
@@ -310,6 +314,9 @@ func _smoke_test() -> void:
 			get_tree().quit(1)
 			return
 	if not world.active_events.any(func(e): return e.id == "research_boost") or world.detected_count() == 0:
+		get_tree().quit(1)
+		return
+	if not is_equal_approx(world.transport_factor(["centrale", "meridien"]), 0.72):
 		get_tree().quit(1)
 		return
 	for i in range(500):
@@ -454,7 +461,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.6", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.7", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -631,7 +638,7 @@ func show_game() -> void:
 	map_view.selected = selected
 	map_view.region_selected.connect(select_region)
 	map_column.add_child(map_view)
-	map_column.add_child(_label("Routes : bleu ouvertes, ambre fermées · Barres : cumul touché", 16, MUTED))
+	map_column.add_child(_label("Terre : trait · Air : tirets · Mer : points · Fermée : croix ambre", 16, MUTED))
 	effects_label = RichTextLabel.new()
 	effects_label.custom_minimum_size.y = 86
 	effects_label.add_theme_font_size_override("normal_font_size", 15)
@@ -649,6 +656,9 @@ func show_game() -> void:
 	sidebar_scroll.add_child(sidebar)
 	region_details = _label("", 16)
 	sidebar.add_child(region_details)
+	transport_details = _label("", 14, MUTED)
+	transport_details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	sidebar.add_child(transport_details)
 	sidebar.add_child(_label("Évolutions", 22))
 	for id in world.evolutions:
 		var evolution = world.evolutions[id]
@@ -711,6 +721,7 @@ func _refresh() -> void:
 	region_details.text = "%s · Population : %d\nSains : %d · Actifs : %d\nRetirés : %d · %s" % [region.name, region.population, region.healthy, region.active, region.removed, "Détectée" if region.detected else "Non détectée"]
 	if world.scenario.id != "standard":
 		region_details.text += "\nClimat local : croissance ×%.2f" % world.climate_factor(region.id)
+	transport_details.text = world.transport_summary(region.id) + " · Détail : F1 → Transports"
 	for id in evolution_buttons:
 		var evolution = world.evolutions[id]
 		var acquired = id in world.purchased

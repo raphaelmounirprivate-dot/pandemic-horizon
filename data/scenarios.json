@@ -25,7 +25,8 @@
       "events_override":[
         {"id":"arctic_storm","name":"Tempête arctique","kind":"route_closure","start_day":28,"duration":8,"target":["boreale","centrale"],"factor":1.0},
         {"id":"arctic_inspection","name":"Inspection arctique","kind":"route_closure","start_day":31,"duration":8,"target":["boreale","centrale"],"factor":1.0},
-        {"id":"orient_storm","name":"Tempête orientale","kind":"route_closure","start_day":30,"duration":6,"target":["boreale","orient"],"factor":1.0}
+        {"id":"orient_storm","name":"Tempête orientale","kind":"route_closure","start_day":30,"duration":6,"target":["boreale","orient"],"factor":1.0},
+        {"id":"arctic_port_delays","name":"Congestion des ports arctiques","kind":"transport_multiplier","start_day":34,"duration":6,"target":"sea","factor":0.5}
       ]
     }
   ]

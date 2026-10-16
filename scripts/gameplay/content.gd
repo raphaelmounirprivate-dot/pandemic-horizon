@@ -107,6 +107,9 @@ static func validate(source: Variant, regions: Array, connections: Array) -> Str
 			"cure_multiplier":
 				if item.get("target") != "global":
 					return "Le remède est un effet mondial."
+			"transport_multiplier":
+				if item.get("target") not in ["land", "air", "sea"]:
+					return "Type de transport d'événement inconnu."
 			_:
 				return "Type d'événement inconnu."
 	return ""

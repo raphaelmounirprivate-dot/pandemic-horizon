@@ -3,11 +3,11 @@ extends RefCounted
 const World = preload("res://scripts/simulation/world.gd")
 const SLOTS = ["slot1", "slot2", "slot3", "auto"]
 const MAX_BYTES = 2097152
-var directory = "user://saves"
+var directory = "user://saves/transports-1"
 
 func content_hash() -> String:
 	var text = ""
-	for path in ["regions", "evolutions", "events", "scenarios"]:
+	for path in ["regions", "evolutions", "events", "scenarios", "transports"]:
 		text += FileAccess.get_file_as_string("res://data/%s.json" % path)
 	return text.sha256_text()
 

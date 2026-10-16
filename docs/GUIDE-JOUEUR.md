@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.6
+# Jouer à Pandemic Horizon 0.7
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.6.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.7.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -39,7 +39,15 @@ Le focus clavier suit l'action demandée ; Entrée active le contrôle et Tab pe
 
 L'entraînement conserve une partie et des fichiers séparés, dans `user://training`. Il ne remplace ni la partie en mémoire ni les sauvegardes du joueur. Les fichiers d'essai sont réinitialisés au prochain lancement du tutoriel. « Terminer », « Quitter l'entraînement » ou Échap restituent la session précédente en pause. Depuis l'aide ou les sauvegardes, un premier Échap ferme cet écran ; un second quitte l'entraînement. Fermer normalement l'application pendant l'entraînement sauvegarde la partie du joueur, si elle existe.
 
-« Aide [F1] » est accessible au menu, en partie et au bilan. F1 fonctionne aussi depuis les paramètres et les sauvegardes. « Situation actuelle » résume le scénario, la région sélectionnée, les raisons d'indisponibilité des évolutions et les effets actifs. Le sélecteur propose également sept sujets : commandes, régions, évolutions, détection, événements, sauvegardes et Dégel. Faire défiler le texte, ou le focaliser avec Tab et utiliser les flèches. F1, Échap ou « Retour » ramènent à l'écran précédent, en pause.
+« Aide [F1] » est accessible au menu, en partie et au bilan. F1 fonctionne aussi depuis les paramètres et les sauvegardes. « Situation actuelle » résume le scénario, la région sélectionnée, les raisons d'indisponibilité des évolutions et les effets actifs. Le sélecteur propose également huit sujets : commandes, régions, évolutions, détection, événements, sauvegardes, Dégel et transports. Faire défiler le texte, ou le focaliser avec Tab et utiliser les flèches. F1, Échap ou « Retour » ramènent à l'écran précédent, en pause.
+
+## Transports
+
+Chaque liaison a un seul type : terrestre (trait plein, coefficient ×1), aérien (tirets, ×1,2) ou maritime (points, ×0,8). Les valeurs sont des paramètres fictifs du jeu. Une route fermée porte toujours des pointillés et une croix ambre, quel que soit son type.
+
+Le détail régional affiche les liaisons ouvertes sur leur total : T pour terrestre, A pour aérien, M pour maritime. Par exemple M 0/2 signifie deux routes maritimes présentes et toutes deux fermées ; A 0/0 signifie aucune route aérienne. Dans F1 → Transports, consulter les destinations, le type, l'ouverture et le coefficient de transport actuel. Ce coefficient n'inclut pas Mobilité ni le bonus saisonnier, qui se multiplient séparément.
+
+Le Standard subit des contrôles aériens du jour 40 au 47 inclus (échanges aériens ×0,6), puis des retards portuaires du 45 au 51 inclus (maritimes ×0,7). Dans Dégel, la congestion des ports réduit les échanges maritimes de moitié du 34 au 39 inclus. Un ralentissement ne rouvre jamais une route fermée. Les autres types de transport restent inchangés par cet événement.
 
 ## Détection et réactions
 
@@ -86,4 +94,4 @@ Le chargement conserve régions, détections, achats, points, remède, événeme
 
 Après un remplacement réussi, le fichier `.bak` contient la version précédente. Si le fichier principal manque ou est illisible, un secours valide est chargé avec un avertissement. Il peut être plus ancien. Si les deux fichiers sont invalides, la partie en mémoire est conservée. Les versions de format, données ou moteur incompatibles sont refusées sans écrasement ; aucune migration automatique n'est proposée dans ce prototype.
 
-Les fichiers restent locaux, dans `%APPDATA%/Godot/app_userdata/Pandemic Horizon/saves/` pour le jeu distribué. Ils ne sont pas synchronisés avec GitHub. Le lancement par `dev.ps1 Play` utilise un dossier isolé sous `.tools/user/`. Les chiffres, le contenu et le rythme restent provisoires et doivent être éprouvés avec des joueurs.
+Les fichiers 0.7 restent locaux, dans `%APPDATA%/Godot/app_userdata/Pandemic Horizon/saves/transports-1/` pour le jeu distribué. Les anciennes sauvegardes 0.6 restent dans le dossier `saves/` et s'ouvrent avec l'exécutable 0.6 ; aucune migration n'est proposée, car les règles d'échange ont changé. Les parties 0.7 utilisent leurs propres emplacements et ne remplacent pas ces anciens fichiers. Les fichiers ne sont pas synchronisés avec GitHub. Le lancement par `dev.ps1 Play` utilise un dossier isolé sous `.tools/user/`. Les chiffres, le contenu et le rythme restent provisoires et doivent être éprouvés avec des joueurs.

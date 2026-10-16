@@ -5,6 +5,7 @@ extends RefCounted
 const DATA_PATH = "res://data/regions.json"
 const Content = preload("res://scripts/gameplay/content.gd")
 const Scenarios = preload("res://scripts/gameplay/scenarios.gd")
+const Transports = preload("res://scripts/gameplay/transports.gd")
 
 var regions: Array = []
 var connections: Array = []
@@ -25,6 +26,8 @@ var scenario: Dictionary = {}
 var difficulty: Dictionary = {}
 var phase: Dictionary = {}
 var start_region_id: String = ""
+var transport_profiles: Dictionary = {}
+var transport_modes: Dictionary = {}
 
 static func validate_data(data: Variant) -> String:
 	if not data is Dictionary:
@@ -74,7 +77,7 @@ static func validate_data(data: Variant) -> String:
 		edges.append(pair)
 	return ""
 
-func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null) -> String:
+func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null, transport_source: Variant = null) -> String:
 	var data: Variant = source
 	if data == null:
 		if not FileAccess.file_exists(DATA_PATH):
@@ -106,6 +109,13 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 		return "Scénario ou difficulté inconnu."
 	if chosen_scenario.forced_start != "" and chosen_scenario.forced_start != start_id:
 		return "Ce scénario impose un départ en " + chosen_scenario.forced_start + "."
+	var transports: Variant = transport_source
+	if transports == null: transports = Transports.load_file() if source == null else Transports.neutral(data, catalog)
+	error = Transports.validate(transports, data, catalog)
+	if not error.is_empty(): return error
+	transport_profiles = transports.profiles.duplicate(true)
+	transport_modes.clear()
+	for route in transports.routes: transport_modes[Transports.key(route.edge)] = route.mode
 	scenario = chosen_scenario.duplicate(true)
 	difficulty = chosen_difficulty.duplicate(true)
 	phase = scenario.phases[0].duplicate(true)
@@ -220,6 +230,34 @@ func route_is_seasonal(edge: Array) -> bool:
 			return true
 	return false
 
+func route_mode(edge: Array) -> String:
+	if edge.size() != 2: return ""
+	return transport_modes.get(Transports.key(edge), "")
+
+func transport_factor(edge: Array) -> float:
+	var mode = route_mode(edge)
+	if mode.is_empty() or not route_is_open(edge): return 0.0
+	return float(transport_profiles[mode]) * event_modifier("transport_multiplier", mode)
+
+func transport_summary(region_id: String) -> String:
+	var counts = {"land": [0, 0], "air": [0, 0], "sea": [0, 0]}
+	for edge in connections:
+		if region_id not in edge: continue
+		var mode = route_mode(edge)
+		if not counts.has(mode): continue
+		counts[mode][1] += 1
+		if route_is_open(edge): counts[mode][0] += 1
+	return "Liaisons ouvertes : T %d/%d · A %d/%d · M %d/%d" % [counts.land[0], counts.land[1], counts.air[0], counts.air[1], counts.sea[0], counts.sea[1]]
+
+func transport_lines(region_id: String) -> Array[String]:
+	var lines: Array[String] = []
+	for edge in connections:
+		if region_id not in edge: continue
+		var other = edge[1] if edge[0] == region_id else edge[0]
+		var mode = route_mode(edge)
+		lines.append("%s ↔ %s · %s · %s" % [region_name(region_id), region_name(other), Transports.NAMES.get(mode, "Inconnu"), "ouverte ×%.2f" % transport_factor(edge) if route_is_open(edge) else "fermée"])
+	return lines
+
 func climate_factor(region_id: String) -> float:
 	var cold = region_id in scenario.get("cold_regions", [])
 	var factor = float(phase.get("cold_factor" if cold else "warm_factor", 1.0))
@@ -250,6 +288,7 @@ func effect_description(effect: Dictionary) -> String:
 		"route_closure": return "%s ↔ %s : route fermée" % [region_name(effect.target[0]), region_name(effect.target[1])]
 		"growth_multiplier": return "%s : croissance ×%.2f" % [region_name(effect.target), effect.factor]
 		"cure_multiplier": return "remède ×%.2f" % effect.factor
+		"transport_multiplier": return "transport %s : échanges ×%.2f" % [Transports.NAMES[effect.target].to_lower(), effect.factor]
 	return ""
 
 func _add_event(definition: Dictionary) -> bool:
@@ -321,7 +360,7 @@ func step() -> void:
 			var source = by_id[direction[0]]
 			if source.active >= 1000:
 				var seasonal = upgrade_modifier("seasonal_multiplier") if route_is_seasonal(edge) else 1.0
-				incoming[direction[1]] += maxi(1, int(source.active * 0.001 * upgrade_modifier("exchange_multiplier") * seasonal))
+				incoming[direction[1]] += maxi(1, int(source.active * 0.001 * upgrade_modifier("exchange_multiplier") * seasonal * transport_factor(edge)))
 	for index in range(regions.size()):
 		var before = snapshot[index]
 		var region = regions[index]
