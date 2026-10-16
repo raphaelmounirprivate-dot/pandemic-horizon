@@ -29,6 +29,7 @@ var body: VBoxContainer
 var metrics: Label
 var region_details: Label
 var transport_details: Label
+var specialization_details: Label
 var journal_label: Label
 var status_label: Label
 var pause_button: Button
@@ -48,6 +49,7 @@ var training_directory = "user://training"
 var help_return = "menu"
 var help_topic = 0
 var help_text: RichTextLabel
+var mouse_press_active = false
 
 func open_help() -> void:
 	if screen == "help":
@@ -157,6 +159,16 @@ func select_region(index: int) -> void:
 	if tutorial != null: tutorial.select_region(index, world)
 	_refresh()
 
+func reveal_evolution_group(group: Control) -> void:
+	# Wrapped labels and containers need their final layout before scrolling.
+	var tree = get_tree()
+	await tree.process_frame
+	if not is_instance_valid(group) or not group.is_inside_tree(): return
+	await tree.process_frame
+	if not is_instance_valid(group) or not group.is_inside_tree(): return
+	if group.get_child(0).has_focus() and not mouse_press_active:
+		group.get_parent().get_parent().ensure_control_visible(group)
+
 func autosave() -> String:
 	if tutorial != null or not autosave_enabled or world.regions.is_empty(): return ""
 	var error = save_store.save_slot("auto", world, selected, speed)
@@ -232,7 +244,7 @@ func show_saves() -> void:
 	paused = true
 	elapsed = 0.0
 	screen = "saves"
-	_reset_screen("Sauvegardes d'entraînement" if tutorial != null else "Sauvegardes", "Fichiers d'essai séparés : aucune sauvegarde du joueur n'est modifiée." if tutorial != null else "Sauvegardes 0.7 · Les parties 0.6 restent dans leur dossier et se jouent avec l'ancien exécutable.")
+	_reset_screen("Sauvegardes d'entraînement" if tutorial != null else "Sauvegardes", "Fichiers d'essai séparés : aucune sauvegarde du joueur n'est modifiée." if tutorial != null else "Sauvegardes 0.8 · Parties 0.7 compatibles · Parties 0.6 : ancien exécutable.")
 	body.add_child(_label("Enregistrez dans un emplacement manuel, puis chargez-le pour terminer l'exercice." if tutorial != null else "Le chargement remplace la partie en mémoire et reprend en pause.\nL'automatique est actualisée tous les 10 jours, au menu et à la fermeture.", 18, MUTED))
 	var scroll = ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -251,7 +263,8 @@ func show_saves() -> void:
 		var summary = result.error
 		if result.error.is_empty():
 			summary = "%s · %s · Jour %d · %s" % [result.world.scenario.name, result.world.difficulty.name, result.world.day, result.saved_at.replace("T", " à ")]
-			if result.has("warning"): summary += " · Copie de secours"
+			if result.get("backup", false): summary += " · Copie de secours"
+			elif result.has("warning"): summary += " · Partie 0.7 compatible"
 		var label = _label(name_text + " — " + summary, 18)
 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		group.add_child(label)
@@ -335,7 +348,7 @@ func _smoke_test() -> void:
 	difficulty_id = "normal"
 	start_id = "boreale"
 	start_game()
-	if world.phase.id != "isolation" or world.evolutions.size() != 6 or world.route_is_open(["boreale", "orient"]):
+	if world.phase.id != "isolation" or world.evolutions.size() != 9 or world.route_is_open(["boreale", "orient"]):
 		get_tree().quit(1)
 		return
 	toggle_pause()
@@ -351,7 +364,7 @@ func _smoke_test() -> void:
 		return
 	world.points = 100
 	for id in world.evolutions: buy_evolution(id)
-	if world.purchased.size() != 6:
+	if world.purchased.size() != 7 or world.specialization_id() != "land_network":
 		get_tree().quit(1)
 		return
 	difficulty_id = "hard"
@@ -461,7 +474,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.7", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.8", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -660,14 +673,24 @@ func show_game() -> void:
 	transport_details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	sidebar.add_child(transport_details)
 	sidebar.add_child(_label("Évolutions", 22))
+	specialization_details = _label("", 14, AMBER)
+	specialization_details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	sidebar.add_child(specialization_details)
 	for id in world.evolutions:
 		var evolution = world.evolutions[id]
-		var button = _button("", func(): buy_evolution(id), sidebar)
+		var group = VBoxContainer.new()
+		group.add_theme_constant_override("separation", 4)
+		sidebar.add_child(group)
+		var button = _button("", func(): buy_evolution(id), group)
+		button.focus_entered.connect(func(): reveal_evolution_group(group))
 		button.tooltip_text = evolution.effect
 		evolution_buttons[id] = button
-		sidebar.add_child(_label(evolution.effect, 14, MUTED))
+		var effect_label = _label(evolution.effect, 14, MUTED)
+		effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		group.add_child(effect_label)
 		var reason = _label("", 14, AMBER)
-		sidebar.add_child(reason)
+		reason.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		group.add_child(reason)
 		evolution_reasons[id] = reason
 	status_label = _label("", 16, MUTED)
 	body.add_child(status_label)
@@ -706,6 +729,9 @@ func buy_evolution(id: String) -> void:
 	_refresh()
 	if not error.is_empty():
 		status_label.text = error
+	if evolution_buttons.has(id) and evolution_buttons[id].has_focus():
+		var group = evolution_buttons[id].get_parent()
+		reveal_evolution_group(group)
 
 func toggle_pause() -> void:
 	if tutorial != null and not tutorial.can_run(): return
@@ -722,6 +748,8 @@ func _refresh() -> void:
 	if world.scenario.id != "standard":
 		region_details.text += "\nClimat local : croissance ×%.2f" % world.climate_factor(region.id)
 	transport_details.text = world.transport_summary(region.id) + " · Détail : F1 → Transports"
+	var specialization = world.specialization_id()
+	specialization_details.text = "Après Mobilité : une seule spécialisation au choix." if specialization.is_empty() else "Spécialisation : " + world.evolutions[specialization].name
 	for id in evolution_buttons:
 		var evolution = world.evolutions[id]
 		var acquired = id in world.purchased
@@ -796,6 +824,8 @@ func show_result() -> void:
 	restart.grab_focus()
 
 func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		mouse_press_active = event.pressed
 	if is_instance_valid(pending_dialog) and pending_dialog.visible: return
 	if not event is InputEventKey or not event.pressed or event.echo:
 		return

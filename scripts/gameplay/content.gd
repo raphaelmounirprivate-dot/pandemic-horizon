@@ -35,7 +35,7 @@ static func validate(source: Variant, regions: Array, connections: Array) -> Str
 		if not item.get("modifiers") is Dictionary or item.modifiers.is_empty():
 			return "Effets absents : " + item.id
 		for modifier in item.modifiers:
-			if modifier not in ["growth_bonus", "exchange_multiplier", "cure_multiplier", "cold_multiplier", "seasonal_multiplier", "climate_penalty_multiplier"]:
+			if modifier not in ["growth_bonus", "exchange_multiplier", "cure_multiplier", "cold_multiplier", "seasonal_multiplier", "climate_penalty_multiplier", "land_multiplier", "air_multiplier", "sea_multiplier"]:
 				return "Effet d'évolution inconnu : " + str(modifier)
 			var minimum = 0.0 if modifier == "growth_bonus" else 0.05
 			var maximum = 1.0 if modifier == "climate_penalty_multiplier" else 5.0
@@ -62,6 +62,22 @@ static func validate(source: Variant, regions: Array, connections: Array) -> Str
 				resolved.append(id)
 	if resolved.size() != ids.size():
 		return "Cycle dans les prérequis d'évolution."
+	for item in upgrades.evolutions:
+		var excluded = item.get("excludes", [])
+		if not excluded is Array: return "Exclusions d'évolution invalides."
+		var seen: Array = []
+		for id in excluded:
+			if not id is String or id not in ids or id == item.id or id in seen: return "Exclusion inconnue, dupliquée ou vers soi-même."
+			if not definitions[id].get("excludes", []) is Array or item.id not in definitions[id].get("excludes", []): return "Les exclusions doivent être réciproques."
+			seen.append(id)
+		var ancestors: Array = item.requires.duplicate()
+		var visited: Array = []
+		while not ancestors.is_empty():
+			var required = ancestors.pop_back()
+			if required in visited: continue
+			visited.append(required)
+			if required in excluded: return "Une évolution ne peut exclure un de ses prérequis."
+			ancestors.append_array(definitions[required].requires)
 	var events = source.get("events")
 	if not events is Dictionary or events.get("schema_version") != 1 or not events.get("events") is Array:
 		return "Version ou liste des événements invalide."

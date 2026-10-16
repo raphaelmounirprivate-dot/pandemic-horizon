@@ -18,8 +18,22 @@ func capture() -> void:
 			for suffix in ["", ".bak", ".tmp", ".bak.tmp"]:
 				if FileAccess.file_exists(scene.save_store._path(slot) + suffix): DirAccess.remove_absolute(scene.save_store._path(slot) + suffix)
 		DisplayServer.window_set_size(resolution)
-		for surface in ["menu", "saves-empty", "degel-menu", "game", "help", "transports", "isolation", "opening", "instability", "mobilization", "saves-filled", "save-confirm", "result", "menu-resume", "tutorial-1", "tutorial-2", "tutorial-3", "tutorial-4", "tutorial-5", "tutorial-6", "tutorial-saves"]:
+		for surface in ["menu", "saves-empty", "degel-menu", "game", "help", "transports", "choices", "choice-land", "choice-air", "choice-sea", "isolation", "opening", "instability", "mobilization", "saves-filled", "legacy-save", "save-confirm", "result", "menu-resume", "tutorial-1", "tutorial-2", "tutorial-3", "tutorial-4", "tutorial-5", "tutorial-6", "tutorial-saves"]:
 			match surface:
+				"choices", "choice-land", "choice-air", "choice-sea":
+					scene.start_game()
+					for i in range(45): scene.world.step()
+					scene.world.purchase("transmission")
+					scene.world.purchase("mobility")
+					var id = {"choices":"land_network", "choice-land":"land_network", "choice-air":"air_bridge", "choice-sea":"sea_logistics"}[surface]
+					if surface != "choices": scene.world.purchase(id)
+					scene._refresh()
+					await process_frame
+					await process_frame
+					scene.evolution_buttons[id].grab_focus()
+				"legacy-save":
+					scene.save_store._write(scene.save_store._path("slot2"), FileAccess.get_file_as_string("res://tests/fixtures/save-0.7-standard.json"))
+					scene.show_saves()
 				"transports":
 					scene.help_topic = 8
 					scene.show_help()

@@ -35,7 +35,7 @@ func run(check: Callable) -> void:
 	check.call(model.phase.id == "isolation" and model.phase.temperature == -18, "Phase et température initiales")
 	check.call(model.connections.size() == data.connections.size() + 1 and not model.route_is_open(["boreale", "orient"]), "Route arctique ajoutée mais fermée initialement")
 	check.call(not model.route_is_open(["boreale", "centrale"]) and model.route_is_open(["boreale", "occident"]), "Isolement conserve une seule sortie de Boréale")
-	check.call(model.evolutions.has("polar") and model.evolutions.size() == 6, "Trois évolutions spécifiques au scénario")
+	check.call(model.evolutions.has("polar") and model.evolutions.size() == 9, "Trois évolutions spécifiques au scénario et six communes")
 	model.day = 11
 	model.step()
 	check.call(model.phase.id == "opening" and model.route_is_open(["boreale", "orient"]), "Ouverture au jour 12")

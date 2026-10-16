@@ -71,6 +71,7 @@ func run() -> void:
 	check(first.regions == second.regions, "Échanges indépendants de l'ordre des connexions")
 	# Verify each upgrade changes the promised observable behavior.
 	for id in first.evolutions:
+		if id in World.SPECIALIZATIONS: continue # Dedicated suite checks each mode and its cure trade-off.
 		first.start("boreale", 10)
 		second.start("boreale", 10)
 		second.points = 100
@@ -196,5 +197,8 @@ func run() -> void:
 	var before_transports = checks
 	await load("res://tests/test_transports.gd").new().run(self, check)
 	check(checks - before_transports >= 80, "Suite transports entièrement exécutée")
+	var before_specializations = checks
+	await load("res://tests/test_specializations.gd").new().run(self, check)
+	check(checks - before_specializations >= 100, "Suite spécialisations et compatibilité entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

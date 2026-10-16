@@ -87,7 +87,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 	check.call(scene.start_choice.disabled and scene.start_id == "boreale", "Menu impose le départ de Dégel")
 	check.call("1.30" in scene.menu_difficulty_detail.text and "Difficile" in scene.menu_difficulty_detail.text, "Menu explique la difficulté")
 	await key(tree, KEY_ENTER)
-	check.call(scene.world.scenario.id == "degel2042" and scene.world.difficulty.id == "hard" and scene.evolution_buttons.size() == 6, "Lancement applique scénario et difficulté")
+	check.call(scene.world.scenario.id == "degel2042" and scene.world.difficulty.id == "hard" and scene.evolution_buttons.size() == 9, "Lancement applique scénario et difficulté")
 	scene.show_menu()
 	scene.scenario_choice.select(0)
 	scene.scenario_choice.item_selected.emit(0)

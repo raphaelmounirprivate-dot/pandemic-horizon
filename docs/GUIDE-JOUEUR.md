@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.7
+# Jouer à Pandemic Horizon 0.8
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.7.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.8.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -49,6 +49,20 @@ Le détail régional affiche les liaisons ouvertes sur leur total : T pour terre
 
 Le Standard subit des contrôles aériens du jour 40 au 47 inclus (échanges aériens ×0,6), puis des retards portuaires du 45 au 51 inclus (maritimes ×0,7). Dans Dégel, la congestion des ports réduit les échanges maritimes de moitié du 34 au 39 inclus. Un ralentissement ne rouvre jamais une route fermée. Les autres types de transport restent inchangés par cet événement.
 
+## Spécialisations de transport
+
+Après Diffusion puis Mobilité, vous pouvez choisir une seule spécialisation pour toute la partie. Ce choix est facultatif, irréversible, et ne peut être acheté qu'une fois. Les deux autres choix deviennent incompatibles, même si vous disposez de leurs points.
+
+| Choix | Coût | Avantage sur les échanges | Contrepartie sur la vitesse du remède |
+| --- | --- | --- | --- |
+| Réseau terrestre | 9 pts | Terrestres ×1,8 | ×1,08, soit +8 % |
+| Pont aérien | 10 pts | Aériens ×3 | ×1,18, soit +18 % |
+| Logistique maritime | 10 pts | Maritimes ×2,5 | ×1,12, soit +12 % |
+
+Le bonus ne touche que le transport choisi ; il ne rouvre aucune route. L'accélération du remède est permanente après achat et se multiplie avec Discrétion, la difficulté et les événements. Le coût retarde aussi les autres achats : une spécialisation peut être moins intéressante qu'un achat plus précoce de Discrétion.
+
+Le panneau droit comporte six évolutions dans Standard et neuf dans Dégel. Faire défiler ou utiliser Tab/Maj + Tab : le bouton, son effet et son état sont ramenés ensemble dans le champ visible. Lire les contreparties avant Entrée. F1 → Évolutions explique les choix ; F1 → Transports indique le coefficient courant, spécialisation comprise, hors Mobilité et bonus saisonnier.
+
 ## Détection et réactions
 
 Une région est détectée lorsque les cas actifs atteignent à la fois 500 personnes et 1,5 % de sa population. Son état apparaît dans les détails. La première détection lance la recherche du remède ; chaque région détectée renforce ensuite sa progression. Chaque région réagit une seule fois par une réduction temporaire de sa croissance locale de 20 % pendant huit jours.
@@ -94,4 +108,6 @@ Le chargement conserve régions, détections, achats, points, remède, événeme
 
 Après un remplacement réussi, le fichier `.bak` contient la version précédente. Si le fichier principal manque ou est illisible, un secours valide est chargé avec un avertissement. Il peut être plus ancien. Si les deux fichiers sont invalides, la partie en mémoire est conservée. Les versions de format, données ou moteur incompatibles sont refusées sans écrasement ; aucune migration automatique n'est proposée dans ce prototype.
 
-Les fichiers 0.7 restent locaux, dans `%APPDATA%/Godot/app_userdata/Pandemic Horizon/saves/transports-1/` pour le jeu distribué. Les anciennes sauvegardes 0.6 restent dans le dossier `saves/` et s'ouvrent avec l'exécutable 0.6 ; aucune migration n'est proposée, car les règles d'échange ont changé. Les parties 0.7 utilisent leurs propres emplacements et ne remplacent pas ces anciens fichiers. Les fichiers ne sont pas synchronisés avec GitHub. Le lancement par `dev.ps1 Play` utilise un dossier isolé sous `.tools/user/`. Les chiffres, le contenu et le rythme restent provisoires et doivent être éprouvés avec des joueurs.
+Les fichiers 0.8 et 0.7 restent locaux, dans `%APPDATA%/Godot/app_userdata/Pandemic Horizon/saves/transports-1/`. Les sauvegardes 0.7 reconnues sont signalées, chargées en pause et vérifiées avant utilisation. La lecture ne réécrit pas le fichier. Au premier enregistrement 0.8, le fichier 0.7 devient la copie de secours précédente ; les sauvegardes suivantes font tourner ce secours normalement. Les nouvelles spécialisations deviennent disponibles selon les prérequis et points de la partie reprise. Avant un nouvel achat, les règles anciennes restent identiques.
+
+Une partie enregistrée en 0.8 n'est pas compatible avec l'exécutable 0.7. Les anciennes sauvegardes 0.6 restent dans le dossier `saves/` et nécessitent leur ancien exécutable. Les versions et empreintes inconnues restent refusées, sans écrasement automatique. Les fichiers ne sont pas synchronisés avec GitHub. `dev.ps1 Play` utilise un dossier isolé sous `.tools/user/`. Le rythme et le contenu restent provisoires et doivent être éprouvés avec des joueurs.

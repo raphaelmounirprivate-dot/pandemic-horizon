@@ -6,6 +6,7 @@ const DATA_PATH = "res://data/regions.json"
 const Content = preload("res://scripts/gameplay/content.gd")
 const Scenarios = preload("res://scripts/gameplay/scenarios.gd")
 const Transports = preload("res://scripts/gameplay/transports.gd")
+const SPECIALIZATIONS = ["land_network", "air_bridge", "sea_logistics"]
 
 var regions: Array = []
 var connections: Array = []
@@ -177,6 +178,8 @@ func purchase_reason(id: String) -> String:
 		return "Évolution inconnue."
 	if id in purchased:
 		return "Évolution déjà acquise."
+	for excluded in evolutions[id].get("excludes", []):
+		if excluded in purchased: return "Incompatible : " + evolutions[excluded].name
 	for prerequisite in evolutions[id].requires:
 		if prerequisite not in purchased:
 			return "Prérequis : " + evolutions[prerequisite].name
@@ -236,8 +239,17 @@ func route_mode(edge: Array) -> String:
 
 func transport_factor(edge: Array) -> float:
 	var mode = route_mode(edge)
+	return transport_base_factor(edge) * upgrade_modifier(mode + "_multiplier")
+
+func transport_base_factor(edge: Array) -> float:
+	var mode = route_mode(edge)
 	if mode.is_empty() or not route_is_open(edge): return 0.0
 	return float(transport_profiles[mode]) * event_modifier("transport_multiplier", mode)
+
+func specialization_id() -> String:
+	for id in SPECIALIZATIONS:
+		if id in purchased: return id
+	return ""
 
 func transport_summary(region_id: String) -> String:
 	var counts = {"land": [0, 0], "air": [0, 0], "sea": [0, 0]}
@@ -360,7 +372,8 @@ func step() -> void:
 			var source = by_id[direction[0]]
 			if source.active >= 1000:
 				var seasonal = upgrade_modifier("seasonal_multiplier") if route_is_seasonal(edge) else 1.0
-				incoming[direction[1]] += maxi(1, int(source.active * 0.001 * upgrade_modifier("exchange_multiplier") * seasonal * transport_factor(edge)))
+				# Preserve the 0.7 operation order; apply the new specialization last.
+				incoming[direction[1]] += maxi(1, int(source.active * 0.001 * upgrade_modifier("exchange_multiplier") * seasonal * transport_base_factor(edge) * upgrade_modifier(route_mode(edge) + "_multiplier")))
 	for index in range(regions.size()):
 		var before = snapshot[index]
 		var region = regions[index]

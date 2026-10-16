@@ -6,7 +6,10 @@ const POLICIES = {
 	"discretion": ["discretion", "transmission", "mobility"],
 	"diffusion": ["transmission", "discretion", "mobility"],
 	"mobilite": ["transmission", "mobility", "discretion"],
-	"polaire": ["polar", "transmission", "discretion", "seasonal", "mobility", "resilience"]
+	"polaire": ["polar", "transmission", "discretion", "seasonal", "mobility", "resilience"],
+	"terrestre": ["transmission", "mobility", "land_network", "discretion"],
+	"aerien": ["transmission", "mobility", "air_bridge", "discretion"],
+	"maritime": ["transmission", "mobility", "sea_logistics", "discretion"]
 }
 
 func _initialize() -> void:

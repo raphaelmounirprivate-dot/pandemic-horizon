@@ -3,6 +3,9 @@
   "evolutions": [
     {"id": "transmission", "name": "Diffusion", "cost": 12, "requires": [], "effect": "Croissance locale : +8 points de %.", "modifiers": {"growth_bonus": 0.08}},
     {"id": "mobility", "name": "Mobilité", "cost": 10, "requires": ["transmission"], "effect": "Échanges entre régions : multipliés par 3.", "modifiers": {"exchange_multiplier": 3.0}},
-    {"id": "discretion", "name": "Discrétion", "cost": 14, "requires": [], "effect": "Progression du remède : réduite de 30 %.", "modifiers": {"cure_multiplier": 0.7}}
+    {"id": "discretion", "name": "Discrétion", "cost": 14, "requires": [], "effect": "Progression du remède : réduite de 30 %.", "modifiers": {"cure_multiplier": 0.7}},
+    {"id": "land_network", "name": "Réseau terrestre", "cost": 9, "requires": ["mobility"], "excludes": ["air_bridge", "sea_logistics"], "effect": "Terre ×1,8 ; vitesse du remède ×1,08. Choix exclusif.", "modifiers": {"land_multiplier": 1.8, "cure_multiplier": 1.08}},
+    {"id": "air_bridge", "name": "Pont aérien", "cost": 10, "requires": ["mobility"], "excludes": ["land_network", "sea_logistics"], "effect": "Air ×3 ; vitesse du remède ×1,18. Choix exclusif.", "modifiers": {"air_multiplier": 3.0, "cure_multiplier": 1.18}},
+    {"id": "sea_logistics", "name": "Logistique maritime", "cost": 10, "requires": ["mobility"], "excludes": ["land_network", "air_bridge"], "effect": "Mer ×2,5 ; vitesse du remède ×1,12. Choix exclusif.", "modifiers": {"sea_multiplier": 2.5, "cure_multiplier": 1.12}}
   ]
 }

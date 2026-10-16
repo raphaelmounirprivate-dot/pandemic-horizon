@@ -31,7 +31,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Export
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-export.ps1
 ```
 
-Résultat actuel : `build/windows-0.7.0/PandemicHorizon.exe`, ressources embarquées, accompagné du guide et des licences copiés par le script. Le dossier est calculé depuis `config/version` dans `project.godot` : `build/windows-<version>/`. Cela permet de conserver une ancienne version en cours d'exécution. Un nouvel export de la même version exige toutefois que son binaire soit fermé. L'exécutable n'est pas signé. Les exécutables, archives téléchargées et captures ne sont pas versionnés dans Git. La release GitHub 1.0 reste un jalon ultérieur.
+Résultat actuel : `build/windows-0.8.0/PandemicHorizon.exe`, ressources embarquées, accompagné du guide et des licences copiés par le script. Le dossier est calculé depuis `config/version` dans `project.godot` : `build/windows-<version>/`. Cela permet de conserver une ancienne version en cours d'exécution. Un nouvel export de la même version exige toutefois que son binaire soit fermé. L'exécutable n'est pas signé. Les exécutables, archives téléchargées et captures ne sont pas versionnés dans Git. La release GitHub 1.0 reste un jalon ultérieur.
 
 `verify-export.ps1` copie le binaire de la version courante seul vers un chemin contenant espaces et accents, vérifie le standard (prérequis, événements, victoire/défaite), Dégel (quatre phases, routes et évolutions) et les difficultés, puis son démarrage graphique. Ce contrôle nécessite une session graphique pour sa deuxième étape ; il n'utilise ni les scènes sources ni le dossier de tests.
 
@@ -49,14 +49,14 @@ En 0.6, il exécute également les six exercices, une sauvegarde/lecture d'entra
 - `tests/test_onboarding.gd` vérifie l'aide depuis plusieurs écrans, sa pause, le contexte de région/scénario, les six actions du tutoriel, les points normalement gagnés, les arrêts exacts aux jours 1/26/32, l'isolation du monde et du fichier d'origine, la sortie anticipée et le retour aux choix précédents. Un parcours entièrement au clavier injecte les événements Entrée/Tab, y compris dans la confirmation de chargement ; les états pédagogiques et le focus après chaque réussite sont contrôlés.
 - `tests/input_journey.gd` injecte des événements souris/clavier dans le viewport : clics avec test de position, refus/acceptation d'achat, Tab/Maj+Tab, Entrée, Espace, vitesses et Échap. Il teste le routage Godot ; il ne simule pas le pilote d'entrée Windows ni des gestes humains. API utilisée : [Viewport.push_input](https://docs.godotengine.org/en/stable/classes/class_viewport.html#class-viewport-method-push-input).
 - 288 parties automatisées explorent les 24 départs standards et douze graines, avec ou sans achats automatiques. Ce lot ne mesure pas la difficulté pour des joueurs humains.
-- La commande `Capture` utilise un vrai rendu graphique et produit quarante-deux captures à 1280 × 720 et 1920 × 1080 : menus Standard/Dégel et reprise, jeu Standard, quatre phases de Dégel, sauvegardes vides/remplies, confirmation, bilan, aide contextuelle, six étapes et sauvegardes du tutoriel. Elle nécessite une session graphique.
+- La commande `Capture` utilise un vrai rendu graphique et produit cinquante-deux captures à 1280 × 720 et 1920 × 1080 : menus Standard/Dégel et reprise, jeu Standard, quatre phases de Dégel, sauvegardes vides/remplies, confirmation, bilan, aide contextuelle, six étapes et sauvegardes du tutoriel, choix des spécialisations et partie 0.7 compatible. Elle nécessite une session graphique.
 - Le script `dev.ps1` signale un échec si le moteur renvoie une erreur ou si un test échoue. Le workflow GitHub exécute import et tests ; il ne publie aucun binaire.
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Capture
 ```
 
-La commande `Balance` explore séparément 909 parties, puis écrit `build/qa/balance.csv` et affiche les résultats par scénario, difficulté et politique d'achats. Ce fichier généré reste hors de Git. Le script d'exploration est exclu du jeu exporté.
+La commande `Balance` explore séparément 1 584 parties, puis écrit `build/qa/balance.csv` et affiche les résultats par scénario, difficulté et politique d'achats. Ce fichier généré reste hors de Git. Le script d'exploration est exclu du jeu exporté.
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Balance
@@ -65,6 +65,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Balance
 Voir [EQUILIBRAGE-0.4.md](EQUILIBRAGE-0.4.md) pour la méthode et les limites des résultats mesurés.
 
 Le [point 07](suivi/07-transports.md) contient les nouveaux résultats 0.7 avec les transports différenciés. Le rapport 0.4 reste un historique ; les chiffres ne sont pas interchangeables.
+
+Le [point 08](suivi/08-specialisations.md) mesure les spécialisations 0.8 sur 1 584 parties. Les trois politiques supplémentaires achètent la spécialisation avant Discrétion, ce qui modifie aussi le budget et l'ordre des achats.
 
 Les essais automatiques et les captures ne prouvent pas la facilité d'utilisation, l'équilibrage final ou le fonctionnement sur toutes les configurations Windows.
 
@@ -81,6 +83,8 @@ Les essais automatiques et les captures ne prouvent pas la facilité d'utilisati
 - `scripts/ui/help.gd` : neuf sujets en français, dont un résumé calculé à partir du monde courant ; aucun appel réseau.
 - `data/transports.json` et `scripts/gameplay/transports.gd` : profils, attribution unique de chaque liaison standard ou saisonnière, validation des références et coefficients. Les appels programmatiques avec un monde personnalisé utilisent des profils neutres, sauf si `transport_source` est fourni explicitement à `World.start` ; le jeu distribué charge toujours le fichier de transports.
 - `tests/test_transports.gd` : schémas invalides, symétrie, imports mesurés par type, fermeture prioritaire, effets cumulés et expiration, saison/Mobilité/transport combinés, reprise exacte après sauvegarde et détails d'interface. Les sauvegardes 0.7 utilisent `user://saves/transports-1`, distinct des parties 0.6.
+- `tests/test_specializations.gd` : exclusions symétriques et sans contradiction, coûts, imports, contreparties réelles de recherche, rejeu après achat, contrôle des sauvegardes et parcours Tab/Maj+Tab des neuf groupes de Dégel aux deux tailles. `tests/fixtures/` conserve quatre états générés avec le commit 0.7 pour vérifier vingt journées de reprise identique et l'absence de réécriture à la lecture. Ne pas régénérer ces références avec la version courante.
+- Le format reste 1 ; les empreintes 0.7 connues sont acceptées uniquement avec les anciens achats. La lecture reconstruit et valide le monde sans modifier le fichier ; la première écriture 0.8 garde l'original en secours. L'empreinte 0.8 normalise les fins de ligne des cinq fichiers JSON. Toute autre compatibilité doit être vérifiée avant d'étendre l'allowlist.
 - `scripts/ui/region_map.gd` : carte schématique et sélection des régions.
 - `docs/REGLES.md` : paramètres effectifs du prototype.
 - `docs/suivi/00-index.md` : point de reprise pour les prochaines sessions.

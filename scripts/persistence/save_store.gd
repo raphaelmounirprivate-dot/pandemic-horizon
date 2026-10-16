@@ -3,12 +3,15 @@ extends RefCounted
 const World = preload("res://scripts/simulation/world.gd")
 const SLOTS = ["slot1", "slot2", "slot3", "auto"]
 const MAX_BYTES = 2097152
+# Trusted 0.7 builds: shipped mixed line endings, LF and CRLF. See tests/fixtures.
+const LEGACY_07_HASHES = ["0285d7ef5812b9c4df607215fad53b9266dfff0b74cc0d661b6ccf4c6f132d19", "10c7d2193c11a8db4fcbc136af2244af17cdf7482ca893586cc3edc8f7e06d2b", "0cb9cea463f2a6883e28c3024475f26e7c7eda527db69a3074cc1c580305e829"]
+const LEGACY_07_UPGRADES = ["transmission", "mobility", "discretion", "polar", "seasonal", "resilience"]
 var directory = "user://saves/transports-1"
 
 func content_hash() -> String:
 	var text = ""
 	for path in ["regions", "evolutions", "events", "scenarios", "transports"]:
-		text += FileAccess.get_file_as_string("res://data/%s.json" % path)
+		text += FileAccess.get_file_as_string("res://data/%s.json" % path).replace("\r\n", "\n")
 	return text.sha256_text()
 
 func encode(world: RefCounted, selected: int = 0, speed: int = 1) -> Dictionary:
@@ -42,7 +45,8 @@ func decode(data: Variant) -> Dictionary:
 	if not data is Dictionary: return invalid
 	for key in ["format", "content", "engine"]:
 		if not data.has(key): return invalid
-	if data.get("format") != 1 or data.get("content") != content_hash() or data.get("engine") != Engine.get_version_info().string:
+	var legacy = data.get("content") in LEGACY_07_HASHES
+	if data.get("format") != 1 or (data.get("content") != content_hash() and not legacy) or data.get("engine") != Engine.get_version_info().string:
 		return {"error": "Sauvegarde incompatible avec cette version du jeu.", "incompatible": true}
 	for key in ["scenario", "difficulty", "start", "phase", "outcome", "selected", "saved_at", "seed", "rng"]:
 		if not data.get(key) is String or data[key].length() > 100: return invalid
@@ -77,6 +81,9 @@ func decode(data: Variant) -> Dictionary:
 	var spent = 0
 	for id in data.purchased:
 		if not world.evolutions.has(id) or id in world.purchased: return invalid
+		if legacy and id not in LEGACY_07_UPGRADES: return invalid
+		for excluded in world.evolutions[id].get("excludes", []):
+			if excluded in world.purchased: return invalid
 		for required in world.evolutions[id].requires:
 			if required not in world.purchased: return invalid
 		spent += int(world.evolutions[id].cost)
@@ -124,7 +131,9 @@ func decode(data: Variant) -> Dictionary:
 	elif world.totals().active == 0: expected = "defeat_extinction"
 	if data.outcome != expected: return invalid
 	world.outcome = expected
-	return {"error": "", "world": world, "selected": ids.find(data.selected), "speed": int(data.speed), "saved_at": data.saved_at}
+	var result = {"error": "", "world": world, "selected": ids.find(data.selected), "speed": int(data.speed), "saved_at": data.saved_at}
+	if legacy: result["warning"] = "Partie 0.7 chargée en pause ; nouvelles spécialisations disponibles."
+	return result
 
 func _path(slot: String) -> String:
 	return directory.path_join(slot + ".json")
@@ -144,7 +153,8 @@ func load_slot(slot: String) -> Dictionary:
 	if primary.error.is_empty() or primary.get("incompatible", false): return primary
 	var backup = _read(_path(slot) + ".bak")
 	if backup.error.is_empty():
-		backup["warning"] = "Copie de secours chargée ; le fichier principal est absent ou invalide."
+		backup["backup"] = true
+		backup["warning"] = "Copie de secours chargée ; le fichier principal est absent ou invalide. " + backup.get("warning", "")
 		return backup
 	return primary
 
