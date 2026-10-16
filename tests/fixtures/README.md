@@ -19,3 +19,9 @@ Leur véritable format 1 et empreinte 0.8 vérifient l'absence d'objectif rétro
 Les huit fichiers `save-0.9-*` / `future-0.9-*` ont été générés avec le code `188dc64`, avant modification du catalogue ou du moteur 0.10 : format 2, Godot 4.7.2, graine 2042, Boréale, difficulté normale et date fixe `2026-10-16T00:00:00`. Standard avec Premiers relais est figé en cours au jour 35, réussi au jour 60, échoué au jour 60 ; Dégel sans objectif est figé au jour 35. Chaque futur correspond à trente pas supplémentaires.
 
 À chaque journée, tentative du premier achat manquant dans l'ordre Diffusion, Mobilité, Discrétion, sauf le cas Standard échoué, qui ne fait aucun achat. Cet ordre continue pendant les trente journées futures. Les fichiers vérifient le suivi 0.9 conservé, l'absence de nouveau relais arctique rétroactif, la reprise exacte, la lecture sans écriture et le premier secours identique à l'original. Ne pas les régénérer avec une nouvelle version pour faire passer les tests.
+
+## Références 0.10
+
+Les huit fichiers `save-0.10-*` / `future-0.10-*` ont été générés avec le code `2505179`, avant toute modification 0.11 : format 2, empreinte `f62d5506dcce2d68eec5c590a3efaf3e7b0bf8ef4f406486451afcfd317d19db`, Godot 4.7.2, Boréale, graine 2042, difficulté normale, date fixe `2026-10-16T00:00:00`. Dégel avec Relais arctiques est figé en cours au J35, réussi au J55, échoué au J55 ; Standard sans objectif est figé au J35. Chaque futur correspond à trente pas supplémentaires.
+
+Avant chaque pas, tentative du premier achat manquant Diffusion → Mobilité → Discrétion, sauf `arctic-failed` sans achat. La même politique continue pendant les trente jours futurs. Les tests vérifient l'absence de décision rétroactive, le suivi d'objectif conservé, la continuation exacte, la lecture sans écriture et le premier secours strictement identique au texte original. Ne pas régénérer ces références pour contourner une régression.

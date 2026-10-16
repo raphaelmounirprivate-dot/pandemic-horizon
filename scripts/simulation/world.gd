@@ -8,6 +8,8 @@ const Scenarios = preload("res://scripts/gameplay/scenarios.gd")
 const Transports = preload("res://scripts/gameplay/transports.gd")
 const SPECIALIZATIONS = ["land_network", "air_bridge", "sea_logistics"]
 const Objectives = preload("res://scripts/gameplay/objectives.gd")
+const Decisions = preload("res://scripts/gameplay/decisions.gd")
+var decision: Dictionary = {}
 var objective: Dictionary = {}
 
 var regions: Array = []
@@ -80,7 +82,10 @@ static func validate_data(data: Variant) -> String:
 		edges.append(pair)
 	return ""
 
-func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null, transport_source: Variant = null, objective_id: String = "") -> String:
+func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null, transport_source: Variant = null, objective_id: String = "", decision_enabled: bool = false) -> String:
+	if decision_enabled:
+		var item = Decisions.definition()
+		if item.is_empty() or item.scenario != scenario_id: return "Décision indisponible pour ce scénario."
 	if not objective_id.is_empty():
 		var item = Objectives.definition(objective_id)
 		if item.is_empty() or item.scenario != scenario_id: return "Objectif facultatif indisponible pour ce scénario."
@@ -113,6 +118,11 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 		if item.id == difficulty_id: chosen_difficulty = item
 	if chosen_scenario.is_empty() or chosen_difficulty.is_empty():
 		return "Scénario ou difficulté inconnu."
+	if decision_enabled:
+		var valid_phase = false
+		for candidate in chosen_scenario.phases:
+			if candidate.id == Decisions.definition().phase and candidate.start_day == Decisions.definition().start_day: valid_phase = true
+		if not valid_phase: return "Phase de décision incompatible."
 	if not objective_id.is_empty():
 		error = Objectives.validate_context(Objectives.definition(objective_id),chosen_scenario,Scenarios.gameplay_for(gameplay,chosen_scenario).events.events)
 		if not error.is_empty(): return error
@@ -147,6 +157,7 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	purchased.clear()
 	journal.clear()
 	objective = Objectives.initial(objective_id)
+	decision = Decisions.initial(decision_enabled)
 	rng.seed = seed_value
 	for region in regions:
 		region["active"] = 200 if region.id == start_id else 0
@@ -303,7 +314,7 @@ func event_modifier(kind: String, target: String = "global") -> float:
 	for effect in active_events:
 		if effect.kind == kind and effect.target == target:
 			factor *= effect.factor
-	return factor
+	return factor * Decisions.modifier(self,kind,target)
 
 func effect_description(effect: Dictionary) -> String:
 	match effect.kind:
@@ -360,6 +371,7 @@ func active_event_lines() -> Array[String]:
 	var lines: Array[String] = []
 	for effect in active_events:
 		lines.append("%s · %s · %d j restants" % [effect.name, effect_description(effect), effect.end_day - day])
+	if decision.get("status") in ["pending","active"]: lines.append(Decisions.summary(self))
 	return lines
 
 func step() -> void:
@@ -367,6 +379,7 @@ func step() -> void:
 		return
 	day += 1
 	_update_scenario()
+	Decisions.update(self)
 	_update_events_and_detection()
 	var incoming: Dictionary = {}
 	var snapshot = regions.duplicate(true)
@@ -405,6 +418,7 @@ func step() -> void:
 		points += 3
 	resolve_outcome()
 	Objectives.update(self)
+	Decisions.update(self)
 
 func resolve_outcome() -> void:
 	if cure >= 100.0:

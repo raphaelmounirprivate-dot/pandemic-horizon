@@ -8,11 +8,12 @@ const LEGACY_07_HASHES = ["0285d7ef5812b9c4df607215fad53b9266dfff0b74cc0d661b6cc
 const LEGACY_07_UPGRADES = ["transmission", "mobility", "discretion", "polar", "seasonal", "resilience"]
 const LEGACY_08_HASH = "7030c81500cac55fcb5656cc286cf0f965a559f3c4f8e0cee8df54b9cfd67b19"
 const LEGACY_09_HASH = "ae93560e93e6e89e97c7efb0d0ed393f0338bfb3127088cf58fb4c06197655a9"
+const LEGACY_10_HASH = "f62d5506dcce2d68eec5c590a3efaf3e7b0bf8ef4f406486451afcfd317d19db"
 var directory = "user://saves/transports-1"
 
 func content_hash() -> String:
 	var text = ""
-	for path in ["regions", "evolutions", "events", "scenarios", "transports", "objectives"]:
+	for path in ["regions", "evolutions", "events", "scenarios", "transports", "objectives", "decisions"]:
 		text += FileAccess.get_file_as_string("res://data/%s.json" % path).replace("\r\n", "\n")
 	return text.sha256_text()
 
@@ -24,11 +25,11 @@ func encode(world: RefCounted, selected: int = 0, speed: int = 1) -> Dictionary:
 	var effects: Array = []
 	for effect in world.active_events:
 		effects.append({"id": effect.id, "start_day": effect.start_day, "end_day": effect.end_day})
-	return {"format": 2, "content": content_hash(), "engine": Engine.get_version_info().string,
+	return {"format": 3, "content": content_hash(), "engine": Engine.get_version_info().string,
 		"saved_at": Time.get_datetime_string_from_system(), "scenario": world.scenario.id,
 		"difficulty": world.difficulty.id, "start": world.start_region_id,
 		"day": world.day, "points": world.points, "cure": PackedFloat64Array([world.cure]).to_byte_array().hex_encode(), "outcome": world.outcome,
-		"regions": states, "purchased": world.purchased.duplicate(), "journal": world.journal.duplicate(), "objective":world.objective.duplicate(true),
+		"regions": states, "purchased": world.purchased.duplicate(), "journal": world.journal.duplicate(), "objective":world.objective.duplicate(true), "decision":world.decision.duplicate(true),
 		"events": effects, "activated": world.activated_events.duplicate(), "phase": world.phase.id,
 		"seed": str(world.rng.seed), "rng": str(world.rng.state),
 		"selected": world.regions[clampi(selected, 0, world.regions.size() - 1)].id, "speed": speed}
@@ -50,9 +51,11 @@ func decode(data: Variant) -> Dictionary:
 	var legacy = data.get("content") in LEGACY_07_HASHES
 	var old_format = data.get("format") == 1 and (legacy or data.get("content") == LEGACY_08_HASH)
 	var legacy09 = data.get("format") == 2 and data.get("content") == LEGACY_09_HASH
-	var current_format = data.get("format") == 2 and (data.get("content") == content_hash() or legacy09)
-	if (not old_format and not current_format) or data.get("engine") != Engine.get_version_info().string:
+	var legacy10 = data.get("format") == 2 and data.get("content") == LEGACY_10_HASH
+	var current_format = data.get("format") == 3 and data.get("content") == content_hash()
+	if (not old_format and not current_format and not legacy09 and not legacy10) or data.get("engine") != Engine.get_version_info().string:
 		return {"error": "Sauvegarde incompatible avec cette version du jeu.", "incompatible": true}
+	if not current_format and data.has("decision"): return invalid
 	if old_format and data.has("objective"): return invalid
 	if legacy09 and (not data.get("objective") is Dictionary or data.objective.get("id","") not in ["","first_relays"]): return invalid
 	for key in ["scenario", "difficulty", "start", "phase", "outcome", "selected", "saved_at", "seed", "rng"]:
@@ -95,7 +98,6 @@ func decode(data: Variant) -> Dictionary:
 			if required not in world.purchased: return invalid
 		spent += int(world.evolutions[id].cost)
 		world.purchased.append(id)
-	if int(data.points) != 8 + int(data.day / 5) * 3 - spent: return invalid
 	world.day = int(data.day)
 	world.points = int(data.points)
 	world.cure = cure_value
@@ -138,7 +140,7 @@ func decode(data: Variant) -> Dictionary:
 	elif world.totals().active == 0: expected = "defeat_extinction"
 	if data.outcome != expected: return invalid
 	world.outcome = expected
-	if current_format:
+	if current_format or legacy09 or legacy10:
 		if not World.Objectives.valid_state(data.get("objective"), world): return invalid
 		world.objective = data.objective.duplicate(true)
 		if not world.objective.is_empty():
@@ -146,10 +148,18 @@ func decode(data: Variant) -> Dictionary:
 			world.objective.resolved_day = int(world.objective.resolved_day)
 			if world.objective.has("routes"):
 				for target in world.objective.routes: world.objective.routes[target] = int(world.objective.routes[target])
+	if current_format:
+		if not World.Decisions.valid_state(data.get("decision"),world): return invalid
+		world.decision = data.decision.duplicate(true)
+		if not world.decision.is_empty():
+			world.decision.day = int(world.decision.day)
+			if not world.decision.choice.is_empty(): spent += int(World.Decisions.option(world.decision.choice).cost)
+	if int(data.points) != 8 + int(data.day / 5) * 3 - spent: return invalid
 	var result = {"error": "", "world": world, "selected": ids.find(data.selected), "speed": int(data.speed), "saved_at": data.saved_at}
 	if legacy: result["warning"] = "Partie 0.7 chargée en pause ; nouvelles spécialisations disponibles."
 	elif old_format: result["warning"] = "Partie 0.8 chargée en pause, sans objectif facultatif."
 	elif legacy09: result["warning"] = "Partie 0.9 chargée en pause ; objectif facultatif conservé."
+	elif legacy10: result["warning"] = "Partie 0.10 chargée en pause, sans nouvel événement à choix."
 	return result
 
 func _path(slot: String) -> String:

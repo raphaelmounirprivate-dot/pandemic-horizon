@@ -23,6 +23,10 @@ var objective_id: String = ""
 var objective_choice: CheckButton
 var menu_objective_detail: Label
 var objective_details: Label
+var decision_enabled = false
+var decision_choice: CheckButton
+var decision_buttons: Dictionary = {}
+var decision_notice: Label
 var scenario_choice: OptionButton
 var difficulty_choice: OptionButton
 var start_choice: OptionButton
@@ -92,6 +96,7 @@ func close_help() -> void:
 func _return_to(target: String) -> void:
 	match target:
 		"game": show_game()
+		"decision": show_decision()
 		"result": show_result()
 		"saves": show_saves()
 		"settings": show_settings()
@@ -101,7 +106,7 @@ func start_tutorial() -> void:
 	if tutorial != null: return
 	tutorial_session = {"world": world, "selected": selected, "speed": speed, "save_store": save_store,
 		"save_notice": save_notice, "saves_return": saves_return, "screen": screen,
-		"start_id": start_id, "scenario_id": scenario_id, "difficulty_id": difficulty_id, "objective_id":objective_id}
+		"start_id": start_id, "scenario_id": scenario_id, "difficulty_id": difficulty_id, "objective_id":objective_id,"decision_enabled":decision_enabled}
 	world = World.new()
 	var error = world.start("boreale")
 	if not error.is_empty():
@@ -137,6 +142,7 @@ func _restore_tutorial_session() -> String:
 	scenario_id = tutorial_session.scenario_id
 	difficulty_id = tutorial_session.difficulty_id
 	objective_id = tutorial_session.objective_id
+	decision_enabled = tutorial_session.decision_enabled
 	tutorial = null
 	tutorial_session.clear()
 	paused = true
@@ -240,6 +246,7 @@ func load_saved(slot: String) -> void:
 	scenario_id = world.scenario.id
 	difficulty_id = world.difficulty.id
 	if tutorial == null: objective_id = world.objective.get("id", "")
+	if tutorial == null: decision_enabled = not world.decision.is_empty()
 	paused = true
 	elapsed = 0.0
 	save_notice = result.get("warning", "Partie chargée en pause.")
@@ -250,7 +257,7 @@ func show_saves() -> void:
 	paused = true
 	elapsed = 0.0
 	screen = "saves"
-	_reset_screen("Sauvegardes d'entraînement" if tutorial != null else "Sauvegardes", "Fichiers d'essai séparés : aucune sauvegarde du joueur n'est modifiée." if tutorial != null else "Sauvegardes 0.10 · Parties 0.7 à 0.9 compatibles · Objectifs 0.9 conservés.")
+	_reset_screen("Sauvegardes d'entraînement" if tutorial != null else "Sauvegardes", "Fichiers d'essai séparés : aucune sauvegarde du joueur n'est modifiée." if tutorial != null else "Sauvegardes 0.11 · Parties 0.7 à 0.10 compatibles, sans nouvel événement rétroactif.")
 	body.add_child(_label("Enregistrez dans un emplacement manuel, puis chargez-le pour terminer l'exercice." if tutorial != null else "Le chargement remplace la partie en mémoire et reprend en pause.\nL'automatique est actualisée tous les 10 jours, au menu et à la fermeture.", 18, MUTED))
 	var scroll = ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -466,7 +473,20 @@ func _smoke_test() -> void:
 	if optional_world.objective.status != "completed" or not optional_loaded.error.is_empty() or optional_loaded.world.objective != optional_world.objective:
 		get_tree().quit(1)
 		return
-	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, persistence replay, six tutorial lessons, contextual help, optional objectives and arctic flows, restart, settings, menu")
+	optional_world.start("boreale",2042,null,null,"degel2042","normal",null,null,"",true)
+	for i in range(28): optional_world.step()
+	if not World.Decisions.choose(optional_world,"support").is_empty():
+		get_tree().quit(1)
+		return
+	optional_loaded = smoke_store.decode(smoke_store.encode(optional_world))
+	if not optional_loaded.error.is_empty() or optional_loaded.world.points != 17:
+		get_tree().quit(1)
+		return
+	for i in range(13): optional_loaded.world.step()
+	if optional_loaded.world.decision.status != "expired":
+		get_tree().quit(1)
+		return
+	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, persistence replay, six tutorial lessons, contextual help, optional objectives and arctic flows, logistics decision cost/replay/expiration, restart, settings, menu")
 	get_tree().quit()
 
 func _apply_theme() -> void:
@@ -510,7 +530,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.10", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.11", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -557,7 +577,17 @@ func show_menu() -> void:
 	objective_choice.custom_minimum_size.y = 44
 	objective_choice.button_pressed = not objective_id.is_empty()
 	objective_choice.toggled.connect(func(enabled): objective_id = World.Objectives.for_scenario(scenario_id).get("id","") if enabled else "")
-	presentation.add_child(objective_choice)
+	var optional_choices = HBoxContainer.new()
+	presentation.add_child(optional_choices)
+	objective_choice.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	optional_choices.add_child(objective_choice)
+	decision_choice = CheckButton.new()
+	decision_choice.text = "Décision logistique (J28)"
+	decision_choice.custom_minimum_size.y = 44
+	decision_choice.button_pressed = decision_enabled
+	decision_choice.tooltip_text = "Événement facultatif Dégel : options, coûts et effets présentés au jour 28."
+	decision_choice.toggled.connect(func(enabled): decision_enabled = enabled)
+	optional_choices.add_child(decision_choice)
 	menu_objective_detail = _label("", 16, MUTED)
 	menu_objective_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	presentation.add_child(menu_objective_detail)
@@ -625,6 +655,9 @@ func show_menu() -> void:
 	launch.grab_focus()
 
 func _update_menu_choices(catalog: Dictionary) -> void:
+	decision_choice.visible = scenario_id == "degel2042"
+	if scenario_id != "degel2042": decision_enabled = false
+	decision_choice.set_pressed_no_signal(decision_enabled)
 	var optional = World.Objectives.for_scenario(scenario_id)
 	objective_choice.disabled = optional.is_empty()
 	objective_choice.text = "Objectif facultatif : " + optional.get("name","indisponible")
@@ -667,7 +700,7 @@ func show_settings() -> void:
 	fullscreen.grab_focus()
 
 func start_game() -> void:
-	var error = world.start(start_id, 2042, null, null, scenario_id, difficulty_id, null, null, objective_id)
+	var error = world.start(start_id, 2042, null, null, scenario_id, difficulty_id, null, null, objective_id,decision_enabled)
 	if not error.is_empty():
 		show_menu()
 		body.add_child(_label("Impossible de démarrer : " + error))
@@ -686,6 +719,7 @@ func restart_game() -> void:
 	difficulty_id = world.difficulty.id
 	start_id = world.start_region_id
 	objective_id = world.objective.get("id", "")
+	decision_enabled = not world.decision.is_empty()
 	start_game()
 
 func show_game() -> void:
@@ -767,6 +801,7 @@ func show_game() -> void:
 		_button("Recommencer", restart_game, controls)
 		_button("Menu", show_menu, controls)
 		_button("Sauvegardes", open_saves, controls)
+		if not world.decision.is_empty(): _button("Décision [F2]",show_decision,controls)
 	else:
 		if tutorial.stage == 5: initial_focus = _button("Sauvegardes d'essai", open_saves, controls)
 		tutorial_next = _button("Terminer" if tutorial.stage == 5 else "Continuer", next_lesson, controls)
@@ -789,6 +824,41 @@ func buy_evolution(id: String) -> void:
 	if evolution_buttons.has(id) and evolution_buttons[id].has_focus():
 		var group = evolution_buttons[id].get_parent()
 		reveal_evolution_group(group)
+
+func show_decision() -> void:
+	if tutorial != null or world.decision.is_empty(): return
+	screen = "decision"
+	paused = true
+	elapsed = 0.0
+	_reset_screen("Logistique sous tension",World.Decisions.summary(world))
+	decision_buttons.clear()
+	var info = _label("Jour %d · %d points disponibles\nUn seul choix, irréversible. Les effets commencent le lendemain et se combinent avec les événements ; une route fermée le reste." % [world.day,world.points],18,MUTED)
+	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.add_child(info)
+	if World.Decisions.pending(world):
+		for choice in World.Decisions.definition().choices:
+			var id = choice.id
+			decision_buttons[id] = _button("%s · %d pts" % [choice.name,choice.cost],func():
+				var error = World.Decisions.choose(world,id)
+				if error.is_empty():
+					autosave()
+					show_game()
+				else: decision_notice.text = error
+			,body)
+			var detail = _label(choice.description,18,MUTED)
+			detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			body.add_child(detail)
+			var reason = World.Decisions.reason(world,id)
+			if not reason.is_empty(): body.add_child(_label(reason,16,AMBER))
+		body.add_child(_label("Sans décision avant le jour 31 : maintien de la situation, sans coût ni effet supplémentaire.",16,AMBER))
+	decision_notice = _label("",16,AMBER)
+	body.add_child(decision_notice)
+	var space = Control.new()
+	space.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	body.add_child(space)
+	var back = _button("Revenir à la partie en pause",show_game,body)
+	_button("Aide [F1]",open_help,body)
+	back.grab_focus()
 
 func toggle_pause() -> void:
 	if tutorial != null and not tutorial.can_run(): return
@@ -863,6 +933,9 @@ func advance_time(delta: float) -> void:
 			paused = true
 			show_result()
 			return
+		if World.Decisions.pending(world) and world.day == World.Decisions.definition().start_day:
+			show_decision()
+			return
 	_refresh()
 
 func show_result() -> void:
@@ -875,6 +948,7 @@ func show_result() -> void:
 		var optional = _label("Objectif facultatif · " + World.Objectives.summary(world), 16, MUTED)
 		optional.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		body.add_child(optional)
+	if not world.decision.is_empty(): body.add_child(_label(World.Decisions.summary(world),16,MUTED))
 	var log = RichTextLabel.new()
 	log.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	log.text = "\n".join(world.journal)
@@ -894,11 +968,15 @@ func _input(event: InputEvent) -> void:
 	if event.keycode == KEY_ESCAPE:
 		if screen == "help": close_help()
 		elif screen == "saves": close_saves()
+		elif screen == "decision": show_game()
 		elif tutorial != null: finish_tutorial()
 		else: show_menu()
 		get_viewport().set_input_as_handled()
 	elif event.keycode == KEY_F1:
 		open_help()
+		get_viewport().set_input_as_handled()
+	elif event.keycode == KEY_F2 and screen == "game" and not world.decision.is_empty():
+		show_decision()
 		get_viewport().set_input_as_handled()
 	elif screen == "game":
 		if event.keycode == KEY_SPACE:

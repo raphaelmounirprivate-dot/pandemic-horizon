@@ -1,6 +1,6 @@
 extends RefCounted
 const Objectives = preload("res://scripts/gameplay/objectives.gd")
-const TITLES = ["Situation actuelle", "Temps et commandes", "Régions et objectif", "Évolutions et prérequis", "Détection et remède", "Événements et routes", "Sauvegardes", "Dégel 2042", "Transports"]
+const TITLES = ["Situation actuelle", "Temps et commandes", "Régions et objectif", "Évolutions et prérequis", "Détection et remède", "Événements et routes", "Sauvegardes", "Dégel 2042", "Transports", "Décision logistique"]
 
 static func text_for(topic: int, world: RefCounted, selected: int, training_stage: int = -1) -> String:
 	match topic:
@@ -19,6 +19,7 @@ static func text_for(topic: int, world: RefCounted, selected: int, training_stag
 			lines.append("Événements actifs")
 			lines.append("Aucun effet temporaire." if world.active_events.is_empty() else "\n".join(world.active_event_lines()))
 			lines.append(Objectives.summary(world))
+			if not world.decision.is_empty(): lines.append(world.Decisions.summary(world))
 			return "\n\n".join(lines)
 		1: return "Espace : pause ou reprise. 1, 2, 4 : vitesse. Une journée dure une demi-seconde à ×1.\n\nF1 : ouvrir ou fermer cette aide. Échap : fermer l'aide, revenir depuis Sauvegardes, ou rejoindre le menu depuis la partie. Tout retour à la partie se fait en pause.\n\nTab et Maj + Tab : parcourir les contrôles. Entrée : activer le contrôle sélectionné. Les panneaux défilants suivent le focus."
 		2: return "Sélectionnez une région pour voir les sains, actifs et retirés. Retirés signifie sortis de l'état actif.\n\nLe cumul touché additionne actifs et retirés ; une personne n'est comptée qu'une fois. Les barres de la carte montrent cette proportion par région.\n\nVictoire : 90 % de population touchée. Défaite : remède à 100 %, ou plus aucun actif avant l'objectif. Si plusieurs fins coïncident, le remède est prioritaire.\n\nPremiers relais est facultatif, à activer avant une nouvelle partie Standard : trois régions à 10 % touchés, au plus tard à la fin du jour 50. Le suivi se fige à la réussite, à l'échéance ou à la fin de partie. Aucun point ni bonus de score ; réussite facultative et victoire principale sont indépendantes. Les anciennes parties n'en reçoivent pas rétroactivement.\n\nDans Dégel, Relais arctiques compte les échanges sortants de Boréale vers Orient à partir du jour 36 et Centrale à partir du jour 39 : 1 000 unités sur chaque route avant la fin du jour 54. Ces unités abstraites sont les échanges calculés par les routes ouvertes, même vers une région déjà touchée ; elles ne comptent pas des personnes transportées. Les tempêtes et inspections restent prioritaires. Les compteurs sont plafonnés et figés après résolution, sans bonus."
@@ -31,4 +32,5 @@ static func text_for(topic: int, world: RefCounted, selected: int, training_stag
 			var intro = "T : terrestre, trait plein, coefficient ×1. A : aérien, tirets, ×1,2. M : maritime, points, ×0,8. Les croix ambre signalent les fermetures.\n\nLe coefficient de transport inclut la spécialisation choisie et les effets temporaires du même type. Il se multiplie ensuite avec Mobilité et les bonus saisonniers. Une route fermée ne laisse passer aucun échange. Les facteurs sont des paramètres fictifs du jeu."
 			if world.regions.is_empty(): return intro
 			return intro + "\n\nLiaisons de " + world.regions[selected].name + " (coefficient transport, hors Mobilité et bonus saisonnier)\n\n" + "\n\n".join(world.transport_lines(world.regions[selected].id))
+		9: return "Activez Décision logistique (J28) avant une nouvelle partie Dégel. Elle est désactivée par défaut et absente des anciennes sauvegardes.\n\nAu jour 28, la partie s'arrête en pause sur les choix. Soutenir les ports coûte 6 points : mer ×1,50 et remède ×1,15. Limiter les échanges est gratuit : mer ×0,65 et remède ×0,85. Maintenir la situation est gratuit, sans effet supplémentaire.\n\nChaque effet dure douze journées à partir du lendemain du choix. Au J28, il s'applique du J29 au J40 inclus. Les facteurs se multiplient avec les autres effets ; les routes fermées restent fermées.\n\nUn seul choix est possible. Vous pouvez revenir en pause sans décider, puis rouvrir avec F2. Le choix reste disponible jusqu'au J30 inclus ; au J31, le maintien neutre est automatique. Sauvegarder conserve les points, le choix et son expiration."
 	return ""

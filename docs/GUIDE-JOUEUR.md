@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.10
+# Jouer à Pandemic Horizon 0.11
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.10.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.11.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -15,6 +15,7 @@ La carte schématique présente 24 régions fictives, organisées en quatre rang
 | Espace | Pause / reprise pendant la partie |
 | 1, 2, 4 | Choisir la vitesse |
 | F1 | Ouvrir ou fermer l'aide, en pause |
+| F2 | Ouvrir la décision logistique activée dans Dégel, en pause |
 | Échap | Menu et pause de la partie |
 | Tab / Maj + Tab | Parcourir les contrôles |
 | Entrée | Activer le contrôle sélectionné |
@@ -124,6 +125,20 @@ Le chargement conserve régions, détections, achats, points, remède, événeme
 
 Après un remplacement réussi, le fichier `.bak` contient la version précédente. Si le fichier principal manque ou est illisible, un secours valide est chargé avec un avertissement. Il peut être plus ancien. Si les deux fichiers sont invalides, la partie en mémoire est conservée. Les versions de format, données ou moteur incompatibles sont refusées sans écrasement ; aucune migration automatique n'est proposée dans ce prototype.
 
-Les fichiers 0.7 à 0.10 restent locaux, dans `%APPDATA%/Godot/app_userdata/Pandemic Horizon/saves/transports-1/`. Les sauvegardes reconnues sont signalées, chargées en pause et vérifiées avant utilisation. Les parties 0.7/0.8 restent sans objectif ; les parties 0.9 conservent leur suivi de Premiers relais ou l'absence d'objectif dans Dégel. Relais arctiques n'est jamais ajouté rétroactivement. La lecture ne réécrit pas le fichier. Au premier enregistrement 0.10, le fichier ancien devient la copie de secours précédente ; les sauvegardes suivantes font tourner ce secours normalement. Les règles de propagation et le remède restent identiques.
+Les fichiers 0.7 à 0.10 restent locaux, dans `%APPDATA%/Godot/app_userdata/Pandemic Horizon/saves/transports-1/`. Les sauvegardes reconnues sont signalées, chargées en pause et vérifiées avant utilisation. Les parties 0.7/0.8 restent sans objectif ; les parties 0.9 conservent leur suivi de Premiers relais ou l'absence d'objectif dans Dégel. Relais arctiques n'est jamais ajouté rétroactivement. La lecture ne réécrit pas le fichier. Au premier enregistrement 0.11, le fichier ancien devient la copie de secours précédente ; les sauvegardes suivantes font tourner ce secours normalement. Les règles de propagation et le remède restent identiques.
 
-Une partie enregistrée en 0.10 utilise toujours le format 2, avec une nouvelle empreinte de contenu ; elle n'est pas compatible avec les exécutables 0.7 à 0.9. Les anciennes sauvegardes 0.6 restent dans le dossier `saves/` et nécessitent leur ancien exécutable. Les versions et empreintes inconnues restent refusées, sans écrasement automatique. Les fichiers ne sont pas synchronisés avec GitHub. `dev.ps1 Play` utilise un dossier isolé sous `.tools/user/`. Le rythme et le contenu restent provisoires et doivent être éprouvés avec des joueurs.
+Une partie enregistrée en 0.11 utilise le format 3 et n'est pas compatible avec les anciens exécutables. Les sauvegardes reconnues 0.10 conservent leur objectif et ne reçoivent aucune décision logistique rétroactive. Le premier enregistrement 0.11 conserve le texte ancien en secours ; la lecture seule ne le modifie pas. Les anciennes sauvegardes 0.6 restent dans le dossier `saves/` et nécessitent leur ancien exécutable. Les versions et empreintes inconnues restent refusées, sans écrasement automatique. Les fichiers ne sont pas synchronisés avec GitHub. `dev.ps1 Play` utilise un dossier isolé sous `.tools/user/`. Le rythme et le contenu restent provisoires et doivent être éprouvés avec des joueurs.
+
+## Décision logistique facultative dans Dégel
+
+Avant une nouvelle partie Dégel, activer « Décision logistique (J28) ». Au jour 28, le jeu s'arrête en pause et présente trois options :
+
+| Option | Coût | Mer | Vitesse du remède | Durée |
+| --- | --- | --- | --- | --- |
+| Soutenir les ports | 6 points | ×1,50 | ×1,15 | 12 journées |
+| Limiter les échanges | Gratuit | ×0,65 | ×0,85 | 12 journées |
+| Maintenir la situation | Gratuit | Aucun ajout | Aucun ajout | Sans effet |
+
+Un seul choix est possible, sans annulation. Les points insuffisants sont expliqués avant et après une tentative. Les effets commencent le lendemain : choix au J28 → effets du J29 au J40 inclus, expiration au J41. Les multiplicateurs se combinent avec les autres effets ; une route fermée reste fermée. Le choix ne change directement ni le score ni le statut des objectifs facultatifs.
+
+« Revenir à la partie en pause » permet de réfléchir ou de sauvegarder sans décider. F2 rouvre l'écran. On peut choisir au J28, J29 ou J30 ; au J31, le maintien neutre est automatique et gratuit. Une partie terminée avant décision annule ou clôt le choix sans coût. Les sauvegardes conservent le choix, les points et la date de fin. L'aide F1 propose le sujet « Décision logistique ».
