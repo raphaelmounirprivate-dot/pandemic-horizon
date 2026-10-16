@@ -200,5 +200,8 @@ func run() -> void:
 	var before_specializations = checks
 	await load("res://tests/test_specializations.gd").new().run(self, check)
 	check(checks - before_specializations >= 100, "Suite spécialisations et compatibilité entièrement exécutée")
+	var before_comparison = checks
+	load("res://tests/test_strategy_comparison.gd").new().run(check)
+	check(checks - before_comparison >= 40, "Suite comparaison des stratégies entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

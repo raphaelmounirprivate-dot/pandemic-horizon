@@ -56,7 +56,11 @@ En 0.6, il exécute également les six exercices, une sauvegarde/lecture d'entra
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Capture
 ```
 
-La commande `Balance` explore séparément 1 584 parties, puis écrit `build/qa/balance.csv` et affiche les résultats par scénario, difficulté et politique d'achats. Ce fichier généré reste hors de Git. Le script d'exploration est exclu du jeu exporté.
+La commande `Balance` explore séparément 2 259 parties, puis écrit `build/qa/balance.csv` et `build/qa/balance-comparison.md`. Ces fichiers générés restent hors de Git. Le script d'exploration et son module `scripts/analysis/` sont exclus du jeu exporté.
+
+Le CSV conserve les neuf colonnes historiques et ajoute `purchases_json` : identifiant, jour, points avant/après de chaque achat réel. Une seule tentative du premier achat manquant est faite avant chaque journée ; aucun point n'est ajouté artificiellement. Une politique inconnue, répétée, incompatible ou sans ses prérequis est refusée ; une partie sans résultat à la limite est une erreur, pas une défaite.
+
+Le rapport compare 675 paires à scénario, difficulté, départ et graine identiques : spécialisation avant Discrétion, ou Discrétion avant spécialisation, toujours après Diffusion puis Mobilité. Il distingue les victoires propres à chaque ordre, les deux victoires, les deux défaites et les spécialisations effectivement acquises. La durée moyenne comparée porte uniquement sur les doubles victoires. Une paire incomplète ou dupliquée est refusée. La synthèse et le détail par départ utilisent les mêmes observations.
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Balance
@@ -67,6 +71,8 @@ Voir [EQUILIBRAGE-0.4.md](EQUILIBRAGE-0.4.md) pour la méthode et les limites de
 Le [point 07](suivi/07-transports.md) contient les nouveaux résultats 0.7 avec les transports différenciés. Le rapport 0.4 reste un historique ; les chiffres ne sont pas interchangeables.
 
 Le [point 08](suivi/08-specialisations.md) mesure les spécialisations 0.8 sur 1 584 parties. Les trois politiques supplémentaires achètent la spécialisation avant Discrétion, ce qui modifie aussi le budget et l'ordre des achats.
+
+Le [point 09](suivi/09-ordres-achats.md) et le [rapport apparié](EQUILIBRAGE-0.8-ORDRES.md) comparent les deux ordres sans modifier les règles 0.8. `tests/test_strategy_comparison.gd` vérifie la conservation des résultats de l'ancienne boucle, la trace des achats, le rejeu, les appariements et les calculs du rapport.
 
 Les essais automatiques et les captures ne prouvent pas la facilité d'utilisation, l'équilibrage final ou le fonctionnement sur toutes les configurations Windows.
 

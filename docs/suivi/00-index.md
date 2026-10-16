@@ -10,7 +10,8 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 - [Point 05 — J5 sauvegardes](05-j5-sauvegardes.md) : historique du prototype 0.5.
 - [Point 06 — J5 tutoriel et aide](06-j5-tutoriel-aide.md) : historique du prototype 0.6.
 - [Point 07 — Transports](07-transports.md) : historique du prototype 0.7.
-- [Point 08 — Spécialisations](08-specialisations.md) : état actuel du prototype 0.8, compatibilité 0.7 et exploration d'équilibrage.
+- [Point 08 — Spécialisations](08-specialisations.md) : prototype 0.8, compatibilité 0.7 et première exploration d'équilibrage.
+- [Point 09 — Ordres d'achat](09-ordres-achats.md) : comparaison appariée des stratégies et traces d'achats ; règles du jeu toujours en 0.8.
 - [Règles effectives](../REGLES.md) : paramètres du code actuel.
 - [Développement](../DEVELOPPEMENT.md) : préparation, tests et export.
 - [Guide joueur](../GUIDE-JOUEUR.md) : parcours et limites.
@@ -19,7 +20,7 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 
 1. Compléter l'essai physique souris/clavier, plein écran et défilement du journal ; organiser un essai sur un autre PC Windows. Le parcours synthétique Godot est testé.
 2. Éprouver le tutoriel et l'aide contextuelle auprès de joueurs débutants. Les fonctionnalités de J5 sont implémentées : sauvegardes en 0.5, tutoriel facultatif et aide F1 en 0.6 ; la compréhension et le confort réels restent à valider.
-3. Éprouver les spécialisations livrées en 0.8, puis enrichir les décisions et événements. Les politiques avec spécialisation avant Discrétion ont davantage de défaites en difficile ; mesurer les autres ordres d'achat avant d'ajuster. Conserver les références de compatibilité 0.7 lors des prochaines modifications.
+3. Éprouver les spécialisations livrées en 0.8, puis enrichir les décisions et événements. Le lot 09 compare les deux ordres : Discrétion avant spécialisation réduit les défaites Standard difficiles dans l'échantillon, avec des doubles victoires un peu plus tardives. Les coefficients restent inchangés. Préparer un premier objectif facultatif Standard, avec conditions visibles et compatibilité des sauvegardes définie avant implémentation. Conserver les références de compatibilité 0.7 lors des prochaines modifications.
 4. J6/J7 : finition et release distribuable.
 
-Créer `09-<lot>.md` pour la prochaine livraison. Y noter périmètre, fichiers principaux, tests exécutés, limites et prochaine action. Mettre à jour cet index à chaque lot livré.
+Créer `10-<lot>.md` pour la prochaine livraison. Y noter périmètre, fichiers principaux, tests exécutés, limites et prochaine action. Mettre à jour cet index à chaque lot livré.
