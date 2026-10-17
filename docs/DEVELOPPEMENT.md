@@ -140,3 +140,7 @@ Avant un push : import, tests, contrôle des écrans modifiés, `git diff --chec
 3 141 contrôles automatiques passent. Captures de confort : tests/capture_comfort.gd ; profil enrichi : tests/capture_expanded.gd. Avant livraison : dev.ps1 Export, puis verify-export.ps1. Après commit propre : checkpoint.ps1 pour le bundle et les sources, package-windows.ps1 pour le ZIP Windows identifié par commit et SHA-256. L’archive est locale, les binaires restent hors Git ; le push main est distinct.
 
 Le script de paquet vérifie les ressources de l’exécutable, sa copie en chemin accentué, les fichiers du ZIP et l’empreinte du binaire archivé. Les préférences de développement restent isolées. Essais humains à compléter dans TESTS-JOUEURS.md avant de déclarer le cycle validé en 1.0.
+
+## Extension 0.20
+
+Aléas : tests/test_crises.gd ; captures : tests/capture_crises.gd ; mesures : scripts/balance_crises.gd (140 parties). Aucun JSON historique modifié : crises.json séparé, format 6, profils 4/5 inchangés. Le script package-windows.ps1 choisit désormais les notes correspondant à la version du projet. Export séparé build/windows-0.20.0/ ; sauvegarde et archive identifiées par commit après vérification.

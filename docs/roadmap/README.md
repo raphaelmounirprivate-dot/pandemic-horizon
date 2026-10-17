@@ -1,6 +1,6 @@
 # Feuille de route — suite de Pandemic Horizon
 
-Date : 17 octobre 2026. État courant : candidat 0.19, lots A à F implémentés techniquement ; essais joueurs en attente, voir le [point 24](../suivi/24-confort-distribution.md). Base de la planification : prototype 0.13, commit `f252baf`.
+Date : 17 octobre 2026. État courant : candidat 0.20, lots A à F implémentés techniquement ; essais joueurs en attente, voir le [point 25](../suivi/25-aleas-resilience.md). Base de la planification : prototype 0.13, commit `f252baf`.
 
 Ce dossier organise le développement à venir à partir des captures fournies par le joueur. Les éléments marqués « proposé » ne sont pas encore développés. Les tâches terminées sont identifiées dans le backlog et reliées à leur point de suivi.
 
@@ -26,3 +26,7 @@ Les étiquettes 0.14 et suivantes sont des versions candidates, sans date de liv
 - Un seul lot principal en cours. Mettre à jour le backlog et créer un point de suivi à chaque livraison.
 - Garder l'interface française, les choix intégrés et les sauvegardes reconnues. Les changements de règles nécessitent leurs propres mesures.
 - Les captures de référence inspirent les fonctions et l'ambiance ; les ressources visuelles du jeu doivent avoir leur propre provenance.
+
+## Extension demandée : aléas et résilience
+
+La 0.20 ajoute trois compétences, Réseaux fragiles et douze incidents variables de huit types, avec graine et format 6. Implémentation et mesures : [point 25](../suivi/25-aleas-resilience.md). Essais humains toujours en attente.

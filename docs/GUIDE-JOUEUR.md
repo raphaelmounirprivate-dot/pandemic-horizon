@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.19
+# Jouer à Pandemic Horizon 0.20
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.19.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.20.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -172,3 +172,17 @@ Dans Paramètres, Réduire les mouvements fige les déplacements des véhicules 
 Les sons sont désactivés par défaut. Activer les sons de retour ajoute des signaux courts pour achat, détection et fin de partie. Régler Volume avec la souris ou les flèches du clavier ; zéro ou désactivation coupe le son. Aucun signal sonore n’est indispensable. Ces préférences restent sur ce PC, indépendantes des sauvegardes de partie.
 
 Pour l’archive Windows, extraire tous les fichiers et lancer PandemicHorizon.exe. VERSION.json identifie le commit et l’empreinte du binaire. Cette version candidate attend les essais physiques, auditifs et sur un second PC décrits dans TESTS-JOUEURS.md.
+
+## Aléas et résilience (0.20)
+
+Au menu, activer Aléas et résilience (+3) pour compléter le catalogue enrichi : 21 compétences en Standard/Réseaux fragiles, 24 dans Dégel. Le profil classique reste disponible en désactivant cette option puis Catalogue enrichi. Le tutoriel conserve ses règles classiques.
+
+Douze incidents sont tirés au lancement parmi huit types : tempête maritime, séisme, panne des communications aériennes, mobilisation scientifique, reprise terrestre, retard de coordination de recherche, fenêtre maritime favorable et reprise régionale. Le premier sac contient chaque type une fois, puis un second sac est entamé ; certains incidents peuvent survenir après la fin de la partie. Dates, durées et certaines cibles varient. Favorable/défavorable se rapporte à la diffusion du joueur. Le calendrier futur n’est pas affiché. Effets, cibles, dates de fin et jours restants se consultent en partie et dans Monde/F3.
+
+Graine règle le tirage ; saisir un nombre puis valider avec Entrée, ou utiliser Autre. Les mêmes choix et la même graine reproduisent la même partie. Recommencer conserve la graine. Changer la graine au menu avant une nouvelle partie pour varier les événements.
+
+Liaisons de secours coûte 10 points et exige Mobilité : les pénalités de transport des aléas sont divisées par deux. Veille scientifique coûte 11 points et exige Discrétion : leurs accélérations du remède sont divisées par deux. Réserves régionales coûte 9 points et exige Relais locaux : leurs pénalités de croissance sont divisées par deux. Ces protections ne modifient ni les événements historiques ni les effets favorables et ne rouvrent aucune route fermée. Sélectionner consulte ; Évoluer confirme l’achat.
+
+Réseaux fragiles impose Centrale et l’option des aléas : incidents environ tous les six jours au lieu de huit, croissance ×0,95 jusqu’au J44, remède ×1,15 dès J45. L’objectif principal reste toucher 90 % avant le remède ; aucun objectif facultatif ni décision portuaire dans ce scénario.
+
+Le profil utilise le format de sauvegarde 6, à reprendre avec 0.20 compatible. Les anciens formats classiques/enrichis 4/5 restent reconnus sans ajout rétroactif d’incidents. Les catastrophes sont des effets de jeu abstraits : aucune nouvelle mortalité ni destruction économique simulée.

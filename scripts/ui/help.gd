@@ -3,6 +3,15 @@ const Objectives = preload("res://scripts/gameplay/objectives.gd")
 const TITLES = ["Situation actuelle", "Temps et commandes", "Régions et objectif", "Évolutions et prérequis", "Détection et remède", "Événements et routes", "Sauvegardes", "Dégel 2042", "Transports", "Décision logistique"]
 
 static func text_for(topic: int, world: RefCounted, selected: int, training_stage: int = -1) -> String:
+	var text = _base_text_for(topic,world,selected,training_stage)
+	if not world.regions.is_empty() and world.crises_enabled:
+		if topic in [0,5]: text += "\n\nAléas et résilience · Graine %d. Douze incidents sont tirés au lancement, à dates, durées et cibles variables. Favorable ou défavorable se rapporte à la diffusion. Tempête : fermeture maritime ; séisme : croissance régionale freinée ; panne aérienne : échanges réduits. Des reprises d'échanges et retards du remède peuvent vous favoriser. Le calendrier futur reste caché. Recommencer conserve la graine ; Autre au menu change le tirage. Les fins et cumuls suivent les mêmes règles que les autres événements." % world.rng.seed
+		if topic == 3: text += "\n\nRésilience : Liaisons de secours (10 pts, exige Mobilité) divise par deux les pénalités de transport des aléas ; Veille scientifique (11 pts, exige Discrétion) divise par deux leurs accélérations du remède ; Réserves régionales (9 pts, exige Relais locaux) divise par deux leurs pénalités de croissance. Ces compétences n'atténuent pas les événements classiques, ne modifient pas les occasions favorables et ne rouvrent aucune liaison fermée."
+		if topic == 6: text += "\n\nCette partie utilise le profil crises-0.20, format 6. La graine reconstitue le même calendrier d'aléas lors du chargement. Les formats classiques 4 et enrichis 5 restent reconnus sans ajout rétroactif d'aléas."
+		if topic == 0 and world.scenario.id == "fragile2042": text += "\n\nRéseaux fragiles : départ en Centrale, incidents espacés d'environ six jours, croissance ×0,95 jusqu'au J44, remède ×1,15 à partir du J45. Objectif principal habituel ; aucun objectif facultatif ni décision portuaire dans ce scénario."
+	return text
+
+static func _base_text_for(topic: int, world: RefCounted, selected: int, training_stage: int = -1) -> String:
 	match topic:
 		0:
 			if world.regions.is_empty(): return "Choisissez un scénario, une difficulté et une région, puis lancez Nouvelle partie.\n\nVous commencez en pause. Le tutoriel guidé est facultatif et accessible au menu."

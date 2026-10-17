@@ -26,6 +26,9 @@ var objective_details: Label
 var decision_enabled = false
 var advanced_mode = false
 var advanced_choice: CheckButton
+var crises_mode = false
+var crises_choice: CheckButton
+var simulation_seed = 2042
 var decision_choice: CheckButton
 var decision_buttons: Dictionary = {}
 var decision_notice: Label
@@ -284,6 +287,9 @@ func load_saved(slot: String) -> void:
 	if tutorial == null: objective_id = world.objective.get("id", "")
 	if tutorial == null: decision_enabled = not world.decision.is_empty()
 	if tutorial == null: advanced_mode = world.expanded_content
+	if tutorial == null:
+		crises_mode = world.crises_enabled
+		simulation_seed = world.rng.seed
 	paused = true
 	elapsed = 0.0
 	save_notice = result.get("warning", "Partie chargée en pause.")
@@ -557,7 +563,15 @@ func _smoke_test() -> void:
 	if help_text.get_theme_font_size("normal_font_size") != 24:
 		get_tree().quit(1)
 		return
-	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, persistence replay, six tutorial lessons, contextual help, optional objectives and arctic flows, logistics decision cost/replay/expiration, enriched profile and format 5, comfort and original audio resources, restart, settings, menu")
+	if not optional_world.start("centrale",777,null,null,"fragile2042","normal",null,null,"",false,true,null,true).is_empty():
+		get_tree().quit(1)
+		return
+	for day in range(40): optional_world.step()
+	optional_loaded = smoke_store.decode(smoke_store.encode(optional_world))
+	if not optional_loaded.error.is_empty() or not optional_loaded.world.crises_enabled or optional_loaded.world.event_definitions != optional_world.event_definitions:
+		get_tree().quit(1)
+		return
+	print("RUNTIME_SMOKE_OK: classic scenarios and replay, tutorial, help, objectives and decisions, enriched profile5, comfort and audio, crises profile6 and fragile scenario, restart, settings, menu")
 	get_tree().quit()
 
 func _apply_theme() -> void:
@@ -607,7 +621,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.19", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.20", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -639,7 +653,7 @@ func show_menu() -> void:
 	presentation.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	center.add_child(presentation)
 	var spacer = Control.new()
-	spacer.custom_minimum_size.y = 16
+	spacer.custom_minimum_size.y = 0
 	presentation.add_child(spacer)
 	var identity = HBoxContainer.new()
 	presentation.add_child(identity)
@@ -648,7 +662,7 @@ func show_menu() -> void:
 	emblem.tooltip_text = "NACRE · Emblème abstrait de réseau, sans représentation biologique réelle."
 	identity.add_child(emblem)
 	identity.add_child(_label("NACRE\nChaque région compte.",26))
-	var description = _label("Agent fictif dans 24 régions reliées.\nFaites évoluer sa diffusion et surveillez le remède.\nObjectif : toucher 90 % avant le remède.",18)
+	var description = _label("Agent fictif dans 24 régions reliées.\nObjectif : toucher 90 % avant le remède.",18)
 	presentation.add_child(description)
 	menu_scenario_detail = _label("", 16, MUTED)
 	menu_scenario_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -674,25 +688,48 @@ func show_menu() -> void:
 	menu_objective_detail = _label("", 16, MUTED)
 	menu_objective_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	presentation.add_child(menu_objective_detail)
+	var profile_choices = HBoxContainer.new()
+	presentation.add_child(profile_choices)
 	var learning = HBoxContainer.new()
 	presentation.add_child(learning)
 	_button("Tutoriel guidé", start_tutorial, learning)
 	_button("Aide [F1]", open_help, learning)
 	advanced_choice = CheckButton.new()
-	advanced_choice.text = "Contenu enrichi · 18 à 21 évolutions"
+	advanced_choice.text = "Catalogue enrichi"
 	advanced_choice.custom_minimum_size.y = 44
 	advanced_choice.button_pressed = advanced_mode
 	advanced_choice.tooltip_text = "Profil distinct : 18 évolutions de base, 21 dans Dégel, événements supplémentaires. Les parties classiques gardent leurs règles."
 	advanced_choice.toggled.connect(func(enabled):
 		advanced_mode = enabled
-		_update_menu_choices(World.Scenarios.load_catalog()))
-	learning.add_child(advanced_choice)
+		_update_menu_choices(_menu_catalog()))
+	profile_choices.add_child(advanced_choice)
+	crises_choice = CheckButton.new()
+	crises_choice.text = "Aléas et résilience (+3)"
+	crises_choice.custom_minimum_size.y = 44
+	crises_choice.button_pressed = crises_mode
+	crises_choice.tooltip_text = "Douze aléas tirés par graine, huit types favorables/défavorables à la diffusion et trois compétences de protection. Active le catalogue enrichi."
+	crises_choice.toggled.connect(func(enabled):
+		crises_mode = enabled
+		_update_menu_choices(_menu_catalog()))
+	profile_choices.add_child(crises_choice)
+	learning.add_child(_label("Graine",16,MUTED))
+	var seed_input = SpinBox.new()
+	seed_input.name = "seed_input"
+	seed_input.min_value = 0
+	seed_input.max_value = 999999999
+	seed_input.step = 1
+	seed_input.value = simulation_seed
+	seed_input.custom_minimum_size = Vector2(140,44)
+	seed_input.tooltip_text = "Même graine et mêmes choix : même tirage des aléas. Recommencer conserve cette graine."
+	seed_input.value_changed.connect(func(value): simulation_seed = int(value))
+	learning.add_child(seed_input)
+	_button("Autre",func(): seed_input.value = abs((str(Time.get_unix_time_from_system())+str(Time.get_ticks_usec())).hash()) % 1000000000,learning)
 	var actions = VBoxContainer.new()
 	actions.custom_minimum_size.x = 320
 	center.add_child(actions)
 	var data = JSON.parse_string(FileAccess.get_file_as_string(World.DATA_PATH))
 	var error = World.validate_data(data)
-	var catalog: Variant = World.Scenarios.load_catalog()
+	var catalog: Variant = _menu_catalog()
 	if error.is_empty():
 		error = World.Scenarios.validate(catalog, data, World.Content.load_files())
 	if not error.is_empty():
@@ -746,7 +783,16 @@ func show_menu() -> void:
 	body.add_child(footer)
 	launch.grab_focus()
 
+func _menu_catalog() -> Dictionary:
+	return World.Crises.catalog(World.Scenarios.load_catalog())
+
 func _update_menu_choices(catalog: Dictionary) -> void:
+	if scenario_id == "fragile2042": crises_mode = true
+	if crises_mode: advanced_mode = true
+	crises_choice.set_pressed_no_signal(crises_mode)
+	crises_choice.disabled = scenario_id == "fragile2042"
+	advanced_choice.set_pressed_no_signal(advanced_mode)
+	advanced_choice.disabled = crises_mode
 	decision_choice.visible = scenario_id == "degel2042"
 	if scenario_id != "degel2042": decision_enabled = false
 	decision_choice.set_pressed_no_signal(decision_enabled)
@@ -763,6 +809,7 @@ func _update_menu_choices(catalog: Dictionary) -> void:
 			if item.forced_start != "": start_id = item.forced_start
 			menu_scenario_detail.text = item.description
 			menu_scenario_detail.text += "\n" + ("Profil enrichi : %d évolutions · %d événements programmés." % [21 if scenario_id == "degel2042" else 18,12 if scenario_id == "degel2042" else 14] if advanced_mode else "Profil classique : %d évolutions · règles historiques conservées." % [9 if scenario_id == "degel2042" else 6])
+			if crises_mode: menu_scenario_detail.text = item.description + "\nProfil aléas : %d compétences · 12 aléas + %d événements fixes.\nConséquences favorables ou défavorables à la diffusion." % [24 if scenario_id == "degel2042" else 21,12 if scenario_id == "degel2042" else 14]
 	for i in range(start_choice.item_count):
 		if start_choice.get_item_metadata(i) == start_id: start_choice.select(i)
 	for item in catalog.difficulties:
@@ -825,7 +872,7 @@ func show_settings() -> void:
 
 func start_game() -> void:
 	reset_map_camera = true
-	var error = world.start(start_id, 2042, null, null, scenario_id, difficulty_id, null, null, objective_id,decision_enabled,advanced_mode)
+	var error = world.start(start_id, simulation_seed, null, null, scenario_id, difficulty_id, null, null, objective_id,decision_enabled,advanced_mode,null,crises_mode)
 	if not error.is_empty():
 		show_menu()
 		body.add_child(_label("Impossible de démarrer : " + error))
@@ -846,6 +893,8 @@ func restart_game() -> void:
 	objective_id = world.objective.get("id", "")
 	decision_enabled = not world.decision.is_empty()
 	advanced_mode = world.expanded_content
+	crises_mode = world.crises_enabled
+	simulation_seed = world.rng.seed
 	start_game()
 
 func show_game() -> void:

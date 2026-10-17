@@ -11,6 +11,8 @@ const Objectives = preload("res://scripts/gameplay/objectives.gd")
 const Decisions = preload("res://scripts/gameplay/decisions.gd")
 const History = preload("res://scripts/gameplay/history.gd")
 const Expanded = preload("res://scripts/gameplay/expanded_content.gd")
+const Crises = preload("res://scripts/gameplay/crises.gd")
+var crises_enabled = false
 var expanded_content = false
 var history: Array = []
 var purchase_history: Array = []
@@ -90,7 +92,9 @@ static func validate_data(data: Variant) -> String:
 		edges.append(pair)
 	return ""
 
-func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null, transport_source: Variant = null, objective_id: String = "", decision_enabled: bool = false, expanded_enabled: bool = false, expanded_source: Variant = null) -> String:
+func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null, transport_source: Variant = null, objective_id: String = "", decision_enabled: bool = false, expanded_enabled: bool = false, expanded_source: Variant = null, crises_active: bool = false, crises_source: Variant = null) -> String:
+	if scenario_id == "fragile2042" and not crises_active: return "Réseaux fragiles exige l'option Aléas et résilience."
+	if crises_active: expanded_enabled = true
 	if decision_enabled:
 		var item = Decisions.definition()
 		if item.is_empty() or item.scenario != scenario_id: return "Décision indisponible pour ce scénario."
@@ -115,6 +119,7 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	if not error.is_empty():
 		return error
 	var catalog: Variant = Scenarios.load_catalog() if catalog_source == null else catalog_source
+	if scenario_id == "fragile2042" and catalog_source == null: catalog = Crises.catalog(catalog,crises_source)
 	error = Scenarios.validate(catalog, data, gameplay)
 	if not error.is_empty():
 		return error
@@ -147,6 +152,10 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 		effective_gameplay = enriched.content
 		error = Content.validate(effective_gameplay,data.regions,Scenarios.connections_for(data,chosen_scenario))
 		if not error.is_empty(): return error
+	if crises_active:
+		var incidents = Crises.build(effective_gameplay,data.regions,Scenarios.connections_for(data,chosen_scenario),transports,seed_value,scenario_id,crises_source)
+		if not incidents.error.is_empty(): return incidents.error
+		effective_gameplay = incidents.content
 	transport_profiles = transports.profiles.duplicate(true)
 	transport_modes.clear()
 	for route in transports.routes: transport_modes[Transports.key(route.edge)] = route.mode
@@ -155,6 +164,7 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	phase = scenario.phases[0].duplicate(true)
 	gameplay = effective_gameplay
 	expanded_content = expanded_enabled
+	crises_enabled = crises_active
 	regions = data.regions.duplicate(true)
 	connections = Scenarios.connections_for(data, scenario)
 	evolutions.clear()
@@ -185,6 +195,7 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 		region["detected"] = false
 	journal.append("Jour 0 · Départ dans la région %s." % region_name(start_id))
 	journal.append("Jour 0 · %s · Difficulté %s · Phase %s." % [scenario.name, difficulty.name, phase.name])
+	if crises_enabled: journal.append("Jour 0 · Aléas et résilience · Graine %d · Conséquences favorables ou défavorables à la diffusion ; calendrier tiré au lancement." % seed_value)
 	if not objective.is_empty(): journal.append("Jour 0 · Objectif facultatif · " + Objectives.description(Objectives.definition(objective_id)))
 	history.clear()
 	purchase_history.clear()
@@ -337,15 +348,23 @@ func event_modifier(kind: String, target: String = "global") -> float:
 	var factor = 1.0
 	for effect in active_events:
 		if effect.kind == kind and effect.target == target:
-			factor *= effect.factor
+			factor *= effect_factor(effect)
 	return factor * Decisions.modifier(self,kind,target)
+
+func effect_factor(effect: Dictionary) -> float:
+	var factor = float(effect.factor)
+	if effect.get("source") != "crisis": return factor
+	if effect.kind == "transport_multiplier" and factor < 1: return 1-(1-factor)*upgrade_modifier("incident_transport_penalty")
+	if effect.kind == "growth_multiplier" and factor < 1: return 1-(1-factor)*upgrade_modifier("incident_growth_penalty")
+	if effect.kind == "cure_multiplier" and factor > 1: return 1+(factor-1)*upgrade_modifier("incident_research_penalty")
+	return factor
 
 func effect_description(effect: Dictionary) -> String:
 	match effect.kind:
 		"route_closure": return "%s ↔ %s : route fermée" % [region_name(effect.target[0]), region_name(effect.target[1])]
-		"growth_multiplier": return "%s : croissance ×%.2f" % [region_name(effect.target), effect.factor]
-		"cure_multiplier": return "remède ×%.2f" % effect.factor
-		"transport_multiplier": return "transport %s : échanges ×%.2f" % [Transports.NAMES[effect.target].to_lower(), effect.factor]
+		"growth_multiplier": return "%s : croissance ×%.2f" % [region_name(effect.target), effect_factor(effect)]
+		"cure_multiplier": return "remède ×%.2f" % effect_factor(effect)
+		"transport_multiplier": return "transport %s : échanges ×%.2f" % [Transports.NAMES[effect.target].to_lower(), effect_factor(effect)]
 	return ""
 
 func _add_event(definition: Dictionary) -> bool:

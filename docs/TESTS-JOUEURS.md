@@ -1,4 +1,4 @@
-# Essais joueurs — candidat Windows 0.19
+# Essais joueurs — candidat Windows 0.20
 
 Statut : **à réaliser**. Ce formulaire ne représente aucun essai humain accompli. Les tests automatiques et captures sont consignés séparément dans les points 19 à 24.
 
@@ -29,3 +29,14 @@ Comparer les mêmes scénarios, graines et difficultés avec croissance locale, 
 | À renseigner | — | Non réalisé | — | — |
 
 La validation du cycle et l'étiquette 1.0 restent conditionnées à ces essais. Aucune compatibilité universelle Windows, audition réelle ou validation avec débutants n'est déduite des tests synthétiques.
+
+## Extension 0.20 — parcours supplémentaire non réalisé
+
+- [ ] Activer puis désactiver Aléas et résilience ; identifier le catalogue enrichi imposé par l’option.
+- [ ] Jouer Réseaux fragiles ; expliquer Centrale imposée et les coefficients du scénario.
+- [ ] Saisir une graine, valider Entrée, comparer une reprise identique puis une autre graine.
+- [ ] Distinguer favorable/défavorable à la diffusion ; lire cible, effet et fin d’une tempête, d’un séisme et d’une panne.
+- [ ] Acheter les trois protections après leurs prérequis, sans croire qu’elles rouvrent une liaison fermée.
+- [ ] Sauvegarder en pleine crise, fermer puis reprendre ; comparer les jours suivants et les préférences du menu.
+
+Rapport automatique de référence : EQUILIBRAGE-0.20-ALEAS.md. Ces cases restent à cocher uniquement après observation physique réelle.

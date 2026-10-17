@@ -1,6 +1,6 @@
 ---
 name: Pandemic Horizon
-description: Monde en crise, commandes intégrées et confort facultatif du prototype Godot 0.19
+description: Monde en crise, commandes intégrées, confort et aléas facultatifs du prototype Godot 0.20
 colors:
   ink: "#e1eee9"
   muted: "#a7c4c9"
@@ -110,6 +110,8 @@ Les titres des écrans utilisent 30 px, celui du jeu 22 px, les indicateurs et l
 
 ## Layout
 
+Les 21 captures 0.20 `.impeccable/review/crises-{menu-classic,menu-crises,menu-fragile,skills,incident,fragile,loaded}-{1280,1920,2395}.png` documentent les menus, les évolutions, un incident, Réseaux fragiles et un chargement aux dimensions 1280 × 720, 1920 × 1080 et 2395 × 1060. La revue conclut à la livraison sans correction requise ; essais humains, physiques et DPI Windows restent à réaliser. Le menu sépare la rangée Catalogue enrichi/Aléas de la rangée tutoriel/aide/graine/Autre. Les six colonnes compactes gardent tous les achats visibles : 21 nœuds Standard/Réseaux fragiles et 24 Dégel avec aléas. Aucun jeton de palette, typographie ou angle n’est ajouté.
+
 Les douze captures 0.19 `.impeccable/review/comfort-{settings,help-large,overview-large,reduced-game}-{1280,1920,2395}.png` documentent Paramètres, l’aide et Monde en lecture agrandie et le jeu avec mouvements réduits, à 1280 × 720, 1920 × 1080 et 2395 × 1060. Les 3 141 contrôles automatisés réussissent sans échec, dont 44 contrôles de confort ; la revue de finition conclut à la livraison sans correction. Ces preuves ne constituent ni un essai humain ou une écoute physique, ni un essai sur second PC ou une validation DPI Windows. L’archive Windows reste une candidate prévue, sans publication de binaire GitHub établie.
 L’extension 0.18 conserve la palette, la police Godot et les angles de 6 px. Le classique garde trois colonnes, six ou neuf nœuds, avec leurs états courts. Le profil enrichi affiche 18 ou 21 nœuds sur six colonnes, séparées de 8 px horizontalement et de 10 px verticalement, sans défilement des achats. Les libellés courts d’au plus huit caractères utilisent le jeton existant de 12 px ; les cibles gardent au moins 44 px de hauteur. Les marges internes du bouton enrichi réservent 26 px à gauche au symbole et 12 px à droite. Seuls les prérequis directs de la sélection sont reliés, via un corridor situé 4 px à droite de la grille et des segments 5 px au-dessus des nœuds. La fiche complète et le bouton séparé restent sous la grille.
 
@@ -142,6 +144,8 @@ Les boutons généraux ont un rayon de 6 px, un focus transparent bordé de turq
 Le fond local Natural Earth `assets/maps/world-land.geojson` dessine continents et contours vectoriels. Les routes sont courbes ; une fermeture ajoute des segments et une croix ambre au milieu. Aucun raster n’est livré par cette réalisation.
 
 ## Components
+
+**Aléas et résilience (0.20).** La case « Aléas et résilience (+3) », facultative et décochée par défaut, implique Catalogue enrichi ; Réseaux fragiles l’impose avec un départ visible désactivé sur Centrale. La graine numérique et « Autre » rendent le renouvellement du tirage explicite avant lancement ; recommencer conserve cette graine. La fiche du scénario affiche les comptes propres au profil. Les trois compétences de résilience reprennent les nœuds vectoriels, liens directs de la sélection et fiche complète de la grille enrichie, sans changer sa palette ni l’achat séparé. Les incidents affichent leur effet favorable/défavorable du point de vue de la diffusion du virus fictif, leurs cibles et durées dans les effets, le journal et Monde. Une fermeture conserve son signal ambre et n’est jamais annulée par un bonus. Les textes gardent priorité sur la couleur. Le calendrier déterministe est lié au profil de sauvegarde 6 `crises-0.20` ; profils 4/5 et confort 0.19 sont conservés.
 
 **Paramètres et confort (0.19).** Les options « Réduire les mouvements », « Agrandir le texte de lecture (aide, actualités et bilan) » et « Activer les sons de retour » sont désactivées par défaut. `ConfigFile` conserve leurs valeurs et le volume dans `user://settings.cfg`, séparément des parties, en préservant les clés inconnues. Le volume vaut 35 % par défaut, est borné de 0 à 100 % et zéro coupe le son. La lecture agrandie passe le texte de l’aide de 20 à 24 px, les colonnes Monde de 14 à 18 px et le journal de bilan de 16 à 20 px, sans agrandir les évolutions compactes ni les autres commandes. Réduire les mouvements fige `visual_time`, véhicules et pulsations, sans suspendre le modèle. Trois sons PCM synthétiques originaux d’environ 150 ms signalent achat, alerte et issue après activation explicite ; ils n’ajoutent aucune ressource externe ni tirage de simulation. La palette, les angles et les profils 0.18 sont conservés.
 

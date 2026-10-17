@@ -94,3 +94,9 @@ Les difficultés appliquent les facteurs recherche/détection/score suivants : F
 ## Profil enrichi 0.18
 
 Facultatif au lancement ; douze évolutions et huit événements supplémentaires définis dans data/expanded-content.json. Coûts, prérequis, effets et dates sont validés avant de modifier la partie. Le format 5 fixe le profil enriched-0.18 et une empreinte complète. Le format 4 classique reste inchangé ; anciens achats, références et tutoriel sont conservés. Les effets se multiplient et expirent selon les règles existantes, les fermetures restent prioritaires. Mesures : EQUILIBRAGE-0.18-ENRICHI.md ; essais joueurs à réaliser.
+
+## Aléas et résilience 0.20
+
+Le catalogue crises.json ajoute trois compétences au profil enrichi et douze incidents tirés au lancement par un flux aléatoire indépendant de la propagation (graine xor 0x20422020). Un sac de huit types est mélangé sans répétition puis renouvelé. Dates : 18 + 8×index ±2 jours, ou 12 + 6×index ±2 dans Réseaux fragiles ; durées et cibles sont tirées selon le catalogue. Les tirages sont reconstruits à l’identique au chargement, pas recalculés à chaque journée.
+
+Les pénalités des seuls aléas sont atténuées par les trois compétences : facteur f inférieur à 1 devient 1−(1−f)×0,5 pour transports/croissance, facteur f supérieur à 1 devient 1+(f−1)×0,5 pour remède. Favorables et événements classiques restent inchangés ; fermetures prioritaires, cumul multiplicatif et fin exclusive existants. Les profils 4/5 sont conservés ; le format 6 fixe crises-0.20 et son empreinte propre. Détails et mesures : point 25 et EQUILIBRAGE-0.20-ALEAS.md.

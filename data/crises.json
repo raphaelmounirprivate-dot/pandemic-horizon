@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "profile": "crises-0.20",
+  "scenario": {
+    "id":"fragile2042","name":"Réseaux fragiles","description":"Départ en Centrale. Aléas rapprochés : environ 6 jours. Croissance ×0,95 jusqu'au J44 ; remède ×1,15 dès J45.",
+    "forced_start":"centrale","cold_regions":[],"seasonal_routes":[],"extra_evolutions":[],
+    "phases":[
+      {"id":"fragile","name":"Précarité","start_day":0,"temperature":15,"cold_factor":1.0,"warm_factor":0.95,"cure_multiplier":1.0},
+      {"id":"coordination","name":"Coordination","start_day":45,"temperature":15,"cold_factor":1.0,"warm_factor":1.0,"cure_multiplier":1.15}
+    ]
+  },
+  "evolutions": [
+    {"id":"backup_links","name":"Liaisons de secours","short":"Secours","cost":10,"requires":["mobility"],"effect":"Pénalités de transport des aléas : divisées par deux.\nLes routes fermées restent fermées.","modifiers":{"incident_transport_penalty":0.5}},
+    {"id":"research_watch","name":"Veille scientifique","short":"Veille","cost":11,"requires":["discretion"],"effect":"Divise par deux les accélérations du remède provoquées par les aléas.","modifiers":{"incident_research_penalty":0.5}},
+    {"id":"regional_reserves","name":"Réserves régionales","short":"Réserves","cost":9,"requires":["relay"],"effect":"Divise par deux les pénalités de croissance régionale des aléas.","modifiers":{"incident_growth_penalty":0.5}}
+  ],
+  "templates": [
+    {"id":"storm","name":"Tempête maritime","kind":"route_closure","target":"sea_route","factor":1.0,"min_duration":4,"max_duration":7,"impact":"défavorable"},
+    {"id":"earthquake","name":"Séisme : déplacements freinés","kind":"growth_multiplier","target":"region","factor":0.65,"min_duration":5,"max_duration":8,"impact":"défavorable"},
+    {"id":"communications","name":"Panne des communications aériennes","kind":"transport_multiplier","target":"air","factor":0.55,"min_duration":4,"max_duration":7,"impact":"défavorable"},
+    {"id":"research_mobilization","name":"Mobilisation scientifique","kind":"cure_multiplier","target":"global","factor":1.35,"min_duration":5,"max_duration":8,"impact":"défavorable"},
+    {"id":"convoy","name":"Reprise des échanges terrestres","kind":"transport_multiplier","target":"land","factor":1.35,"min_duration":4,"max_duration":7,"impact":"favorable"},
+    {"id":"coordination_failure","name":"Panne de coordination de la recherche","kind":"cure_multiplier","target":"global","factor":0.7,"min_duration":4,"max_duration":7,"impact":"favorable"},
+    {"id":"sea_window","name":"Fenêtre maritime favorable","kind":"transport_multiplier","target":"sea","factor":1.4,"min_duration":4,"max_duration":6,"impact":"favorable"},
+    {"id":"regional_recovery","name":"Flux régionaux rétablis","kind":"growth_multiplier","target":"region","factor":1.25,"min_duration":4,"max_duration":6,"impact":"favorable"}
+  ]
+}

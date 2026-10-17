@@ -19,6 +19,8 @@ func content_hash() -> String:
 	return text.sha256_text()
 func expanded_hash() -> String:
 	return (content_hash()+"\n"+FileAccess.get_file_as_string(World.Expanded.PATH).replace("\r\n","\n")).sha256_text()
+func crises_hash() -> String:
+	return (expanded_hash()+"\n"+FileAccess.get_file_as_string(World.Crises.PATH).replace("\r\n","\n")).sha256_text()
 
 func encode(world: RefCounted, selected: int = 0, speed: int = 1) -> Dictionary:
 	if world.regions.is_empty(): return {}
@@ -38,6 +40,10 @@ func encode(world: RefCounted, selected: int = 0, speed: int = 1) -> Dictionary:
 		"selected": world.regions[clampi(selected, 0, world.regions.size() - 1)].id, "speed": speed,
 		"history":world.history.duplicate(true),"purchase_history":world.purchase_history.duplicate(true)}
 	if world.expanded_content: data["rules_profile"] = World.Expanded.PROFILE
+	if world.crises_enabled:
+		data.format = 6
+		data.content = crises_hash()
+		data.rules_profile = World.Crises.PROFILE
 	return data
 
 func _integer(value: Variant, minimum: int, maximum: int) -> bool:
@@ -60,11 +66,13 @@ func decode(data: Variant) -> Dictionary:
 	var legacy10 = data.get("format") == 2 and data.get("content") == LEGACY_10_HASH
 	var legacy11 = data.get("format") == 3 and data.get("content") == LEGACY_11_HASH
 	var enriched = data.get("format") == 5 and data.get("content") == expanded_hash()
-	var current_format = (data.get("format") == 4 and data.get("content") == content_hash()) or enriched
+	var crises = data.get("format") == 6 and data.get("content") == crises_hash()
+	var current_format = (data.get("format") == 4 and data.get("content") == content_hash()) or enriched or crises
 	if (not old_format and not current_format and not legacy09 and not legacy10 and not legacy11) or data.get("engine") != Engine.get_version_info().string:
 		return {"error": "Sauvegarde incompatible avec cette version du jeu.", "incompatible": true}
 	if enriched and data.get("rules_profile") != World.Expanded.PROFILE: return invalid
-	if not enriched and data.has("rules_profile"): return invalid
+	if crises and data.get("rules_profile") != World.Crises.PROFILE: return invalid
+	if not enriched and not crises and data.has("rules_profile"): return invalid
 	if not current_format and not legacy11 and data.has("decision"): return invalid
 	if not current_format and data.has("decision_profile"): return invalid
 	if old_format and data.has("objective"): return invalid
@@ -85,7 +93,7 @@ func decode(data: Variant) -> Dictionary:
 	if not _integer(data.get("speed"), 1, 4) or int(data.speed) not in [1, 2, 4]: return invalid
 	if not _strings(data.get("purchased"), 100) or not _strings(data.get("journal"), 10000) or not _strings(data.get("activated"), 200): return invalid
 	var world = World.new()
-	if not world.start(data.start, data.seed.to_int(), null, null, data.scenario, data.difficulty,null,null,"",false,enriched).is_empty(): return invalid
+	if not world.start(data.start, data.seed.to_int(), null, null, data.scenario, data.difficulty,null,null,"",false,enriched or crises,null,crises).is_empty(): return invalid
 	if not data.get("regions") is Array or data.regions.size() != world.regions.size(): return invalid
 	var ids: Array = []
 	for i in range(world.regions.size()):

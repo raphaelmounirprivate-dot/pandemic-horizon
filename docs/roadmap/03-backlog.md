@@ -47,3 +47,7 @@ Pour démarrer une tâche, changer son statut explicitement et créer sa fiche a
 État du lot E : [point 23](../suivi/23-contenu-enrichi.md). CNT-01/02/03 terminés ; CNT-04 à vérifier auprès de joueurs.
 
 État du lot F : [point 24](../suivi/24-confort-distribution.md). Aucun essai humain déclaré terminé ; [protocole](../TESTS-JOUEURS.md).
+
+## Extension 0.20 — implémentée
+
+ALE-01 : option et graine reproductible ; ALE-02 : huit types d’incidents, cumul et expiration ; ALE-03 : trois compétences à prérequis et scénario Réseaux fragiles ; ALE-04 : format 6 et compatibilité des anciens profils ; ALE-05 : mesures et captures. Voir le [point 25](../suivi/25-aleas-resilience.md). ALE-06 : compréhension/équilibrage avec des joueurs, à réaliser.

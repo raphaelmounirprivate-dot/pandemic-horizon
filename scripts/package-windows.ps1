@@ -6,6 +6,7 @@ if ($LASTEXITCODE -ne 0 -or $status) { throw 'Commit the tested candidate before
 $sha = (& git @gitArgs rev-parse HEAD).Trim()
 $version = [regex]::Match((Get-Content (Join-Path $projectRoot 'project.godot') -Raw), 'config/version="([0-9.]+)"').Groups[1].Value
 if (-not $version) { throw 'Missing version.' }
+$notesName = "NOTES-VERSION-$($version -replace '\.[0-9]+$','').md"
 $exportDirectory = Join-Path $projectRoot "build/windows-$version"
 $exe = Join-Path $exportDirectory 'PandemicHorizon.exe'
 if (-not (Test-Path -LiteralPath $exe)) { throw 'Export the candidate first.' }
@@ -14,7 +15,7 @@ if (-not (Test-Path -LiteralPath $exe)) { throw 'Export the candidate first.' }
 if ($LASTEXITCODE -ne 0) { throw 'Executable verification failed.' }
 Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/GUIDE-JOUEUR.md') -Destination $exportDirectory -Force
 Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/TESTS-JOUEURS.md') -Destination $exportDirectory -Force
-Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/NOTES-VERSION-0.19.md') -Destination $exportDirectory -Force
+Copy-Item -LiteralPath (Join-Path $projectRoot "docs/$notesName") -Destination $exportDirectory -Force
 $licenceDirectory = Join-Path $exportDirectory 'licences'
 New-Item -ItemType Directory -Force $licenceDirectory | Out-Null
 foreach ($licence in (Get-ChildItem -LiteralPath (Join-Path $projectRoot 'docs/licences') -File)) {
@@ -36,7 +37,7 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 [IO.Compression.ZipFile]::CreateFromDirectory($exportDirectory,$archive,[IO.Compression.CompressionLevel]::Optimal,$false)
 $zip = [IO.Compression.ZipFile]::OpenRead($archive)
 try {
-    foreach ($required in @('PandemicHorizon.exe','GUIDE-JOUEUR.md','TESTS-JOUEURS.md','NOTES-VERSION-0.19.md','VERSION.json','licences/Godot-LICENSE.txt','licences/Godot-COPYRIGHT.txt','licences/Natural-Earth.txt')) {
+    foreach ($required in @('PandemicHorizon.exe','GUIDE-JOUEUR.md','TESTS-JOUEURS.md',$notesName,'VERSION.json','licences/Godot-LICENSE.txt','licences/Godot-COPYRIGHT.txt','licences/Natural-Earth.txt')) {
         if (-not ($zip.Entries | Where-Object { $_.FullName.Replace('\','/') -eq $required })) { throw "Missing archive entry: $required" }
     }
     $entry = $zip.Entries | Where-Object { $_.FullName -eq 'PandemicHorizon.exe' }
