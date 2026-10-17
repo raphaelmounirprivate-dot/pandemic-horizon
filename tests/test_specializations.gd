@@ -96,7 +96,8 @@ func run(tree: SceneTree, check: Callable) -> void:
 		if not expected.error.is_empty(): continue
 		var future = store.encode(expected.world)
 		var actual = store.encode(result.world)
-		for key in ["content", "saved_at"]:
+		# Original snapshots predate observational history; compare the full model state.
+		for key in ["content", "saved_at", "history", "purchase_history"]:
 			future.erase(key)
 			actual.erase(key)
 		check.call(actual == future, "Vingt journées identiques à la vraie version 0.7 : " + scenario)

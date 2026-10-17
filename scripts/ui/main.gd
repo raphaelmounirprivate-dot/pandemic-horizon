@@ -66,6 +66,8 @@ var help_return = "menu"
 var help_topic = 0
 var help_text: RichTextLabel
 var mouse_press_active = false
+var overview_return = "game"
+var history_chart: Control
 
 func open_help() -> void:
 	if screen == "help":
@@ -108,6 +110,7 @@ func _return_to(target: String) -> void:
 		"result": show_result()
 		"saves": show_saves()
 		"settings": show_settings()
+		"overview": show_overview()
 		_: show_menu()
 
 func start_tutorial() -> void:
@@ -548,7 +551,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.16", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.17", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -830,6 +833,11 @@ func show_game() -> void:
 	body.add_child(status_label)
 	journal_label = _label("",14,MUTED)
 	journal_label.custom_minimum_size.y = 22 if tutorial == null else 44
+	if tutorial == null:
+		journal_label.mouse_filter = Control.MOUSE_FILTER_STOP
+		journal_label.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		journal_label.gui_input.connect(func(event):
+			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed: open_overview())
 	body.add_child(journal_label)
 	var controls = HBoxContainer.new()
 	body.add_child(controls)
@@ -844,6 +852,7 @@ func show_game() -> void:
 		_button("Recommencer", restart_game, controls)
 		_button("Menu", show_menu, controls)
 		_button("Sauvegardes", open_saves, controls)
+		_button("Monde [F3]",open_overview,controls)
 	else:
 		if tutorial.stage == 5: initial_focus = _button("Sauvegardes d'essai", open_saves, controls)
 		tutorial_next = _button("Terminer" if tutorial.stage == 5 else "Continuer", next_lesson, controls)
@@ -961,7 +970,8 @@ func _refresh() -> void:
 	status_label.text = ("En pause" if paused else "Simulation en cours") + " · Vitesse ×%d" % speed
 	if not save_notice.is_empty(): status_label.text += " · " + save_notice
 	status_label.clip_text = true
-	journal_label.text = world.journal[-1] if not world.journal.is_empty() else ""
+	journal_label.text = "Actu · " + world.journal[-1] if not world.journal.is_empty() else ""
+	journal_label.tooltip_text = "Actualités [F3]\n" + "\n".join(world.journal.slice(maxi(0,world.journal.size()-5)))
 	journal_label.clip_text = true
 	if tutorial != null:
 		status_label.text = "Étape %d / 6 · %s · %s" % [tutorial.stage + 1, Tutorial.TITLES[tutorial.stage], "Action réussie : continuez." if tutorial.ready else "À vous de jouer"]
@@ -1024,8 +1034,67 @@ func show_result() -> void:
 	var restart = _button("Rejouer avec les mêmes choix", restart_game, body)
 	_button("Choisir une autre région", show_menu, body)
 	_button("Sauvegardes", open_saves, body)
+	_button("Monde et actualités [F3]",open_overview,body)
 	_button("Aide [F1]", open_help, body)
 	restart.grab_focus()
+
+func open_overview() -> void:
+	if world.regions.is_empty() or tutorial != null: return
+	if screen == "overview":
+		close_overview()
+		return
+	overview_return = "result" if screen == "result" else "game"
+	show_overview()
+func close_overview() -> void:
+	if overview_return == "result" or not world.outcome.is_empty(): show_result()
+	else: show_game()
+func show_overview() -> void:
+	screen = "overview"
+	paused = true
+	elapsed = 0.0
+	_reset_screen("Monde · Actualités et bilan","%s · %s · Jour %d · %s" % [world.scenario.name,world.difficulty.name,world.day,world.outcome_text()])
+	var totals = world.totals()
+	body.add_child(_label("Sains : %d · Actifs : %d · Retirés : %d · Touchés : %.1f %% · Remède : %.1f %%" % [totals.healthy,totals.active,totals.removed,world.coverage()*100,world.cure],16))
+	if not world.objective.is_empty():
+		var objective_line = _label("Objectif facultatif · "+world.Objectives.summary(world),13,MUTED)
+		objective_line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		body.add_child(objective_line)
+	history_chart = load("res://scripts/ui/history_chart.gd").new()
+	history_chart.world = world
+	history_chart.custom_minimum_size.y = 190
+	body.add_child(history_chart)
+	var columns = HBoxContainer.new()
+	columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	columns.add_theme_constant_override("separation",16)
+	body.add_child(columns)
+	var purchase_lines: Array[String] = []
+	for purchase in world.purchase_history: purchase_lines.append("J%d · %s · %d pts" % [purchase.day,world.evolutions[purchase.id].name,purchase.cost])
+	if purchase_lines.is_empty(): purchase_lines.append("Aucun achat daté enregistré.")
+	if world.purchase_history.size() < world.purchased.size(): purchase_lines.append("Dates antérieures absentes de cette sauvegarde.")
+	var effects: Array[String] = world.active_event_lines()
+	if effects.is_empty(): effects.append("Aucun effet temporaire.")
+	if not world.decision.is_empty() and world.Decisions.summary(world) not in effects: effects.append(world.Decisions.summary(world))
+	for section in [{"title":"Achats datés","text":"\n".join(purchase_lines)},{"title":"Effets en cours","text":"\n".join(effects)},{"title":"Actualités · plus récentes en haut","text":"\n".join(reversed_news())}]:
+		var column = VBoxContainer.new()
+		column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		columns.add_child(column)
+		column.add_child(_label(section.title,16,ACCENT))
+		var content = RichTextLabel.new()
+		content.custom_minimum_size.y = 130
+		content.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		content.focus_mode = Control.FOCUS_ALL
+		content.add_theme_font_size_override("normal_font_size",14)
+		content.text = section.text
+		column.add_child(content)
+	var controls = HBoxContainer.new()
+	body.add_child(controls)
+	var back = _button("Retour [F3]",close_overview,controls)
+	_button("Aide [F1]",open_help,controls)
+	back.grab_focus()
+func reversed_news() -> Array[String]:
+	var news = world.journal.duplicate()
+	news.reverse()
+	return news
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
@@ -1035,6 +1104,7 @@ func _input(event: InputEvent) -> void:
 		return
 	if event.keycode == KEY_ESCAPE:
 		if screen == "help": close_help()
+		elif screen == "overview": close_overview()
 		elif screen == "saves": close_saves()
 		elif screen == "decision": show_game()
 		elif tutorial != null: finish_tutorial()
@@ -1045,6 +1115,9 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 	elif event.keycode == KEY_F2 and screen == "game" and not world.decision.is_empty():
 		show_decision()
+		get_viewport().set_input_as_handled()
+	elif event.keycode == KEY_F3 and screen in ["game","result","overview"]:
+		open_overview()
 		get_viewport().set_input_as_handled()
 	elif screen == "game":
 		if event.keycode == KEY_SPACE:

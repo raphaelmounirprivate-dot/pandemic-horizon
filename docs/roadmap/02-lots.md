@@ -36,7 +36,7 @@ Peut commencer après A ; ne dépend pas d'une nouvelle règle de simulation.
 
 Terminé quand EVO-01 à EVO-03 sont validés au clic et au clavier, sans achat accidentel ni changement de coût. Si dix-huit évolutions ne tiennent plus confortablement, proposer et valider une nouvelle composition avant d'étendre le catalogue.
 
-## Lot D — Actualités et bilan explicatif
+## Lot D — Actualités et bilan explicatif, réalisé en 0.17
 
 - Présenter un fil d'actualités compact : fait réel de la simulation, date et conséquence.
 - Conserver les décisions sous la carte ; seules les confirmations qui le nécessitent interrompent l'action.

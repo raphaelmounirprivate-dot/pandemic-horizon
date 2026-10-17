@@ -24,6 +24,7 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 - [Point 19 — Exploration de la carte](19-exploration-carte.md) : prototype 0.14, zoom, déplacement, retour monde, focus et écrans larges ; lot A.
 - [Point 20 — Transports visibles](20-transports-visibles.md) : prototype 0.15, véhicules, filtres, terrain et comparaison de rendu ; sauvegarde distincte du lot B.
 - [Point 21 — Évolutions intégrées](21-evolutions-integrees.md) : prototype 0.16, relations, fiche et achat explicite ; sauvegarde distincte du lot C.
+- [Point 22 — Actualités et historique](22-actualites-historique.md) : prototype 0.17, courbes, achats datés, annonces et reprise des anciennes parties sans passé inventé.
 - [Feuille de route de la suite](../roadmap/README.md) : liste vivante des développements, dépendances et critères de fin.
 - [Règles effectives](../REGLES.md) : paramètres du code actuel.
 - [Développement](../DEVELOPPEMENT.md) : préparation, tests et export.

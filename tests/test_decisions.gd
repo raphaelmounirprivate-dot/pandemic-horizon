@@ -17,9 +17,12 @@ func buy(world: RefCounted) -> void:
 			world.purchase(id)
 			break
 
-func snapshot(world: RefCounted) -> Dictionary:
+func snapshot(world: RefCounted, historical: bool = false) -> Dictionary:
 	var result = Store.new().encode(world)
 	result.erase("saved_at")
+	if historical:
+		result.erase("history")
+		result.erase("purchase_history")
 	return result
 
 func run(tree: SceneTree, check: Callable) -> void:
@@ -151,7 +154,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 			loaded.world.step()
 		var reference = store.decode(JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/future-0.10-%s.json" % name)))
 		check.call(reference.error.is_empty(),"Référence future 0.10 acceptée")
-		if reference.error.is_empty(): check.call(snapshot(loaded.world) == snapshot(reference.world),"Trente vraies journées 0.10 conservées : " + name)
+		if reference.error.is_empty(): check.call(snapshot(loaded.world,true) == snapshot(reference.world,true),"Trente vraies journées 0.10 conservées : " + name)
 		DirAccess.make_dir_recursive_absolute(store.directory)
 		store._write(store._path("slot1"),text)
 		var resumed = store.load_slot("slot1")

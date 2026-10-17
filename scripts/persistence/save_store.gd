@@ -33,7 +33,8 @@ func encode(world: RefCounted, selected: int = 0, speed: int = 1) -> Dictionary:
 		"regions": states, "purchased": world.purchased.duplicate(), "journal": world.journal.duplicate(), "objective":world.objective.duplicate(true), "decision":world.decision.duplicate(true),
 		"events": effects, "activated": world.activated_events.duplicate(), "phase": world.phase.id,
 		"seed": str(world.rng.seed), "rng": str(world.rng.state),
-		"selected": world.regions[clampi(selected, 0, world.regions.size() - 1)].id, "speed": speed}
+		"selected": world.regions[clampi(selected, 0, world.regions.size() - 1)].id, "speed": speed,
+		"history":world.history.duplicate(true),"purchase_history":world.purchase_history.duplicate(true)}
 
 func _integer(value: Variant, minimum: int, maximum: int) -> bool:
 	return (value is int or value is float) and is_finite(float(value)) and value == floor(value) and value >= minimum and value <= maximum
@@ -164,6 +165,7 @@ func decode(data: Variant) -> Dictionary:
 			world.decision.day = int(world.decision.day)
 			if not world.decision.choice.is_empty(): spent += int(World.Decisions.option(world.decision.choice,world).cost)
 	if int(data.points) != 8 + int(data.day / 5) * 3 - spent: return invalid
+	if not World.History.restore(world,data): return invalid
 	var result = {"error": "", "world": world, "selected": ids.find(data.selected), "speed": int(data.speed), "saved_at": data.saved_at}
 	if legacy: result["warning"] = "Partie 0.7 chargée en pause ; nouvelles spécialisations disponibles."
 	elif old_format: result["warning"] = "Partie 0.8 chargée en pause, sans objectif facultatif."

@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.16
+# Jouer à Pandemic Horizon 0.17
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.16.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.17.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -16,6 +16,7 @@ La carte du monde utilise les contours terrestres Natural Earth. Les 24 régions
 | 1, 2, 4 | Choisir la vitesse |
 | F1 | Ouvrir ou fermer l'aide, en pause |
 | F2 | En partie, mettre en pause et retrouver les choix logistiques intégrés |
+| F3 / Monde | Consulter courbes, achats datés, effets et actualités en pause ; F3 ou Échap revient |
 | Échap | Menu et pause de la partie |
 | Tab / Maj + Tab | Parcourir les contrôles |
 | Entrée | Activer le contrôle sélectionné |
@@ -31,6 +32,8 @@ La carte du monde utilise les contours terrestres Natural Earth. Les 24 régions
 « Retirés » signifie sortis de l'état actif. Le cumul touché additionne actifs et retirés, sans compter deux fois une personne. Les courbes discrètes montrent le réseau fictif ; les pointillés et croix ambre signalent une route fermée. Les flèches rouges suivent les échanges orientés calculés pour le jour courant, uniquement sur les routes ouvertes. Elles se figent en pause et reprennent après chargement au prochain jour simulé. Le dessin des trajectoires est illustratif.
 
 La carte se focalise avec Tab. Quand Tab atteint une région hors champ, la vue se déplace pour la montrer ; Entrée la sélectionne. Les cibles restent de taille constante pendant le zoom. Les commandes de jeu, évolutions et choix logistiques ne se déplacent pas avec la carte. Le centre est conservé au redimensionnement et lors du retour depuis l'aide, le menu ou les sauvegardes. Nouvelle partie et chargement repartent en vue mondiale ; cette caméra temporaire n'est pas enregistrée dans les sauvegardes.
+
+« Monde [F3] » présente les courbes de touchés et de remède, les dates d'achats observées, les effets courants et le journal récent. Une ancienne sauvegarde sans historique est signalée ; ses journées ou dates d'achat ne sont pas reconstituées. L'historique reprend ensuite à partir des nouvelles observations. La partie reste en pause pendant cette consultation.
 
 ## Objectif facultatif : Premiers relais
 

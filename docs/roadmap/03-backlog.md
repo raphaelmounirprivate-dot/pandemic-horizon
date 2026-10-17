@@ -31,6 +31,8 @@ Au 17 octobre 2026, **MON-01 à MON-03 sont terminés en 0.14**, voir le [point 
 
 EVO-01, EVO-02 et EVO-03 sont terminés en 0.16, voir le [point 21](../suivi/21-evolutions-integrees.md). EVT-01, EVT-02, STA-01 et STA-02 constituent le lot suivant.
 
+EVT-01, EVT-02, STA-01 et STA-02 sont terminés en 0.17, voir le [point 22](../suivi/22-actualites-historique.md). Les tâches de contenu CNT-01 à CNT-04 suivent ; les essais joueurs de CNT-04 restent distincts des mesures automatiques.
+
 | Question | Quand | Choix provisoire |
 | --- | --- | --- |
 | Glisser au bouton central ou droit ? | Lot A | Tester la cohérence avec clic gauche de sélection |

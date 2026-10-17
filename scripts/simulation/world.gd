@@ -9,6 +9,9 @@ const Transports = preload("res://scripts/gameplay/transports.gd")
 const SPECIALIZATIONS = ["land_network", "air_bridge", "sea_logistics"]
 const Objectives = preload("res://scripts/gameplay/objectives.gd")
 const Decisions = preload("res://scripts/gameplay/decisions.gd")
+const History = preload("res://scripts/gameplay/history.gd")
+var history: Array = []
+var purchase_history: Array = []
 var decision: Dictionary = {}
 var decision_rules: Dictionary = {}
 var decision_profile: String = ""
@@ -173,6 +176,9 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	journal.append("Jour 0 · Départ dans la région %s." % region_name(start_id))
 	journal.append("Jour 0 · %s · Difficulté %s · Phase %s." % [scenario.name, difficulty.name, phase.name])
 	if not objective.is_empty(): journal.append("Jour 0 · Objectif facultatif · " + Objectives.description(Objectives.definition(objective_id)))
+	history.clear()
+	purchase_history.clear()
+	History.record(self)
 	return ""
 
 func region_name(id: String) -> String:
@@ -221,6 +227,8 @@ func purchase(id: String) -> String:
 	points -= int(evolutions[id].cost)
 	purchased.append(id)
 	journal.append("Jour %d · Évolution acquise : %s." % [day, evolutions[id].name])
+	purchase_history.append({"day":day,"id":id,"cost":int(evolutions[id].cost)})
+	History.record(self)
 	return ""
 
 func upgrade_modifier(key: String, base: float = 1.0) -> float:
@@ -427,6 +435,7 @@ func step() -> void:
 	resolve_outcome()
 	Objectives.update(self)
 	Decisions.update(self)
+	History.record(self)
 
 func resolve_outcome() -> void:
 	if cure >= 100.0:

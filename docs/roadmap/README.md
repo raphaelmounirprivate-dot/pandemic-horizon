@@ -1,6 +1,6 @@
 # Feuille de route — suite de Pandemic Horizon
 
-Date : 17 octobre 2026. État courant : prototype 0.16, lots A à C réalisés, voir le [point 21](../suivi/21-evolutions-integrees.md). Base de la planification : prototype 0.13, commit `f252baf`.
+Date : 17 octobre 2026. État courant : prototype 0.17, lots A à D réalisés, voir le [point 22](../suivi/22-actualites-historique.md). Base de la planification : prototype 0.13, commit `f252baf`.
 
 Ce dossier organise le développement à venir à partir des captures fournies par le joueur. Les éléments marqués « proposé » ne sont pas encore développés. Les tâches terminées sont identifiées dans le backlog et reliées à leur point de suivi.
 
@@ -15,7 +15,7 @@ Le [plan général](../plan-developpement.md) conserve les objectifs de la versi
 
 ## Priorité proposée
 
-Les lots A à C sont réalisés : caméra, transports et évolutions intégrées. Le lot D est le suivant : événements, historique quotidien et courbes de bilan. Une sauvegarde vérifiée distincte est créée entre les étapes avec `scripts/checkpoint.ps1`.
+Les lots A à D sont réalisés : caméra, transports, évolutions intégrées, actualités et courbes. Le lot E est le suivant : identité, scénarios, contenu enrichi et mesures. Une sauvegarde vérifiée distincte est créée entre les étapes avec `scripts/checkpoint.ps1`.
 
 Les étiquettes 0.14 et suivantes sont des versions candidates, sans date de livraison engagée. Un lot peut être fractionné s'il devient trop large.
 

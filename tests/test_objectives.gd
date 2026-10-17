@@ -131,6 +131,9 @@ func run(tree: SceneTree, check: Callable) -> void:
 		var reference = store.decode(JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/future-0.8-%s.json" % scenario)))
 		var actual = store.encode(loaded.world)
 		var expected = store.encode(reference.world)
+		for key in ["history","purchase_history"]:
+			actual.erase(key)
+			expected.erase(key)
 		actual.erase("saved_at")
 		expected.erase("saved_at")
 		check.call(actual == expected, "Reprise 0.8 identique aux vingt vrais jours futurs : " + scenario)

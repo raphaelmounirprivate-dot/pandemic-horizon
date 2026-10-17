@@ -9,7 +9,7 @@ const SAMPLE_DAYS = [0,28,31,40,43,54]
 
 static func fingerprint(world: RefCounted) -> String:
 	var state = Store.new().encode(world)
-	for key in ["saved_at","decision","decision_profile","journal"]: state.erase(key)
+	for key in ["saved_at","decision","decision_profile","journal","history","purchase_history"]: state.erase(key)
 	return JSON.stringify(state,"",true,true).sha256_text()
 
 static func sample(world: RefCounted) -> Dictionary:

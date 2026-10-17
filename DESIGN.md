@@ -1,6 +1,6 @@
 ---
 name: Pandemic Horizon
-description: Monde en crise et commandes intégrées du prototype Godot 0.16
+description: Monde en crise et commandes intégrées du prototype Godot 0.17
 colors:
   ink: "#e1eee9"
   muted: "#a7c4c9"
@@ -87,6 +87,7 @@ Le fond géographique est réel ; les 24 régions, leurs populations et leurs li
 - Sélection turquoise ; fermetures et blocages ambre.
 - Carte, arbre complet des évolutions et choix logistiques dans la même vue.
 - Animation observatrice, figée en pause et indépendante du hasard du modèle.
+- Historique observé et actualités en lecture séparée, sans déplacer les achats.
 
 ## Colors
 
@@ -108,6 +109,8 @@ La police est celle fournie par défaut par Godot ; aucune famille ni graisse pe
 Les titres des écrans utilisent 30 px, celui du jeu 22 px, les indicateurs et le titre des évolutions 20 px. Le corps général est à 18 px, le secondaire à 16 px. Le détail régional, le statut et le journal sont à 14 px ; les achats, effets, états, légendes et décisions à 13 px. Les numéros des hubs et mentions cartographiques utilisent 12 px ; le nom de la région sélectionnée utilise 14 px. L’aide utilise 20 px pour son texte riche. Les effets et motifs d’achat reviennent à la ligne.
 
 ## Layout
+
+Les captures 0.17 `.impeccable/review/history-{start,ongoing,pending,victory,defeat,legacy}-{1280,1920,2395}.png` couvrent six états aux dimensions 1280 × 720, 1920 × 1080 et 2395 × 1060. Elles documentent le développement ; elles ne prouvent aucun essai physique Windows ni essai avec des joueurs. La vue Monde place la situation et une courbe de hauteur minimale 190 px avant trois colonnes extensibles séparées de 16 px. Chaque texte riche focalisable a une hauteur minimale de 130 px et son propre défilement. Les achats et décisions restent dans le jeu.
 
 Les captures 0.16 `.impeccable/review/evolution-{insufficient,prerequisite,available,acquired,excluded,pending,arctic,tutorial}-{1280,1920,2395}.png` couvrent huit états aux dimensions 1280 × 720, 1920 × 1080 et 2395 × 1060. Elles documentent la composition de développement ; elles ne prouvent aucun essai physique Windows ni essai avec des joueurs. Le suivi est dans `docs/suivi/21-evolutions-integrees.md`.
 
@@ -134,6 +137,8 @@ Les boutons généraux ont un rayon de 6 px, un focus transparent bordé de turq
 Le fond local Natural Earth `assets/maps/world-land.geojson` dessine continents et contours vectoriels. Les routes sont courbes ; une fermeture ajoute des segments et une croix ambre au milieu. Aucun raster n’est livré par cette réalisation.
 
 ## Components
+
+**Monde, historique et actualités (0.17).** F3, le bouton du bas de partie et la dernière actualité cliquable ouvrent « Monde · Actualités et bilan » hors tutoriel ; le bilan possède aussi un accès. La simulation est mise en pause. La situation actuelle et l’objectif éventuel précèdent les courbes, puis trois colonnes présentent les achats datés, les effets en cours et le journal réel inversé, plus récent en haut. Le résumé de décision n’est pas répété s’il figure déjà parmi les effets. Le graphique vectoriel emploie le corail pour la proportion cumulée touchée et le turquoise pour le remède, avec légende textuelle, repères de 0 à 100 % et jours extrêmes ; un seul échantillon apparaît comme un point. L’absence d’historique et les dates d’achats antérieures manquantes sont explicitement signalées, sans passé inventé. Les colonnes utilisent les textes secondaires de 14 px, leurs titres 16 px et la légende 13 px. Retour, F3 ou Échap ramènent à la partie en pause ou au bilan ; le focus initial vise Retour. F1 ouvre l’aide puis revient à Monde. Les achats et les choix logistiques restent dans leur composition intégrée. Aucun nouveau jeton visuel n’est introduit.
 
 **Transports et filtre (0.15).** Cette extension conserve le système de carte et ses commandes. Véhicules terrestres, avions et bateaux sont des silhouettes vectorielles rouge corail orientées dans le sens des échanges observés. Les petits symboles aériens et maritimes neutres près des hubs indiquent la présence de liaisons, même temporairement fermées ; les comptes ouverts/total restent dans le détail régional. Le bouton fixe « Flux : tous » parcourt tous, terre, air et mer sans menu déroulant. Il filtre uniquement les mouvements ; routes et croix de fermeture restent visibles. Le filtre suit la caméra en mémoire entre les écrans de la même partie ; nouvelle partie et chargement réussi rétablissent tous. Il n’est pas sérialisé ; les règles et le format 4 restent inchangés.
 
