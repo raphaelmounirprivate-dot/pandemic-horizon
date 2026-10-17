@@ -2,6 +2,8 @@
 
 ## Environnement fixé
 
+Le prototype 0.14 ajoute la caméra de carte. `tests/test_map_camera.gd` vérifie zoom, déplacement, limites, sélection, focus, centre et invariance du modèle. Pour quinze captures natives : lancer Godot avec `--path . --script res://tests/capture_camera.gd -- --no-autosave`. Le script refuse une taille PNG différente de la résolution demandée. `window/stretch/aspect="expand"` permet un véritable rendu 2395 × 1060, au lieu d'un rendu intérieur 16:9.
+
 Godot **4.7.2 stable standard**, GDScript, rendu Compatibility, export Windows x86_64. Version observée : `4.7.2.stable.official.ed1daf0bf`. Source : [distribution officielle](https://github.com/godotengine/godot-builds/releases/tag/4.7.2-stable).
 
 Les commandes suivantes s'exécutent depuis la racine du dépôt, sous Windows PowerShell. `-ExecutionPolicy Bypass` ne s'applique qu'au processus lancé ; aucune politique système n'est modifiée.
@@ -31,7 +33,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Export
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/verify-export.ps1
 ```
 
-Résultat actuel : `build/windows-0.13.0/PandemicHorizon.exe`, ressources embarquées, accompagné du guide et des licences copiés par le script. Le dossier est calculé depuis `config/version` dans `project.godot` : `build/windows-<version>/`. Cela permet de conserver une ancienne version en cours d'exécution. Un nouvel export de la même version exige toutefois que son binaire soit fermé. L'exécutable n'est pas signé. Les exécutables, archives téléchargées et captures ne sont pas versionnés dans Git. La release GitHub 1.0 reste un jalon ultérieur.
+Résultat actuel : `build/windows-0.14.0/PandemicHorizon.exe`, ressources embarquées, accompagné du guide et des licences copiés par le script. Le dossier est calculé depuis `config/version` dans `project.godot` : `build/windows-<version>/`. Cela permet de conserver une ancienne version en cours d'exécution. Un nouvel export de la même version exige toutefois que son binaire soit fermé. L'exécutable n'est pas signé. Les exécutables, archives téléchargées et captures ne sont pas versionnés dans Git. La release GitHub 1.0 reste un jalon ultérieur.
 
 `verify-export.ps1` copie le binaire de la version courante seul vers un chemin contenant espaces et accents, vérifie le standard (prérequis, événements, victoire/défaite), Dégel (quatre phases, routes et évolutions) et les difficultés, puis son démarrage graphique. Ce contrôle nécessite une session graphique pour sa deuxième étape ; il n'utilise ni les scènes sources ni le dossier de tests.
 

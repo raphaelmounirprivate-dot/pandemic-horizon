@@ -68,7 +68,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 	await key(tree, KEY_ENTER)
 	check.call(scene.screen == "game" and scene.world.day == 0 and scene.world.purchased.is_empty(), "Entrée relance une nouvelle partie depuis le menu")
 	var reachable: Array = []
-	for i in range(scene.world.regions.size() + scene.world.evolutions.size() + 10):
+	for i in range(scene.world.regions.size() + scene.world.evolutions.size() + 14):
 		await key(tree, KEY_TAB)
 		var focused = scene.get_viewport().gui_get_focus_owner()
 		if focused not in reachable:
@@ -78,7 +78,9 @@ func run(tree: SceneTree, check: Callable) -> void:
 		complete = complete and button in reachable
 	for button in scene.evolution_buttons.values():
 		complete = complete and button in reachable
-	check.call(complete, "Tab atteint toutes les régions et évolutions, panneau défilant compris")
+	for button in scene.map_view.camera_tools.get_children():
+		if not button.disabled: complete = complete and button in reachable
+	check.call(complete, "Tab atteint toutes les régions, évolutions et commandes de caméra actives")
 	scene.show_menu()
 	scene.scenario_choice.select(1)
 	scene.scenario_choice.item_selected.emit(1)

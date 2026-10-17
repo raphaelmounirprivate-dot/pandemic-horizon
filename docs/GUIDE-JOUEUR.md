@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.13
+# Jouer à Pandemic Horizon 0.14
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.13.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.14.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -19,11 +19,17 @@ La carte du monde utilise les contours terrestres Natural Earth. Les 24 régions
 | Échap | Menu et pause de la partie |
 | Tab / Maj + Tab | Parcourir les contrôles |
 | Entrée | Activer le contrôle sélectionné |
+| Molette sur la carte | Zoomer autour du pointeur entre ×1 et ×4 |
+| Glisser au bouton droit ou central | Déplacer la carte agrandie |
+| Boutons − / + / Vue mondiale | Dézoomer, zoomer ou retrouver le monde entier |
+| + / −, flèches, Origine sur la carte focalisée | Zoom, déplacement, retour au monde |
 | Menu → Reprendre la partie | Retrouver la partie en mémoire, en pause |
 | Sauvegardes | Enregistrer ou charger une partie sur ce PC |
 | Recommencer / Nouvelle partie | Abandonner la partie courante et repartir du jour zéro |
 
 « Retirés » signifie sortis de l'état actif. Le cumul touché additionne actifs et retirés, sans compter deux fois une personne. Les courbes discrètes montrent le réseau fictif ; les pointillés et croix ambre signalent une route fermée. Les flèches rouges suivent les échanges orientés calculés pour le jour courant, uniquement sur les routes ouvertes. Elles se figent en pause et reprennent après chargement au prochain jour simulé. Le dessin des trajectoires est illustratif.
+
+La carte se focalise avec Tab. Quand Tab atteint une région hors champ, la vue se déplace pour la montrer ; Entrée la sélectionne. Les cibles restent de taille constante pendant le zoom. Les commandes de jeu, évolutions et choix logistiques ne se déplacent pas avec la carte. Le centre est conservé au redimensionnement et lors du retour depuis l'aide, le menu ou les sauvegardes. Nouvelle partie et chargement repartent en vue mondiale ; cette caméra temporaire n'est pas enregistrée dans les sauvegardes.
 
 ## Objectif facultatif : Premiers relais
 

@@ -2,7 +2,7 @@
 
 P0 : prochain lot. P1 : suite du cycle. P2 : contenu et finition après les fondations. Effort relatif S/M/L : limité / plusieurs fichiers / changement transversal ; il ne correspond pas à une durée promise.
 
-Toutes les lignes sont au statut **proposé** au 17 octobre 2026.
+Au 17 octobre 2026, **MON-01, MON-02 et MON-03 sont terminés en 0.14**, voir le [point 19](../suivi/19-exploration-carte.md). Les autres lignes restent au statut **proposé**. La prochaine tâche recommandée est MON-04.
 
 | ID | Priorité | Tâche | Dépendance | Effort | Critère de fin |
 | --- | --- | --- | --- | --- | --- |

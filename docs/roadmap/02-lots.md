@@ -1,8 +1,8 @@
 # Lots proposés et dépendances
 
-Tous les lots sont proposés. Aucun changement de simulation ou d'interface n'est livré par ce document.
+Le lot A est réalisé en 0.14, voir le [point 19](../suivi/19-exploration-carte.md). Les lots B à F restent proposés. Ce document décrit leur périmètre ; les preuves de réalisation sont consignées dans les points de suivi.
 
-## Lot A — Explorer la carte, candidat 0.14
+## Lot A — Explorer la carte, réalisé en 0.14
 
 Objectif : inspecter le monde et les foyers avec un zoom confortable.
 

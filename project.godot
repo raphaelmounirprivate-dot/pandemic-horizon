@@ -3,7 +3,7 @@ config_version=5
 
 [application]
 config/name="Pandemic Horizon"
-config/version="0.13.0"
+config/version="0.14.0"
 run/main_scene="res://scenes/main.tscn"
 
 [display]
@@ -14,6 +14,7 @@ window/size/window_height_override=720
 window/size/min_width=1280
 window/size/min_height=720
 window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
 [rendering]
 renderer/rendering_method="gl_compatibility"

@@ -1,4 +1,4 @@
-# Règles du prototype 0.13
+# Règles du prototype 0.14
 
 ## Présentation du monde et des flux
 

@@ -18,6 +18,12 @@ var polygons: Array[PackedVector2Array] = []
 var land_dots: Dictionary = {}
 var layout_size = Vector2.ZERO
 var display_positions: Dictionary = {}
+var zoom = 1.0
+var pan = Vector2.ZERO
+var dragging = false
+var camera_tools: HBoxContainer
+var zoom_out: Button
+var zoom_in: Button
 signal region_selected(index: int)
 func setup(model: PandemicWorld) -> void:
 	world = model
@@ -25,6 +31,8 @@ func setup(model: PandemicWorld) -> void:
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	size_flags_vertical = Control.SIZE_EXPAND_FILL
 	clip_contents = true
+	focus_mode = Control.FOCUS_ALL
+	tooltip_text = "Molette : zoom · Glisser au bouton droit ou central : déplacer\nClavier sur la carte : + / −, flèches, Origine : vue mondiale"
 	var geo = JSON.parse_string(FileAccess.get_file_as_string("res://assets/maps/world-land.geojson"))
 	for feature in geo.features:
 		var rings = feature.geometry.coordinates if feature.geometry.type == "MultiPolygon" else [feature.geometry.coordinates]
@@ -60,20 +68,98 @@ func setup(model: PandemicWorld) -> void:
 			selected = i
 			region_selected.emit(i)
 			refresh())
+		button.mouse_filter = Control.MOUSE_FILTER_PASS
+		button.focus_entered.connect(func(): reveal_region(i))
 		add_child(button)
 		buttons.append(button)
+	camera_tools = HBoxContainer.new()
+	camera_tools.add_theme_constant_override("separation",4)
+	add_child(camera_tools)
+	zoom_out = camera_button("−",func(): zoom_at(size*.5,zoom/1.25))
+	zoom_in = camera_button("+",func(): zoom_at(size*.5,zoom*1.25))
+	camera_button("Vue mondiale",reset_view)
 	resized.connect(refresh)
 	refresh()
+func camera_button(title: String, action: Callable) -> Button:
+	var button = Button.new()
+	button.text = title
+	button.custom_minimum_size = Vector2(44,44)
+	button.add_theme_font_size_override("font_size",13)
+	button.pressed.connect(action)
+	camera_tools.add_child(button)
+	return button
+func clamp_pan() -> void:
+	pan = pan.clamp(size*(1.0-zoom),Vector2.ZERO)
+func zoom_at(point: Vector2, value: float) -> void:
+	var next_zoom = clampf(value,1.0,4.0)
+	pan = point-(point-pan)/zoom*next_zoom
+	zoom = next_zoom
+	clamp_pan()
+	refresh()
+func reset_view() -> void:
+	zoom = 1.0
+	pan = Vector2.ZERO
+	dragging = false
+	refresh()
+func camera_state() -> Dictionary:
+	return {"zoom":zoom,"center":(size*.5-pan)/zoom/size}
+func restore_camera(state: Dictionary) -> void:
+	if state.is_empty(): return
+	zoom = clampf(state.zoom,1.0,4.0)
+	pan = size*.5-state.center*size*zoom
+	clamp_pan()
+	refresh()
+func move_camera(offset: Vector2) -> void:
+	pan += offset
+	clamp_pan()
+	refresh()
+func reveal_region(index: int) -> void:
+	if zoom <= 1.0: return
+	var point = map_position(world.regions[index])
+	var safe = Rect2(Vector2(24,60),size-Vector2(48,84))
+	if not safe.has_point(point): move_camera(size*.5-point)
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN] and event.pressed:
+			zoom_at(event.position,zoom*(1.25 if event.button_index == MOUSE_BUTTON_WHEEL_UP else .8))
+			accept_event()
+		elif event.button_index in [MOUSE_BUTTON_RIGHT,MOUSE_BUTTON_MIDDLE]:
+			dragging = event.pressed
+			if dragging: grab_focus()
+			accept_event()
+	elif event is InputEventMouseMotion and dragging:
+		move_camera(event.relative)
+		accept_event()
+	elif event is InputEventKey and event.pressed:
+		if event.keycode in [KEY_PLUS,KEY_EQUAL,KEY_KP_ADD]: zoom_at(size*.5,zoom*1.25)
+		elif event.keycode in [KEY_MINUS,KEY_KP_SUBTRACT]: zoom_at(size*.5,zoom*.8)
+		elif event.keycode == KEY_HOME: reset_view()
+		elif event.keycode in [KEY_LEFT,KEY_RIGHT,KEY_UP,KEY_DOWN]:
+			move_camera({KEY_LEFT:Vector2(64,0),KEY_RIGHT:Vector2(-64,0),KEY_UP:Vector2(0,64),KEY_DOWN:Vector2(0,-64)}[event.keycode])
+		else: return
+		accept_event()
+func _notification(what: int) -> void:
+	if what in [NOTIFICATION_WM_WINDOW_FOCUS_OUT,NOTIFICATION_EXIT_TREE]: dragging = false
 func project(point: Vector2) -> Vector2:
-	return Vector2(24,25)+point*(size-Vector2(48,50))
+	return (Vector2(24,25)+point*(size-Vector2(48,50)))*zoom+pan
 func map_position(region: Dictionary) -> Vector2:
-	return display_positions.get(region.id,project(ANCHORS.get(region.id,Vector2(region.position[0],region.position[1]))))
+	return display_positions.get(region.id,Vector2.ZERO)*zoom+pan
 func refresh() -> void:
 	if world == null: return
 	if layout_size != size:
+		if layout_size.x > 0 and layout_size.y > 0:
+			var center = (layout_size*.5-pan)/zoom/layout_size
+			pan = size*.5-center*size*zoom
 		layout_size = size
-		for region in world.regions: display_positions[region.id] = project(ANCHORS.get(region.id,Vector2(.5,.5)))
+		clamp_pan()
+		for region in world.regions: display_positions[region.id] = Vector2(24,25)+ANCHORS.get(region.id,Vector2(.5,.5))*(size-Vector2(48,50))
 		for iteration in range(40):
+			# Keep the fixed camera toolbar clear in the initial world view.
+			var tools_width = camera_tools.get_combined_minimum_size().x if is_instance_valid(camera_tools) else 215.0
+			for id in display_positions:
+				var point: Vector2 = display_positions[id]
+				if point.x > size.x-tools_width-30 and point.y < 72:
+					display_positions[id].y = 72
 			for a in range(world.regions.size()):
 				for b in range(a+1,world.regions.size()):
 					var first = world.regions[a].id
@@ -91,6 +177,11 @@ func refresh() -> void:
 		buttons[i].position = map_position(region)-Vector2(22,22)
 		buttons[i].size = Vector2(44,44)
 		buttons[i].tooltip_text = "%s · %.1f %% touchés · %d actifs\n%s" % [region.name,100.0*(region.active+region.removed)/region.population,region.active,world.transport_summary(region.id)]
+	if is_instance_valid(camera_tools):
+		camera_tools.size = camera_tools.get_combined_minimum_size()
+		camera_tools.position = Vector2(size.x-camera_tools.size.x-8,4)
+		zoom_out.disabled = zoom <= 1.0
+		zoom_in.disabled = zoom >= 4.0
 	queue_redraw()
 func _process(delta: float) -> void:
 	if motion_enabled:

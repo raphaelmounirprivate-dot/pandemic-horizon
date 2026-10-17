@@ -29,6 +29,8 @@ var decision_buttons: Dictionary = {}
 var decision_notice: Label
 var decision_area: VBoxContainer
 var decision_signature = ""
+var map_camera: Dictionary = {}
+var reset_map_camera = false
 var scenario_choice: OptionButton
 var difficulty_choice: OptionButton
 var start_choice: OptionButton
@@ -234,6 +236,7 @@ func load_saved(slot: String) -> void:
 		show_saves()
 		return
 	world = result.world
+	reset_map_camera = true
 	if tutorial != null and tutorial.stage == 5 and tutorial.saved_slot == slot: tutorial.ready = true
 	selected = result.selected
 	speed = result.speed
@@ -519,6 +522,10 @@ func _apply_theme() -> void:
 	theme = design
 
 func _reset_screen(title: String, subtitle: String) -> void:
+	if is_instance_valid(map_view):
+		map_camera = map_view.camera_state() if not reset_map_camera and map_view.world == world else {}
+		map_view = null
+	if reset_map_camera: map_camera = {}
 	for child in get_children():
 		remove_child(child)
 		child.queue_free()
@@ -537,7 +544,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.13", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.14", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -707,6 +714,7 @@ func show_settings() -> void:
 	fullscreen.grab_focus()
 
 func start_game() -> void:
+	reset_map_camera = true
 	var error = world.start(start_id, 2042, null, null, scenario_id, difficulty_id, null, null, objective_id,decision_enabled)
 	if not error.is_empty():
 		show_menu()
@@ -749,6 +757,8 @@ func show_game() -> void:
 	map_view.selected = selected
 	map_view.region_selected.connect(select_region)
 	map_column.add_child(map_view)
+	map_view.restore_camera(map_camera)
+	reset_map_camera = false
 	map_column.add_child(_label("Rouge : touchés · Flèches : échanges du jour · 24 régions fictives",13,MUTED))
 	decision_area = VBoxContainer.new()
 	decision_signature = ""

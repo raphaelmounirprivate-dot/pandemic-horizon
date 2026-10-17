@@ -1,6 +1,6 @@
 ---
 name: Pandemic Horizon
-description: Monde en crise et commandes intégrées du prototype Godot 0.13
+description: Monde en crise et commandes intégrées du prototype Godot 0.14
 colors:
   ink: "#e1eee9"
   muted: "#a7c4c9"
@@ -102,7 +102,7 @@ Les titres des écrans utilisent 30 px, celui du jeu 22 px, les indicateurs et l
 
 ## Layout
 
-La composition logique de référence est 1280 × 720, avec `canvas_items` dans `project.godot`. Les captures à 1920 × 1080 mettent à l’échelle cette composition ; elles ne démontrent pas une disposition recomposée indépendamment. Les contrôles de développement incluent aussi une capture à la largeur du joueur dans `.impeccable/review/user-2395.png`.
+La composition logique de référence est 1280 × 720, avec `canvas_items` et, depuis la 0.14, `window/stretch/aspect="expand"` dans `project.godot`. À 1920 × 1080, le même rapport 16:9 met cette composition à l’échelle. Une fenêtre plus large étend l’espace logique et la carte extensible. Les captures 0.14 dans `.impeccable/review/camera-{world,zoom,edge,keyboard,reset}-{1280,1920,2395}.png` mesurent respectivement 1280 × 720, 1920 × 1080 et 2395 × 1060. Les anciennes captures annoncées à la largeur 2395, dont `user-2395.png`, mesuraient en réalité 1884 × 1060 : elles documentent le rendu 16:9 antérieur, sans prouver la disposition à pleine largeur 2395.
 
 En jeu, les marges sont de 16 px et la séparation verticale principale de 6 px. Les indicateurs et le suivi facultatif précèdent la zone centrale : carte extensible à gauche, détails régionaux et évolutions à droite. La carte demande au minimum 640 × 220 px ; la colonne droite demande 500 px. Les six évolutions Standard ou neuf Dégel occupent trois colonnes, sans `ScrollContainer`. Chaque groupe rassemble bouton, effet et état.
 
@@ -121,6 +121,8 @@ Le fond local Natural Earth `assets/maps/world-land.geojson` dessine continents 
 ## Components
 
 **Carte du monde.** Les 24 hubs numérotés se sélectionnent au clic ou par navigation clavier. Le nom sélectionné apparaît sur la carte ; noms, populations et états exacts sont dans la colonne régionale et les infobulles. Les points terrestres et halos illustrent la fraction cumulée touchée, actifs et retirés ; ils ne localisent pas des personnes. Le compteur de foyers compte les régions ayant des actifs.
+
+**Caméra de carte (0.14).** Cette extension conserve le monde et les primitives de la 0.13. Le zoom va de ×1 à ×4. La molette zoome autour du pointeur ; le glisser droit ou central déplace la carte dans ses limites. Les commandes « − », « + » et « Vue mondiale » restent fixes en haut à droite, avec des cibles minimales de 44 × 44 px ; les hubs gardent leurs cibles de 44 × 44 px à tous les niveaux de zoom. Quand la carte a le focus, +/− zooment autour du centre, les flèches déplacent la vue et Origine (Home) revient au monde entier. Le focus clavier sur un hub hors champ le révèle. La caméra est conservée en mémoire pendant les passages par l’aide, les menus et les sauvegardes de la même partie ; une nouvelle partie ou un chargement réussi la réinitialise. Elle n’est pas sérialisée : le modèle et le format de sauvegarde 4 restent inchangés.
 
 **Flux.** Les flèches rouges orientées utilisent uniquement `latest_flows` : échanges effectivement ajoutés aux imports pour le jour courant, sur une route encore ouverte. Le temps de dessin anime leur position, sans modifier la simulation ni son RNG. La pause fige cette horloge ; après chargement, les flèches attendent le prochain jour simulé, car les observations ne sont pas sérialisées. Les courbes ne représentent pas des trajets géographiques réels.
 

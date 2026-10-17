@@ -227,5 +227,8 @@ func run() -> void:
 	var before_presentation = checks
 	await load("res://tests/test_world_presentation.gd").new().run(self,check)
 	check(checks - before_presentation >= 50,"Suite carte mondiale et interface intégrée entièrement exécutée")
+	var before_camera = checks
+	await load("res://tests/test_map_camera.gd").new().run(self,check)
+	check(checks - before_camera >= 100,"Suite exploration de carte entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

@@ -1,8 +1,8 @@
 # Feuille de route — suite de Pandemic Horizon
 
-Date : 17 octobre 2026. Base de travail : prototype 0.13, commit `f252baf`.
+Date : 17 octobre 2026. État courant : prototype 0.14, lot A réalisé, voir le [point 19](../suivi/19-exploration-carte.md). Base de la planification : prototype 0.13, commit `f252baf`.
 
-Ce dossier organise le développement à venir à partir des captures fournies par le joueur. Les éléments marqués « proposé » ne sont pas encore développés. Le jeu reste en 0.13 pendant cette planification.
+Ce dossier organise le développement à venir à partir des captures fournies par le joueur. Les éléments marqués « proposé » ne sont pas encore développés. Les tâches terminées sont identifiées dans le backlog et reliées à leur point de suivi.
 
 ## Documents à lire
 
@@ -15,7 +15,7 @@ Le [plan général](../plan-developpement.md) conserve les objectifs de la versi
 
 ## Priorité proposée
 
-Commencer par **MON-01 : zoom et déplacement de la carte**, puis améliorer les transports et la lecture des foyers. Ces travaux exploitent la simulation existante et rendent le monde plus vivant avant d'ajouter de nouvelles règles.
+Le lot A, **MON-01 à MON-03**, est réalisé en 0.14. Préparer maintenant **MON-04 : transports et véhicules**, puis la lecture des foyers. Ces travaux exploitent la simulation existante et rendent le monde plus vivant avant d'ajouter de nouvelles règles.
 
 Les étiquettes 0.14 et suivantes sont des versions candidates, sans date de livraison engagée. Un lot peut être fractionné s'il devient trop large.
 
