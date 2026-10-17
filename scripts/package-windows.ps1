@@ -15,7 +15,16 @@ if ($LASTEXITCODE -ne 0) { throw 'Executable verification failed.' }
 Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/GUIDE-JOUEUR.md') -Destination $exportDirectory -Force
 Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/TESTS-JOUEURS.md') -Destination $exportDirectory -Force
 Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/NOTES-VERSION-0.19.md') -Destination $exportDirectory -Force
-Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/licences') -Destination $exportDirectory -Recurse -Force
+$licenceDirectory = Join-Path $exportDirectory 'licences'
+New-Item -ItemType Directory -Force $licenceDirectory | Out-Null
+foreach ($licence in (Get-ChildItem -LiteralPath (Join-Path $projectRoot 'docs/licences') -File)) {
+    $destination = Join-Path $licenceDirectory $licence.Name
+    # Preserve identical export files; Copy-Item -Force can fail when replacing
+    # inherited Windows permissions even though their content is already correct.
+    if ((Test-Path -LiteralPath $destination) -and (Get-FileHash -LiteralPath $destination).Hash -eq (Get-FileHash -LiteralPath $licence.FullName).Hash) { continue }
+    Copy-Item -LiteralPath $licence.FullName -Destination $destination -Force
+    if ((Get-FileHash -LiteralPath $destination).Hash -ne (Get-FileHash -LiteralPath $licence.FullName).Hash) { throw "Licence copy mismatch: $($licence.Name)" }
+}
 $exeHash = (Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash
 $manifest = [ordered]@{version=$version;commit=$sha;status='candidate; human tests pending';executableSha256=$exeHash}
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $exportDirectory 'VERSION.json') -Encoding UTF8
