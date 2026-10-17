@@ -1,6 +1,6 @@
 # Feuille de route — suite de Pandemic Horizon
 
-Date : 17 octobre 2026. État courant : prototype 0.18, lots A à E implémentés ; essais joueurs en attente, voir le [point 23](../suivi/23-contenu-enrichi.md). Base de la planification : prototype 0.13, commit `f252baf`.
+Date : 17 octobre 2026. État courant : candidat 0.19, lots A à F implémentés techniquement ; essais joueurs en attente, voir le [point 24](../suivi/24-confort-distribution.md). Base de la planification : prototype 0.13, commit `f252baf`.
 
 Ce dossier organise le développement à venir à partir des captures fournies par le joueur. Les éléments marqués « proposé » ne sont pas encore développés. Les tâches terminées sont identifiées dans le backlog et reliées à leur point de suivi.
 
@@ -15,7 +15,7 @@ Le [plan général](../plan-developpement.md) conserve les objectifs de la versi
 
 ## Priorité proposée
 
-Les lots A à E sont implémentés et mesurés automatiquement. CNT-04 attend les essais joueurs. Le lot F prépare les réglages de confort et la distribution. Une sauvegarde vérifiée distincte est créée entre les étapes avec scripts/checkpoint.ps1.
+Les lots A à F sont implémentés techniquement et vérifiés automatiquement. CNT-04 et FIN-03 restent partiels : essais physiques, auditifs et joueurs à consigner dans TESTS-JOUEURS.md. La version 0.19 est candidate. Une sauvegarde vérifiée distincte est créée entre les étapes avec scripts/checkpoint.ps1.
 
 Les étiquettes 0.14 et suivantes sont des versions candidates, sans date de livraison engagée. Un lot peut être fractionné s'il devient trop large.
 

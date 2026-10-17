@@ -70,6 +70,35 @@ var help_text: RichTextLabel
 var mouse_press_active = false
 var overview_return = "game"
 var history_chart: Control
+var settings_path = CONFIG_PATH
+var reduced_motion = false
+var reading_large = false
+var sounds_enabled = false
+var sound_volume = 0.35
+var feedback: Node
+
+func _load_preferences() -> void:
+	var config = ConfigFile.new()
+	if config.load(settings_path) != OK: return
+	reduced_motion = config.get_value("comfort","reduced_motion",false) == true
+	reading_large = config.get_value("comfort","reading_large",false) == true
+	sounds_enabled = config.get_value("audio","enabled",false) == true
+	var level = config.get_value("audio","volume",0.35)
+	sound_volume = clampf(float(level),0,1) if typeof(level) in [TYPE_FLOAT,TYPE_INT] and is_finite(float(level)) else 0.35
+	if config.get_value("display","fullscreen",false) == true:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+
+func _save_preferences() -> void:
+	var config = ConfigFile.new()
+	config.load(settings_path)
+	config.set_value("display","fullscreen",DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN)
+	config.set_value("comfort","reduced_motion",reduced_motion)
+	config.set_value("comfort","reading_large",reading_large)
+	config.set_value("audio","enabled",sounds_enabled)
+	config.set_value("audio","volume",sound_volume)
+	if is_instance_valid(feedback): feedback.configure(sounds_enabled,sound_volume)
+	if config.save(settings_path) != OK and is_instance_valid(status_label):
+		status_label.text = "Préférences appliquées ; enregistrement impossible sur ce PC."
 
 func open_help() -> void:
 	if screen == "help":
@@ -96,7 +125,7 @@ func show_help() -> void:
 	help_text = RichTextLabel.new()
 	help_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	help_text.focus_mode = Control.FOCUS_ALL
-	help_text.add_theme_font_size_override("normal_font_size", 20)
+	help_text.add_theme_font_size_override("normal_font_size", 24 if reading_large else 20)
 	help_text.text = Help.text_for(help_topic, world, selected, tutorial.stage if tutorial != null else -1)
 	body.add_child(help_text)
 	_button("Retour [F1]", close_help, body)
@@ -316,9 +345,10 @@ func _ready() -> void:
 	autosave_enabled = not ("--no-autosave" in OS.get_cmdline_user_args() or "--smoke-test" in OS.get_cmdline_user_args())
 	get_tree().auto_accept_quit = false
 	_apply_theme()
-	var settings = ConfigFile.new()
-	if settings.load(CONFIG_PATH) == OK and settings.get_value("display", "fullscreen", false) == true:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+	_load_preferences()
+	feedback = preload("res://scripts/ui/audio_feedback.gd").new()
+	add_child(feedback)
+	feedback.configure(sounds_enabled,sound_volume)
 	show_menu()
 	if "--smoke-test" in OS.get_cmdline_user_args():
 		call_deferred("_smoke_test")
@@ -512,7 +542,22 @@ func _smoke_test() -> void:
 	if not optional_loaded.error.is_empty() or not optional_loaded.world.expanded_content or optional_loaded.world.evolutions.size() != 21:
 		get_tree().quit(1)
 		return
-	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, persistence replay, six tutorial lessons, contextual help, optional objectives and arctic flows, logistics decision cost/replay/expiration, enriched profile and format 5, restart, settings, menu")
+	advanced_mode = true
+	scenario_id = "degel2042"
+	start_game()
+	reduced_motion = true
+	reading_large = true
+	paused = false
+	advance_time(0.5)
+	if world.day != 1 or map_view.motion_enabled or feedback.cues.size() != 3:
+		get_tree().quit(1)
+		return
+	open_overview()
+	open_help()
+	if help_text.get_theme_font_size("normal_font_size") != 24:
+		get_tree().quit(1)
+		return
+	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, persistence replay, six tutorial lessons, contextual help, optional objectives and arctic flows, logistics decision cost/replay/expiration, enriched profile and format 5, comfort and original audio resources, restart, settings, menu")
 	get_tree().quit()
 
 func _apply_theme() -> void:
@@ -544,6 +589,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 		map_view = null
 	if reset_map_camera: map_camera = {}
 	for child in get_children():
+		if child == feedback: continue
 		remove_child(child)
 		child.queue_free()
 	evolution_buttons.clear()
@@ -561,7 +607,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.18", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.19", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -726,22 +772,53 @@ func _update_menu_choices(catalog: Dictionary) -> void:
 func show_settings() -> void:
 	screen = "settings"
 	paused = true
-	_reset_screen("Paramètres", "Les préférences d'affichage sont conservées sur ce PC.")
+	_reset_screen("Paramètres", "Préférences de confort conservées sur ce PC, sans modifier la partie.")
 	var fullscreen = CheckButton.new()
 	fullscreen.text = "Plein écran"
 	fullscreen.button_pressed = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
 	fullscreen.custom_minimum_size.y = 48
 	fullscreen.toggled.connect(func(enabled):
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if enabled else DisplayServer.WINDOW_MODE_WINDOWED)
-		var config = ConfigFile.new()
-		config.set_value("display", "fullscreen", enabled)
-		var error = config.save(CONFIG_PATH)
-		if error != OK:
-			status_label.text = "Préférence appliquée, mais impossible de l'enregistrer sur ce PC."
+		_save_preferences()
 	)
 	body.add_child(fullscreen)
-	body.add_child(_label("Clavier\nEspace : pause / reprise\n1, 2, 4 : vitesse de simulation\nF1 : aide contextuelle\nÉchap : retour au menu, partie mise en pause\nTab et Maj + Tab : navigation · Entrée : activer", 22))
-	status_label = _label("Le prototype ne contient pas encore de son ni d'animations décoratives.", 18, MUTED)
+	for item in [["Réduire les mouvements",reduced_motion,"motion"],["Agrandir le texte de lecture (aide, actualités et bilan)",reading_large,"reading"],["Activer les sons de retour",sounds_enabled,"sound"]]:
+		var toggle = CheckButton.new()
+		toggle.name = item[2]
+		toggle.text = item[0]
+		toggle.button_pressed = item[1]
+		toggle.custom_minimum_size.y = 44
+		toggle.toggled.connect(func(active):
+			match item[2]:
+				"motion": reduced_motion = active
+				"reading": reading_large = active
+				"sound": sounds_enabled = active
+			_save_preferences()
+			if item[2] == "sound" and active: feedback.play_cue("purchase")
+		)
+		body.add_child(toggle)
+	var volume_row = HBoxContainer.new()
+	volume_row.name = "audio_volume"
+	body.add_child(volume_row)
+	var volume_label = _label("Volume : %d %%" % roundi(sound_volume*100),18)
+	volume_label.custom_minimum_size.x = 160
+	volume_row.add_child(volume_label)
+	var volume = HSlider.new()
+	volume.name = "volume"
+	volume.min_value = 0
+	volume.max_value = 1
+	volume.step = 0.05
+	volume.value = sound_volume
+	volume.custom_minimum_size = Vector2(300,44)
+	volume.tooltip_text = "Volume des sons facultatifs ; zéro coupe le son."
+	volume.value_changed.connect(func(level):
+		sound_volume = level
+		volume_label.text = "Volume : %d %%" % roundi(level*100)
+		_save_preferences()
+	)
+	volume_row.add_child(volume)
+	body.add_child(_label("Espace : pause · 1 / 2 / 4 : vitesse · F1 : aide · F3 : monde\nÉchap : retour · Tab / Maj + Tab : parcourir · Entrée : activer",18))
+	status_label = _label("Les mouvements réduits figent les véhicules ; la simulation continue.\nLes sons sont facultatifs : chaque action conserve son retour visuel.", 18, MUTED)
 	body.add_child(status_label)
 	_button("Retour au menu", show_menu, body)
 	fullscreen.grab_focus()
@@ -901,6 +978,7 @@ func show_game() -> void:
 func buy_evolution(id: String) -> void:
 	if tutorial != null and (tutorial.stage != 2 or id != "transmission"): return
 	var error = world.purchase(id)
+	if error.is_empty(): feedback.play_cue("purchase")
 	if tutorial != null and error.is_empty(): tutorial.ready = true
 	_refresh()
 	if not error.is_empty():
@@ -937,6 +1015,7 @@ func build_inline_decision(parent: Control) -> void:
 			var button = _button("%s · %d pts" % [choice.name,choice.cost],func():
 				var error = World.Decisions.choose(world,id)
 				if error.is_empty():
+					feedback.play_cue("purchase")
 					autosave()
 					show_game()
 				else: decision_notice.text = error
@@ -1023,7 +1102,7 @@ func _refresh() -> void:
 	var climate = "Phase %s · %.0f °C fictifs · Remède de phase ×%.2f\n" % [world.phase.name, world.phase.temperature, world.phase.cure_multiplier] if world.scenario.id != "standard" else ""
 	effects_label.text = climate + "Événements actifs\n" + ("Aucun effet temporaire." if lines.is_empty() else "\n".join(lines))
 	map_view.refresh()
-	map_view.motion_enabled = not paused and world.outcome.is_empty()
+	map_view.motion_enabled = not reduced_motion and not paused and world.outcome.is_empty()
 
 func _process(delta: float) -> void:
 	advance_time(delta)
@@ -1037,7 +1116,9 @@ func advance_time(delta: float) -> void:
 	var steps = 0
 	while elapsed >= 0.5 and steps < 16:
 		elapsed -= 0.5
+		var detected_before = world.detected_count()
 		world.step()
+		if world.detected_count() > detected_before: feedback.play_cue("alert")
 		if world.day % 10 == 0 or not world.outcome.is_empty(): autosave()
 		steps += 1
 		if tutorial != null and tutorial.after_step(world):
@@ -1046,6 +1127,7 @@ func advance_time(delta: float) -> void:
 			break
 		if not world.outcome.is_empty():
 			paused = true
+			feedback.play_cue("outcome")
 			show_result()
 			return
 		if World.Decisions.pending(world) and world.day == World.Decisions.definition().start_day:
@@ -1065,6 +1147,7 @@ func show_result() -> void:
 		body.add_child(optional)
 	if not world.decision.is_empty(): body.add_child(_label(World.Decisions.summary(world),16,MUTED))
 	var log = RichTextLabel.new()
+	log.add_theme_font_size_override("normal_font_size",20 if reading_large else 16)
 	log.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	log.text = "\n".join(world.journal)
 	body.add_child(log)
@@ -1120,7 +1203,7 @@ func show_overview() -> void:
 		content.custom_minimum_size.y = 130
 		content.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		content.focus_mode = Control.FOCUS_ALL
-		content.add_theme_font_size_override("normal_font_size",14)
+		content.add_theme_font_size_override("normal_font_size",18 if reading_large else 14)
 		content.text = section.text
 		column.add_child(content)
 	var controls = HBoxContainer.new()

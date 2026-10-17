@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.18
+# Jouer à Pandemic Horizon 0.19
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.18.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.19.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -164,3 +164,11 @@ Activer Contenu enrichi avant une nouvelle partie ajoute douze évolutions et hu
 Les nœuds compacts affichent nom court et coût. Sélectionner ou survoler révèle le nom complet et les raisons ; le losange indique un blocage. Les liens montrent les prérequis directs de la sélection. Utiliser Évoluer pour acheter. Tous les choix logistiques restent sous la carte.
 
 Le profil enrichi utilise le format de sauvegarde 5, à reprendre avec la version 0.18 ou suivante compatible. Les parties classiques gardent leur format et leurs règles ; aucun ajout rétroactif aux anciennes parties.
+
+## Confort et sons (0.19)
+
+Dans Paramètres, Réduire les mouvements fige les déplacements des véhicules ; les journées continuent selon la vitesse, sauf en pause. Agrandir le texte de lecture augmente les caractères de l’aide, des actualités et du bilan ; les nœuds de la grille ne changent pas de taille. Le remède utilise une courbe en tirets, les touchés un trait continu.
+
+Les sons sont désactivés par défaut. Activer les sons de retour ajoute des signaux courts pour achat, détection et fin de partie. Régler Volume avec la souris ou les flèches du clavier ; zéro ou désactivation coupe le son. Aucun signal sonore n’est indispensable. Ces préférences restent sur ce PC, indépendantes des sauvegardes de partie.
+
+Pour l’archive Windows, extraire tous les fichiers et lancer PandemicHorizon.exe. VERSION.json identifie le commit et l’empreinte du binaire. Cette version candidate attend les essais physiques, auditifs et sur un second PC décrits dans TESTS-JOUEURS.md.

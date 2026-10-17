@@ -134,3 +134,9 @@ Le [point 14](suivi/14-decision-logistique.md) livre la décision logistique 0.1
 - `docs/suivi/00-index.md` : point de reprise pour les prochaines sessions.
 
 Avant un push : import, tests, contrôle des écrans modifiés, `git diff --check` et revue des fichiers inclus. Consigner le résultat dans le point de suivi du lot.
+
+## Clôture du cycle 0.19
+
+3 141 contrôles automatiques passent. Captures de confort : tests/capture_comfort.gd ; profil enrichi : tests/capture_expanded.gd. Avant livraison : dev.ps1 Export, puis verify-export.ps1. Après commit propre : checkpoint.ps1 pour le bundle et les sources, package-windows.ps1 pour le ZIP Windows identifié par commit et SHA-256. L’archive est locale, les binaires restent hors Git ; le push main est distinct.
+
+Le script de paquet vérifie les ressources de l’exécutable, sa copie en chemin accentué, les fichiers du ZIP et l’empreinte du binaire archivé. Les préférences de développement restent isolées. Essais humains à compléter dans TESTS-JOUEURS.md avant de déclarer le cycle validé en 1.0.

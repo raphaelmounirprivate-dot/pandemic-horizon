@@ -2,7 +2,7 @@
 
 P0 : prochain lot. P1 : suite du cycle. P2 : contenu et finition après les fondations. Effort relatif S/M/L : limité / plusieurs fichiers / changement transversal ; il ne correspond pas à une durée promise.
 
-Au 17 octobre 2026 : MON, EVO, EVT et STA terminés. CNT-01 à CNT-03 implémentés et vérifiés en 0.18 ; CNT-04 : mesures faites, essais joueurs en attente. FIN-01 à FIN-03 restent à réaliser. Voir les points 19 à 23.
+Au 17 octobre 2026 : MON, EVO, EVT et STA terminés. CNT-01 à CNT-03 implémentés et vérifiés en 0.18 ; CNT-04 : mesures faites, essais joueurs en attente. FIN-01/02 implémentés et vérifiés automatiquement en 0.19 ; FIN-03 partiel (archive et export vérifiés, essais physiques/joueurs à réaliser). Voir les points 19 à 24.
 
 | ID | Priorité | Tâche | Dépendance | Effort | Critère de fin |
 | --- | --- | --- | --- | --- | --- |
@@ -45,3 +45,5 @@ EVT-01, EVT-02, STA-01 et STA-02 sont terminés en 0.17, voir le [point 22](../s
 Pour démarrer une tâche, changer son statut explicitement et créer sa fiche avec le [modèle](04-validation.md). Une proposition ne devient pas une fonctionnalité livrée parce qu'elle figure ici.
 
 État du lot E : [point 23](../suivi/23-contenu-enrichi.md). CNT-01/02/03 terminés ; CNT-04 à vérifier auprès de joueurs.
+
+État du lot F : [point 24](../suivi/24-confort-distribution.md). Aucun essai humain déclaré terminé ; [protocole](../TESTS-JOUEURS.md).

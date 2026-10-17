@@ -19,9 +19,23 @@ func _draw() -> void:
 			var value = float(sample.active+sample.removed)/(sample.healthy+sample.active+sample.removed) if kind == "touched" else sample.cure/10000.0
 			line.append(Vector2(area.position.x+area.size.x*(sample.day-first)/maxf(1,last-first),area.end.y-area.size.y*value))
 		var color = Color("ff766d") if kind == "touched" else Color("69d6bd")
-		if line.size() > 1: draw_polyline(line,color,2,true)
+		if line.size() > 1:
+			if kind == "cure":
+				# Draw dashes by pixel length, independent of history sampling density.
+				var traveled = 0.0
+				for i in range(1,line.size()):
+					var length = line[i-1].distance_to(line[i])
+					var offset = 0.0
+					while offset < length:
+						var segment = minf(length-offset,6.0-fmod(traveled,6.0))
+						if segment < 0.001: segment = minf(length-offset,0.001)
+						if fmod(traveled,12.0) < 6.0:
+							draw_line(line[i-1].lerp(line[i],offset/length),line[i-1].lerp(line[i],(offset+segment)/length),color,2,true)
+						offset += segment
+						traveled += segment
+			else: draw_polyline(line,color,2,true)
 		elif line.size() == 1: draw_circle(line[0],3,color)
 	for day in [first,last]:
 		var x = area.position.x if day == first else area.end.x-60
 		draw_string(font,Vector2(x,area.end.y+20),"Jour %d" % day,HORIZONTAL_ALIGNMENT_LEFT,-1,12,Color("a7c4c9"))
-	draw_string(font,Vector2(48,14),"Touchés (rouge) / Remède (turquoise) · historique depuis J%d" % first,HORIZONTAL_ALIGNMENT_LEFT,-1,13,Color("e1eee9"))
+	draw_string(font,Vector2(48,14),"Touchés : trait / Remède : tirets · depuis J%d" % first,HORIZONTAL_ALIGNMENT_LEFT,-1,13,Color("e1eee9"))

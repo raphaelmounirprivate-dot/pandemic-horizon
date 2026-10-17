@@ -37,6 +37,8 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 3. Éprouver le soutien à 3 points et la compréhension du tarif historique 6, puis examiner sa valeur pendant les fenêtres de routes ouvertes. Le lot 16 gagne cinq victoires sans perdre de Relais face au prix 6, à autres paramètres identiques. Cela ne démontre pas un choix optimal dans toutes les parties. Conserver les références 0.7 à 0.11 ; conserver les coefficients 0.12 pendant les essais de la nouvelle présentation 0.13.
 4. J6/J7 : finition et release distribuable.
 
-Créer `24-<lot>.md` pour la prochaine livraison. Y noter périmètre, fichiers principaux, tests exécutés, limites et prochaine action. Mettre à jour cet index à chaque lot livré. Prochain développement : lot F, confort et archive Windows.
+Créer `25-<lot>.md` pour la prochaine livraison. Y noter périmètre, fichiers principaux, tests exécutés, limites et prochaine action. Mettre à jour cet index à chaque lot livré. Prochaine étape : essais physiques, auditifs et joueurs sur le candidat 0.19 ; consigner les défauts et recontrôler les corrections.
 
 - [Point 23 — Contenu enrichi](23-contenu-enrichi.md) : NACRE, profils, mesures et sauvegarde de cette étape.
+
+- [Point 24 — Confort et distribution](24-confort-distribution.md) : paramètres, sons, candidat Windows et essais humains restant à faire.

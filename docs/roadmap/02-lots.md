@@ -56,7 +56,7 @@ Terminé quand EVT-01, EVT-02, STA-01 et STA-02 sont validés, y compris après 
 
 Terminé quand CNT-01 à CNT-04 sont validés. Les ajouts de contenu ne sont pas un simple changement graphique : catalogues, sauvegardes, tutoriel et équilibrage doivent évoluer ensemble.
 
-## Lot F — Finition et distribution
+## Lot F — Technique réalisée en 0.19, validation humaine en attente
 
 - Accessibilité : tailles de texte, contrastes, lecture sans couleur seule, contrôle de l'animation.
 - Sons facultatifs et retour visuel cohérent.

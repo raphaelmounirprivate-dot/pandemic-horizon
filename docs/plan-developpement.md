@@ -240,3 +240,7 @@ Une tâche est terminée lorsque son critère d'acceptation a été exécuté, l
 - Pour la 1.0 : aucun défaut connu empêchant de démarrer, terminer, sauvegarder ou reprendre une partie ; documenter les autres limites connues.
 
 La création d'issues GitHub, les commits, leur publication et la release seront des actions de suivi distinctes. Ce document prépare ces tâches ; il ne prouve pas qu'elles ont été réalisées.
+
+## Situation au 17 octobre 2026 — candidat 0.19
+
+Le cycle technique A–F est implémenté : carte explorée, transports observés, évolutions intégrées, historique, profil enrichi de 18/21 évolutions et douze événements au moins, confort et export Windows autonome. Les mesures d’équilibrage et 3 141 contrôles passent. Archive candidate et sauvegardes entre étapes identifiées par empreintes ; aucune release binaire GitHub automatique. Les essais physiques et joueurs conditionnent encore CNT-04, FIN-03 et la validation 1.0. Voir les points 19 à 24 et TESTS-JOUEURS.md.
