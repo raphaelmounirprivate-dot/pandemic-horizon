@@ -9,14 +9,14 @@ const SAMPLE_DAYS = [0,28,31,40,43,54]
 
 static func fingerprint(world: RefCounted) -> String:
 	var state = Store.new().encode(world)
-	for key in ["saved_at","decision","journal"]: state.erase(key)
+	for key in ["saved_at","decision","decision_profile","journal"]: state.erase(key)
 	return JSON.stringify(state,"",true,true).sha256_text()
 
 static func sample(world: RefCounted) -> Dictionary:
 	return {"day":world.day,"cure":world.cure,"coverage":world.coverage(),"points":world.points,"objective":world.objective.duplicate(true)}
 
-static func play(difficulty: String, seed_value: int, policy: String, arm: String, funding: String, limit: int = 500) -> Dictionary:
-	if arm not in ARMS or funding not in FUNDING or not Arctic.policies().has(policy) or difficulty not in ["easy","normal","hard"] or limit < 1 or limit > 500: return {"error":"Paramètres de comparaison invalides."}
+static func play(difficulty: String, seed_value: int, policy: String, arm: String, funding: String, limit: int = 500, reserve_floor: int = 6) -> Dictionary:
+	if arm not in ARMS or funding not in FUNDING or not Arctic.policies().has(policy) or difficulty not in ["easy","normal","hard"] or limit < 1 or limit > 500 or reserve_floor < 0 or reserve_floor > 100: return {"error":"Paramètres de comparaison invalides."}
 	var world = World.new()
 	var error = world.start("boreale",seed_value,null,null,"degel2042",difficulty,null,null,Arctic.ID,arm != "disabled")
 	if not error.is_empty(): return {"error":error}
@@ -26,7 +26,7 @@ static func play(difficulty: String, seed_value: int, policy: String, arm: Strin
 	var samples: Array = [sample(world)]
 	var pre_hash = ""
 	var order = Arctic.policies()[policy]
-	var cost = int(World.Decisions.option("support").cost)
+	var cost = reserve_floor
 	for i in range(limit):
 		if world.day == 28: pre_hash = fingerprint(world)
 		# Daily order: decision first, then first missing purchase, then daily step.
@@ -53,7 +53,7 @@ static func play(difficulty: String, seed_value: int, policy: String, arm: Strin
 	return {"error":"","scenario":"degel2042","start":"boreale","difficulty":difficulty,"seed":seed_value,"policy":policy,"arm":arm,"funding":funding,
 		"outcome":world.outcome,"days":world.day,"coverage":world.coverage(),"cure":world.cure,"score":world.score(),"points":world.points,
 		"objective":world.objective.duplicate(true),"decision":world.decision.duplicate(true),"decision_attempts":decisions,
-		"purchases":purchases,"attempts":attempts,"samples":samples,"pre_hash":pre_hash,"state_hash":fingerprint(world)}
+		"purchases":purchases,"attempts":attempts,"samples":samples,"pre_hash":pre_hash,"state_hash":fingerprint(world),"reserve_floor":cost}
 
 static func validate_trace(row: Dictionary) -> String:
 	var world = World.new()
@@ -76,7 +76,7 @@ static func validate_trace(row: Dictionary) -> String:
 			if id in world.purchased: continue
 			var before = world.points
 			var reason = world.purchase_reason(id)
-			if reason.is_empty() and row.funding == "reserve" and day >= 20 and day < 28 and world.points - world.evolutions[id].cost < World.Decisions.option("support").cost:
+			if reason.is_empty() and row.funding == "reserve" and day >= 20 and day < 28 and world.points - world.evolutions[id].cost < row.reserve_floor:
 				reason = "Réserve de décision"
 			elif reason.is_empty():
 				reason = world.purchase(id)
@@ -106,9 +106,10 @@ static func pair_rows(rows: Array) -> Dictionary:
 	var groups: Dictionary = {}
 	for row in rows:
 		if not row is Dictionary: return {"error":"Observation invalide."}
-		for key in ["error","scenario","start","difficulty","seed","policy","arm","funding","outcome","days","coverage","cure","score","points","objective","decision","decision_attempts","purchases","attempts","samples","pre_hash","state_hash"]:
+		for key in ["error","scenario","start","difficulty","seed","policy","arm","funding","outcome","days","coverage","cure","score","points","objective","decision","decision_attempts","purchases","attempts","samples","pre_hash","state_hash","reserve_floor"]:
 			if not row.has(key): return {"error":"Observation incomplète : " + key}
 		if row.error != "" or row.scenario != "degel2042" or row.start != "boreale" or row.difficulty not in ["easy","normal","hard"] or not row.seed is int or not Arctic.policies().has(row.policy) or row.arm not in ARMS or row.funding not in FUNDING: return {"error":"Identité invalide."}
+		if not World.Objectives.integer(row.reserve_floor,0,100): return {"error":"Réserve invalide."}
 		if not World.Objectives.integer(row.days,1,500) or row.outcome not in ["victory","defeat_cure","defeat_extinction"] or not row.objective is Dictionary or not row.decision is Dictionary: return {"error":"Résultat invalide."}
 		if row.objective.get("id") != Arctic.ID or row.objective.get("status") not in ["completed","failed"]: return {"error":"Objectif non résolu."}
 		for field in ["purchases","attempts","samples","decision_attempts"]:

@@ -21,15 +21,20 @@ static func validate(data: Variant) -> String:
 		ids.append(choice.id)
 	return ""
 
-static func definition() -> Dictionary:
+static func definition(world: RefCounted = null) -> Dictionary:
+	if world != null and not world.decision_rules.is_empty(): return world.decision_rules.duplicate(true)
 	if _definition.is_empty():
 		var data = JSON.parse_string(FileAccess.get_file_as_string("res://data/decisions.json"))
 		if not validate(data).is_empty(): return {}
 		_definition = data.decision
 	return _definition.duplicate(true)
 
-static func option(id: String) -> Dictionary:
-	for choice in definition().get("choices",[]):
+static func legacy_definition() -> Dictionary:
+	var data = JSON.parse_string(FileAccess.get_file_as_string("res://data/decisions-0.11.json"))
+	return data.decision.duplicate(true) if validate(data).is_empty() else {}
+
+static func option(id: String, world: RefCounted = null) -> Dictionary:
+	for choice in definition(world).get("choices",[]):
 		if choice.id == id: return choice
 	return {}
 
@@ -41,7 +46,7 @@ static func pending(world: RefCounted) -> bool:
 
 static func reason(world: RefCounted, id: String) -> String:
 	if not pending(world) or not world.outcome.is_empty(): return "Décision indisponible."
-	var choice = option(id)
+	var choice = option(id,world)
 	if choice.is_empty(): return "Choix inconnu."
 	if world.points < choice.cost: return "Points insuffisants : %d requis, %d disponibles." % [choice.cost,world.points]
 	return ""
@@ -49,11 +54,11 @@ static func reason(world: RefCounted, id: String) -> String:
 static func choose(world: RefCounted, id: String, source: String = "manual") -> String:
 	if source not in ["manual","timeout","game_over"] or (source != "manual" and id != "observe"): return "Choix automatique invalide."
 	if not pending(world) or option(id).is_empty(): return "Décision indisponible."
-	if source == "timeout" and world.day != definition().expires_day: return "Échéance non atteinte."
+	if source == "timeout" and world.day != definition(world).expires_day: return "Échéance non atteinte."
 	if source == "game_over" and world.outcome.is_empty(): return "Partie non terminée."
 	var error = reason(world,id)
 	if not error.is_empty() and source == "manual": return error
-	var choice = option(id)
+	var choice = option(id,world)
 	world.points -= int(choice.cost)
 	world.decision = {"status":"resolved" if choice.duration == 0 else "active","choice":id,"day":world.day,"reason":source}
 	world.journal.append("Jour %d · Décision : %s (%d points). %s" % [world.day,choice.name,choice.cost,choice.description])
@@ -61,12 +66,12 @@ static func choose(world: RefCounted, id: String, source: String = "manual") -> 
 
 static func update(world: RefCounted) -> void:
 	if world.decision.is_empty(): return
-	var item = definition()
+	var item = definition(world)
 	if world.decision.status == "scheduled" and world.day >= item.start_day:
 		world.decision.status = "pending"
 		world.journal.append("Jour %d · %s : décision possible jusqu'au jour %d inclus." % [world.day,item.name,item.expires_day - 1])
 	if pending(world) and world.day >= item.expires_day: choose(world,"observe","timeout")
-	if world.decision.status == "active" and world.day > world.decision.day + option(world.decision.choice).duration:
+	if world.decision.status == "active" and world.day > world.decision.day + option(world.decision.choice,world).duration:
 		world.decision.status = "expired"
 		world.journal.append("Jour %d · Fin des effets de la décision logistique." % world.day)
 	if not world.outcome.is_empty():
@@ -75,7 +80,7 @@ static func update(world: RefCounted) -> void:
 
 static func modifier(world: RefCounted, kind: String, target: String) -> float:
 	if world.decision.get("status") != "active": return 1.0
-	var choice = option(world.decision.choice)
+	var choice = option(world.decision.choice,world)
 	if world.day <= world.decision.day or world.day > world.decision.day + choice.duration: return 1.0
 	if kind == "transport_multiplier" and target == "sea": return float(choice.sea)
 	if kind == "cure_multiplier" and target == "global": return float(choice.cure)
@@ -84,10 +89,10 @@ static func modifier(world: RefCounted, kind: String, target: String) -> float:
 static func summary(world: RefCounted) -> String:
 	if world.decision.is_empty(): return "Décision logistique désactivée."
 	match world.decision.status:
-		"scheduled": return "Décision logistique prévue au J%d." % definition().start_day
-		"pending": return "Logistique sous tension · Choisir avant J%d inclus [F2]." % (definition().expires_day - 1)
+		"scheduled": return "Décision logistique prévue au J%d." % definition(world).start_day
+		"pending": return "Logistique sous tension · Choisir avant J%d inclus [F2]." % (definition(world).expires_day - 1)
 		"cancelled": return "Décision logistique annulée : partie terminée."
-	var choice = option(world.decision.choice)
+	var choice = option(world.decision.choice,world)
 	var text = "Décision : " + choice.name
 	if world.decision.status == "active": text += " · Effets J%d à J%d inclus." % [world.decision.day + 1,world.decision.day + choice.duration]
 	elif world.decision.status == "expired": text += " · Effets terminés."
@@ -101,12 +106,12 @@ static func valid_state(state: Variant, world: RefCounted) -> bool:
 	for key in ["status","choice","day","reason"]:
 		if not state.has(key): return false
 	if not Objectives.integer(state.day,-1,world.day): return false
-	var item = definition()
+	var item = definition(world)
 	match state.status:
 		"scheduled": return state.choice == "" and state.day == -1 and state.reason == "" and world.day < item.start_day and world.outcome.is_empty()
 		"pending": return state.choice == "" and state.day == -1 and state.reason == "" and world.day >= item.start_day and world.day < item.expires_day and world.outcome.is_empty()
 		"cancelled": return state.choice == "" and state.day == world.day and state.reason == "game_over" and world.day < item.start_day and not world.outcome.is_empty()
-	var choice = option(str(state.choice))
+	var choice = option(str(state.choice),world)
 	if choice.is_empty(): return false
 	if state.reason == "manual":
 		if state.day < item.start_day or state.day >= item.expires_day: return false

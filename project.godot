@@ -3,7 +3,7 @@ config_version=5
 
 [application]
 config/name="Pandemic Horizon"
-config/version="0.11.0"
+config/version="0.12.0"
 run/main_scene="res://scenes/main.tscn"
 
 [display]

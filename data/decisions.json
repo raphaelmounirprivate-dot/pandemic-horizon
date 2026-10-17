@@ -3,7 +3,7 @@
   "decision": {
     "id":"arctic_logistics", "name":"Logistique sous tension", "scenario":"degel2042", "phase":"instability", "start_day":28, "expires_day":31,
     "choices":[
-      {"id":"support", "name":"Soutenir les ports", "cost":6, "duration":12, "sea":1.5, "cure":1.15, "description":"Mer ×1,5 ; vitesse du remède ×1,15 pendant 12 jours. Coût : 6 points."},
+      {"id":"support", "name":"Soutenir les ports", "cost":3, "duration":12, "sea":1.5, "cure":1.15, "description":"Mer ×1,5 ; vitesse du remède ×1,15 pendant 12 jours. Coût : 3 points."},
       {"id":"limit", "name":"Limiter les échanges", "cost":0, "duration":12, "sea":0.65, "cure":0.85, "description":"Mer ×0,65 ; vitesse du remède ×0,85 pendant 12 jours. Coût : 0 point."},
       {"id":"observe", "name":"Maintenir la situation", "cost":0, "duration":0, "sea":1.0, "cure":1.0, "description":"Aucun effet supplémentaire et aucun coût. Les événements déjà actifs continuent."}
     ]

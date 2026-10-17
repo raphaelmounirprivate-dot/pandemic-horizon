@@ -10,6 +10,8 @@ const SPECIALIZATIONS = ["land_network", "air_bridge", "sea_logistics"]
 const Objectives = preload("res://scripts/gameplay/objectives.gd")
 const Decisions = preload("res://scripts/gameplay/decisions.gd")
 var decision: Dictionary = {}
+var decision_rules: Dictionary = {}
+var decision_profile: String = ""
 var objective: Dictionary = {}
 
 var regions: Array = []
@@ -158,6 +160,8 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	journal.clear()
 	objective = Objectives.initial(objective_id)
 	decision = Decisions.initial(decision_enabled)
+	decision_rules = Decisions.definition() if decision_enabled else {}
+	decision_profile = "0.12" if decision_enabled else ""
 	rng.seed = seed_value
 	for region in regions:
 		region["active"] = 200 if region.id == start_id else 0

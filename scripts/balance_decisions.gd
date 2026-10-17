@@ -32,7 +32,7 @@ func run() -> void:
 		printerr("Sortie d'analyse inaccessible.")
 		quit(1)
 		return
-	var fields = ["scenario","start","difficulty","seed","policy","funding","arm","outcome","days","coverage","cure","score","points","objective","decision","decision_attempts","purchases","attempts","samples","pre_hash","state_hash"]
+	var fields = ["scenario","start","difficulty","seed","policy","funding","reserve_floor","arm","outcome","days","coverage","cure","score","points","objective","decision","decision_attempts","purchases","attempts","samples","pre_hash","state_hash"]
 	csv.store_csv_line(fields)
 	for row in rows:
 		var values: PackedStringArray = []

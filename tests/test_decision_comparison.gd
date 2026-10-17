@@ -14,7 +14,7 @@ func run(check: Callable) -> void:
 	if not paired.error.is_empty(): return
 	var ordinary = Analysis.select(rows,"ordinary","support").filter(func(row): return row.policy == "mobilite")[0]
 	var reserve = Analysis.select(rows,"reserve","support").filter(func(row): return row.policy == "mobilite")[0]
-	check.call(ordinary.decision.choice == "observe" and ordinary.decision.reason == "timeout","Soutien demandé sans points distingué du soutien réellement appliqué")
+	check.call(ordinary.decision.choice == "support" and ordinary.decision.day == 30,"Soutien à 3 points attendu jusqu'au financement au J30")
 	check.call(ordinary.decision_attempts.size() == 3 and ordinary.decision_attempts[0].day == 28 and ordinary.decision_attempts[2].day == 30,"Trois tentatives avant la neutralisation J31")
 	check.call(reserve.decision.choice == "support" and reserve.decision.day == 28,"Réserve légale rend le soutien disponible au J28")
 	check.call(reserve.purchases != ordinary.purchases,"Coût et réserve modifient les achats réellement observés")

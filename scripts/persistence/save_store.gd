@@ -9,11 +9,12 @@ const LEGACY_07_UPGRADES = ["transmission", "mobility", "discretion", "polar", "
 const LEGACY_08_HASH = "7030c81500cac55fcb5656cc286cf0f965a559f3c4f8e0cee8df54b9cfd67b19"
 const LEGACY_09_HASH = "ae93560e93e6e89e97c7efb0d0ed393f0338bfb3127088cf58fb4c06197655a9"
 const LEGACY_10_HASH = "f62d5506dcce2d68eec5c590a3efaf3e7b0bf8ef4f406486451afcfd317d19db"
+const LEGACY_11_HASH = "4a65420bb3bcc4320c2925410f3c125ca40c4070260e55349df6328639ac93e6"
 var directory = "user://saves/transports-1"
 
 func content_hash() -> String:
 	var text = ""
-	for path in ["regions", "evolutions", "events", "scenarios", "transports", "objectives", "decisions"]:
+	for path in ["regions", "evolutions", "events", "scenarios", "transports", "objectives", "decisions", "decisions-0.11"]:
 		text += FileAccess.get_file_as_string("res://data/%s.json" % path).replace("\r\n", "\n")
 	return text.sha256_text()
 
@@ -25,7 +26,7 @@ func encode(world: RefCounted, selected: int = 0, speed: int = 1) -> Dictionary:
 	var effects: Array = []
 	for effect in world.active_events:
 		effects.append({"id": effect.id, "start_day": effect.start_day, "end_day": effect.end_day})
-	return {"format": 3, "content": content_hash(), "engine": Engine.get_version_info().string,
+	return {"format": 4, "content": content_hash(), "engine": Engine.get_version_info().string,"decision_profile":world.decision_profile,
 		"saved_at": Time.get_datetime_string_from_system(), "scenario": world.scenario.id,
 		"difficulty": world.difficulty.id, "start": world.start_region_id,
 		"day": world.day, "points": world.points, "cure": PackedFloat64Array([world.cure]).to_byte_array().hex_encode(), "outcome": world.outcome,
@@ -52,10 +53,12 @@ func decode(data: Variant) -> Dictionary:
 	var old_format = data.get("format") == 1 and (legacy or data.get("content") == LEGACY_08_HASH)
 	var legacy09 = data.get("format") == 2 and data.get("content") == LEGACY_09_HASH
 	var legacy10 = data.get("format") == 2 and data.get("content") == LEGACY_10_HASH
-	var current_format = data.get("format") == 3 and data.get("content") == content_hash()
-	if (not old_format and not current_format and not legacy09 and not legacy10) or data.get("engine") != Engine.get_version_info().string:
+	var legacy11 = data.get("format") == 3 and data.get("content") == LEGACY_11_HASH
+	var current_format = data.get("format") == 4 and data.get("content") == content_hash()
+	if (not old_format and not current_format and not legacy09 and not legacy10 and not legacy11) or data.get("engine") != Engine.get_version_info().string:
 		return {"error": "Sauvegarde incompatible avec cette version du jeu.", "incompatible": true}
-	if not current_format and data.has("decision"): return invalid
+	if not current_format and not legacy11 and data.has("decision"): return invalid
+	if not current_format and data.has("decision_profile"): return invalid
 	if old_format and data.has("objective"): return invalid
 	if legacy09 and (not data.get("objective") is Dictionary or data.objective.get("id","") not in ["","first_relays"]): return invalid
 	for key in ["scenario", "difficulty", "start", "phase", "outcome", "selected", "saved_at", "seed", "rng"]:
@@ -140,7 +143,7 @@ func decode(data: Variant) -> Dictionary:
 	elif world.totals().active == 0: expected = "defeat_extinction"
 	if data.outcome != expected: return invalid
 	world.outcome = expected
-	if current_format or legacy09 or legacy10:
+	if current_format or legacy09 or legacy10 or legacy11:
 		if not World.Objectives.valid_state(data.get("objective"), world): return invalid
 		world.objective = data.objective.duplicate(true)
 		if not world.objective.is_empty():
@@ -148,18 +151,25 @@ func decode(data: Variant) -> Dictionary:
 			world.objective.resolved_day = int(world.objective.resolved_day)
 			if world.objective.has("routes"):
 				for target in world.objective.routes: world.objective.routes[target] = int(world.objective.routes[target])
-	if current_format:
+	if current_format or legacy11:
+		var profile = data.get("decision_profile") if current_format else ("0.11" if data.get("decision") is Dictionary and not data.decision.is_empty() else "")
+		if profile not in ["","0.11","0.12"]: return invalid
+		if not data.get("decision") is Dictionary or (data.decision.is_empty() != (profile == "")): return invalid
+		world.decision_profile = profile
+		world.decision_rules = World.Decisions.legacy_definition() if profile == "0.11" else (World.Decisions.definition() if profile == "0.12" else {})
+		if profile != "" and world.decision_rules.is_empty(): return invalid
 		if not World.Decisions.valid_state(data.get("decision"),world): return invalid
 		world.decision = data.decision.duplicate(true)
 		if not world.decision.is_empty():
 			world.decision.day = int(world.decision.day)
-			if not world.decision.choice.is_empty(): spent += int(World.Decisions.option(world.decision.choice).cost)
+			if not world.decision.choice.is_empty(): spent += int(World.Decisions.option(world.decision.choice,world).cost)
 	if int(data.points) != 8 + int(data.day / 5) * 3 - spent: return invalid
 	var result = {"error": "", "world": world, "selected": ids.find(data.selected), "speed": int(data.speed), "saved_at": data.saved_at}
 	if legacy: result["warning"] = "Partie 0.7 chargée en pause ; nouvelles spécialisations disponibles."
 	elif old_format: result["warning"] = "Partie 0.8 chargée en pause, sans objectif facultatif."
 	elif legacy09: result["warning"] = "Partie 0.9 chargée en pause ; objectif facultatif conservé."
 	elif legacy10: result["warning"] = "Partie 0.10 chargée en pause, sans nouvel événement à choix."
+	elif legacy11: result["warning"] = "Partie 0.11 chargée en pause ; soutien conservé à 6 points."
 	return result
 
 func _path(slot: String) -> String:

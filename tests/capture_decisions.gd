@@ -1,4 +1,5 @@
 extends SceneTree
+const Store = preload("res://scripts/persistence/save_store.gd")
 func _initialize() -> void:
 	call_deferred("capture")
 
@@ -6,7 +7,7 @@ func capture() -> void:
 	DirAccess.make_dir_recursive_absolute("res://.impeccable/review")
 	for resolution in [Vector2i(1280,720),Vector2i(1920,1080)]:
 		DisplayServer.window_set_size(resolution)
-		for surface in ["menu-off","menu-on","scheduled","pending","insufficient","support","limit","neutral","expired","timeout","help"]:
+		for surface in ["menu-off","menu-on","scheduled","pending","insufficient","support","limit","neutral","expired","timeout","help","legacy-pending","legacy-active","legacy-help"]:
 			var scene = load("res://scenes/main.tscn").instantiate()
 			root.add_child(scene)
 			scene.set_process(false)
@@ -16,6 +17,13 @@ func capture() -> void:
 			scene.decision_enabled = surface != "menu-off"
 			if surface.begins_with("menu"):
 				scene.show_menu()
+			elif surface.begins_with("legacy"):
+				var name = "active" if surface == "legacy-active" else "pending"
+				scene.world = Store.new().decode(JSON.parse_string(FileAccess.get_file_as_string("res://tests/fixtures/save-0.11-%s.json" % name))).world
+				if surface == "legacy-help":
+					scene.help_topic = 9
+					scene.show_help()
+				else: scene.show_decision()
 			else:
 				scene.start_game()
 				for i in range(28 if surface != "scheduled" else 0): scene.world.step()

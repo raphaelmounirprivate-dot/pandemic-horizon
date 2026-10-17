@@ -1,12 +1,14 @@
-# Règles du prototype 0.11
+# Règles du prototype 0.12
 
 ## Décision Logistique sous tension
 
+Profil 0.12 : soutien à 3 points ; profil historique 0.11 : 6 points, autres effets identiques. Le monde conserve sa définition de décision depuis le démarrage ou le chargement. Format 4 : champ `decision_profile` vide sans événement, sinon `0.11` ou `0.12`. Les sauvegardes de format 3 reconnues reçoivent le profil 0.11 sans changer le budget, le choix ou son futur ; les formats 1/2 gardent l'absence de décision. Le profil, l'état et les points doivent être cohérents. Les anciennes règles sont figées dans `data/decisions-0.11.json`, inclus dans l'empreinte de contenu courante.
+
 Activation facultative avant une nouvelle partie Dégel, désactivée par défaut. Catalogue `data/decisions.json`. Déclenchement au J28, choix manuel possible J28–30 inclus ; J31 applique automatiquement le maintien neutre. L'interface interrompt la simulation au déclenchement et revient toujours en pause.
 
-Soutenir les ports coûte 6 points, multiplie les échanges maritimes par 1,50 et la vitesse du remède par 1,15. Limiter les échanges est gratuit, mer ×0,65 et remède ×0,85. Maintenir la situation est gratuit et sans effet supplémentaire. Un choix unique, irréversible ; refus sans mutation si les points manquent. Les deux options actives durent douze pas journaliers à compter du lendemain : sélection J28 → J29–40, expiration J41. Les facteurs se multiplient avec les événements et spécialisations ; les fermetures restent prioritaires. Aucun effet sur la terre ou l'air, aucun bonus direct de score ou de points.
+Soutenir les ports coûte 3 points, multiplie les échanges maritimes par 1,50 et la vitesse du remède par 1,15. Limiter les échanges est gratuit, mer ×0,65 et remède ×0,85. Maintenir la situation est gratuit et sans effet supplémentaire. Un choix unique, irréversible ; refus sans mutation si les points manquent. Les deux options actives durent douze pas journaliers à compter du lendemain : sélection J28 → J29–40, expiration J41. Les facteurs se multiplient avec les événements et spécialisations ; les fermetures restent prioritaires. Aucun effet sur la terre ou l'air, aucun bonus direct de score ou de points.
 
-État sauvegardé en format 3 : dictionnaire vide si désactivé, sinon `status`, `choice`, `day`, `reason`. États : `scheduled`, `pending`, `active`, `expired`, `resolved`, `cancelled`. Le coût entre dans l'invariant des points acquis moins achats et choix. Si la partie finit avant le déclenchement, annulation ; pendant l'attente, maintien gratuit. Les sauvegardes 0.7–0.10 reconnues restent sans décision rétroactive ; leurs objectifs existants sont conservés. La validation contrôle l'état et la chronologie, sans rejouer toute l'histoire du fichier.
+État sauvegardé en format 4 : dictionnaire vide si désactivé, sinon `status`, `choice`, `day`, `reason`. États : `scheduled`, `pending`, `active`, `expired`, `resolved`, `cancelled`. Le coût entre dans l'invariant des points acquis moins achats et choix. Si la partie finit avant le déclenchement, annulation ; pendant l'attente, maintien gratuit. Les sauvegardes 0.7–0.10 reconnues restent sans décision rétroactive ; leurs objectifs existants sont conservés. La validation contrôle l'état et la chronologie, sans rejouer toute l'histoire du fichier.
 
 Ces règles sont provisoires et abstraites. Elles ne représentent aucun modèle biologique réel.
 

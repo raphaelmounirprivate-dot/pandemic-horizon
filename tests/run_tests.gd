@@ -221,5 +221,8 @@ func run() -> void:
 	var before_decision_comparison = checks
 	load("res://tests/test_decision_comparison.gd").new().run(check)
 	check(checks - before_decision_comparison >= 50,"Suite comparaison des décisions entièrement exécutée")
+	var before_parameters = checks
+	load("res://tests/test_logistics_parameters.gd").new().run(check)
+	check(checks - before_parameters >= 100,"Suite paramètres et références 0.11 entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)
