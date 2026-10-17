@@ -224,5 +224,8 @@ func run() -> void:
 	var before_parameters = checks
 	load("res://tests/test_logistics_parameters.gd").new().run(check)
 	check(checks - before_parameters >= 100,"Suite paramètres et références 0.11 entièrement exécutée")
+	var before_presentation = checks
+	await load("res://tests/test_world_presentation.gd").new().run(self,check)
+	check(checks - before_presentation >= 50,"Suite carte mondiale et interface intégrée entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

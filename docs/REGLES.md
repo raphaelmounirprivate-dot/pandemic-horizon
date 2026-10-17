@@ -1,4 +1,10 @@
-# Règles du prototype 0.12
+# Règles du prototype 0.13
+
+## Présentation du monde et des flux
+
+Les positions géographiques de l'interface sont distinctes des coordonnées historiques des données. Les 24 régions, 38/39 connexions, populations et règles restent identiques. Le fond terrestre Natural Earth est purement visuel. Les points et halos rouges utilisent la proportion `actifs + retirés` par région ; leur nombre et leur taille sont des illustrations, pas une localisation de personnes. Les marqueurs numérotés et leurs infobulles permettent la sélection des régions fictives.
+
+À chaque pas, `latest_flows` observe les échanges effectivement ajoutés au modèle : source, destination, unités, mode et jour. Cette observation ne participe à aucun calcul et n'est pas sauvegardée. Une flèche exige le même jour et une route ouverte. L'horloge visuelle est indépendante du RNG et ne progresse qu'en lecture ; la pause la fige. Une partie chargée réaffiche les foyers immédiatement, puis les flux au prochain pas. Les évolutions sont toutes visibles en grille et la décision logistique apparaît sous la carte, en pause au J28.
 
 ## Décision Logistique sous tension
 

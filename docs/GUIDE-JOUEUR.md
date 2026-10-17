@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.12
+# Jouer à Pandemic Horizon 0.13
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.12.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.13.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -8,14 +8,14 @@ Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0
 4. Reprendre avec Espace, puis acheter des évolutions lorsque les points et prérequis le permettent. Mobilité exige d'abord Diffusion. Les effets et raisons d'indisponibilité sont affichés avant achat.
 5. Atteindre 90 % de population touchée avant la fin du remède. Le bilan explique le résultat et présente le journal complet.
 
-La carte schématique présente 24 régions fictives, organisées en quatre rangées de six. Elles sont toutes visibles sans déplacement de la carte. Cliquer sur un nom ou utiliser Tab puis Entrée pour afficher ses statistiques. Le compteur de détection indique le nombre de régions repérées sur 24. Les routes du standard relient l'ensemble de la carte, quel que soit le départ choisi.
+La carte du monde utilise les contours terrestres Natural Earth. Les 24 régions du jeu restent fictives : sélectionner un marqueur numéroté au clic ou avec Tab puis Entrée pour lire son nom et ses statistiques à droite. Les halos et points rouges illustrent le cumul touché ; ce ne sont ni des personnes localisées ni des frontières de simulation réelles. Les noms complets sont aussi disponibles au survol.
 
 | Commande | Effet |
 | --- | --- |
 | Espace | Pause / reprise pendant la partie |
 | 1, 2, 4 | Choisir la vitesse |
 | F1 | Ouvrir ou fermer l'aide, en pause |
-| F2 | Ouvrir la décision logistique activée dans Dégel, en pause |
+| F2 | En partie, mettre en pause et retrouver les choix logistiques intégrés |
 | Échap | Menu et pause de la partie |
 | Tab / Maj + Tab | Parcourir les contrôles |
 | Entrée | Activer le contrôle sélectionné |
@@ -23,7 +23,7 @@ La carte schématique présente 24 régions fictives, organisées en quatre rang
 | Sauvegardes | Enregistrer ou charger une partie sur ce PC |
 | Recommencer / Nouvelle partie | Abandonner la partie courante et repartir du jour zéro |
 
-« Retirés » signifie sortis de l'état actif. Le cumul touché additionne actifs et retirés, sans compter deux fois une personne. Les traits bleus indiquent les connexions ouvertes ; une croix et des pointillés ambre signalent une route fermée. Les barres indiquent la proportion touchée par région.
+« Retirés » signifie sortis de l'état actif. Le cumul touché additionne actifs et retirés, sans compter deux fois une personne. Les courbes discrètes montrent le réseau fictif ; les pointillés et croix ambre signalent une route fermée. Les flèches rouges suivent les échanges orientés calculés pour le jour courant, uniquement sur les routes ouvertes. Elles se figent en pause et reprennent après chargement au prochain jour simulé. Le dessin des trajectoires est illustratif.
 
 ## Objectif facultatif : Premiers relais
 
@@ -56,11 +56,11 @@ Le focus clavier suit l'action demandée ; Entrée active le contrôle et Tab pe
 
 L'entraînement conserve une partie et des fichiers séparés, dans `user://training`. Il ne remplace ni la partie en mémoire ni les sauvegardes du joueur. Les fichiers d'essai sont réinitialisés au prochain lancement du tutoriel. « Terminer », « Quitter l'entraînement » ou Échap restituent la session précédente en pause. Depuis l'aide ou les sauvegardes, un premier Échap ferme cet écran ; un second quitte l'entraînement. Fermer normalement l'application pendant l'entraînement sauvegarde la partie du joueur, si elle existe.
 
-« Aide [F1] » est accessible au menu, en partie et au bilan. F1 fonctionne aussi depuis les paramètres et les sauvegardes. « Situation actuelle » résume le scénario, la région sélectionnée, les raisons d'indisponibilité des évolutions et les effets actifs. Le sélecteur propose également huit sujets : commandes, régions, évolutions, détection, événements, sauvegardes, Dégel et transports. Faire défiler le texte, ou le focaliser avec Tab et utiliser les flèches. F1, Échap ou « Retour » ramènent à l'écran précédent, en pause.
+« Aide [F1] » est accessible au menu, en partie et au bilan. F1 fonctionne aussi depuis les paramètres et les sauvegardes. « Situation actuelle » résume le scénario, la région sélectionnée, les raisons d'indisponibilité des évolutions et les effets actifs. Le sélecteur propose également neuf sujets : commandes, régions, évolutions, détection, événements, sauvegardes, Dégel, transports et décision logistique. Faire défiler le texte, ou le focaliser avec Tab et utiliser les flèches. F1, Échap ou « Retour » ramènent à l'écran précédent, en pause.
 
 ## Transports
 
-Chaque liaison a un seul type : terrestre (trait plein, coefficient ×1), aérien (tirets, ×1,2) ou maritime (points, ×0,8). Les valeurs sont des paramètres fictifs du jeu. Une route fermée porte toujours des pointillés et une croix ambre, quel que soit son type.
+Chaque liaison a un seul type : terrestre (coefficient ×1), aérien (×1,2) ou maritime (×0,8). Les courbes représentent le réseau ; consulter le type dans les statistiques régionales ou F1 → Transports. Les valeurs sont des paramètres fictifs du jeu. Une route fermée porte toujours des pointillés et une croix ambre, quel que soit son type.
 
 Le détail régional affiche les liaisons ouvertes sur leur total : T pour terrestre, A pour aérien, M pour maritime. Par exemple M 0/2 signifie deux routes maritimes présentes et toutes deux fermées ; A 0/0 signifie aucune route aérienne. Dans F1 → Transports, consulter les destinations, le type, l'ouverture et le coefficient de transport actuel. Ce coefficient n'inclut pas Mobilité ni le bonus saisonnier, qui se multiplient séparément.
 
@@ -78,7 +78,7 @@ Après Diffusion puis Mobilité, vous pouvez choisir une seule spécialisation p
 
 Le bonus ne touche que le transport choisi ; il ne rouvre aucune route. L'accélération du remède est permanente après achat et se multiplie avec Discrétion, la difficulté et les événements. Le coût retarde aussi les autres achats : une spécialisation peut être moins intéressante qu'un achat plus précoce de Discrétion.
 
-Le panneau droit comporte six évolutions dans Standard et neuf dans Dégel. Faire défiler ou utiliser Tab/Maj + Tab : le bouton, son effet et son état sont ramenés ensemble dans le champ visible. Lire les contreparties avant Entrée. F1 → Évolutions explique les choix ; F1 → Transports indique le coefficient courant, spécialisation comprise, hors Mobilité et bonus saisonnier.
+Le panneau droit comporte six évolutions dans Standard et neuf dans Dégel. Les six ou neuf évolutions sont affichées ensemble dans une grille permanente, avec effet et état. Tab/Maj + Tab parcourt les achats sans déplacer le panneau. Lire les contreparties avant Entrée. F1 → Évolutions explique les choix ; F1 → Transports indique le coefficient courant, spécialisation comprise, hors Mobilité et bonus saisonnier.
 
 ## Détection et réactions
 
@@ -86,9 +86,9 @@ Une région est détectée lorsque les cas actifs atteignent à la fois 500 pers
 
 ## Événements et routes
 
-Le panneau « Événements actifs » affiche les effets, leur cible et les jours restants. Il permet le défilement si nécessaire. Deux événements peuvent fermer la même route : l'expiration du premier ne suffit pas à la rouvrir. Une route fermée bloque les nouveaux cas importés par cette connexion ; les cas déjà présents continuent leur progression locale.
+Le panneau « Événements actifs » affiche les effets, leur cible et les jours restants. Il permet le défilement si nécessaire. Pendant un choix logistique, ce panneau cède sa place aux trois options ; les effets restent consultables dans F1. Deux événements peuvent fermer la même route : l'expiration du premier ne suffit pas à la rouvrir. Une route fermée bloque les nouveaux cas importés par cette connexion ; les cas déjà présents continuent leur progression locale.
 
-Le standard inclut une tempête, un contrôle des transports, des mesures locales de prudence et une mobilisation accélérant la recherche. Les effets et leur fin sont annoncés dans le journal ; le bilan présente l'historique complet. Si la liste des évolutions dépasse la hauteur disponible, faire défiler le panneau ou le parcourir avec Tab.
+Le standard inclut une tempête, un contrôle des transports, des mesures locales de prudence et une mobilisation accélérant la recherche. Les effets et leur fin sont annoncés dans le journal ; le bilan présente l'historique complet. La grille complète des évolutions reste visible pendant le jeu.
 
 Les points augmentent tous les cinq jours. Chaque évolution ne peut être achetée qu'une fois. Les achats trop chers sont refusés avec un message. Le plein écran se règle dans les paramètres et ce réglage est conservé sur le PC.
 
@@ -103,7 +103,7 @@ Les points augmentent tous les cinq jours. Chaque évolution ne peut être achet
 
 Les températures affichées sont fictives et changent par paliers. Le multiplicateur « Climat local » indique l'effet réel sur la région sélectionnée. Les événements actifs restent prioritaires sur l'ouverture saisonnière : Boréale ↔ Centrale est fermée du jour 28 au 38 inclus, et Boréale ↔ Orient du 30 au 35 inclus.
 
-Trois évolutions supplémentaires se trouvent dans le panneau défilant : Adaptation polaire (9 points, croissance froide ×1,25), Mobilité saisonnière (10 points, échanges saisonniers ×2) et Résilience climatique (12 points, pénalités climatiques divisées par deux). Les deux dernières exigent Adaptation polaire. Faire défiler ou utiliser Tab pour les atteindre.
+Trois évolutions supplémentaires se trouvent dans la troisième rangée de la grille : Adaptation polaire (9 points, croissance froide ×1,25), Mobilité saisonnière (10 points, échanges saisonniers ×2) et Résilience climatique (12 points, pénalités climatiques divisées par deux). Les deux dernières exigent Adaptation polaire. Elles sont toutes visibles ; Tab permet aussi de les atteindre.
 
 ## Difficultés
 
@@ -131,7 +131,7 @@ Une partie enregistrée en 0.12 utilise le format 4 et n'est pas compatible avec
 
 ## Décision logistique facultative dans Dégel
 
-Depuis la 0.12, une nouvelle partie paie le soutien **3 points**. Une partie 0.11 chargée conserve son tarif **6 points**, indiqué dans l'écran de décision et dans l'aide ; aucun point déjà dépensé n'est remboursé. Les états en attente gardent aussi leur ancien prix. Le format 4 conserve ce profil lors des sauvegardes suivantes. Recommencer crée une nouvelle partie aux règles 0.12. Les autres coefficients et les dates d'expiration restent identiques.
+Depuis la 0.12, une nouvelle partie paie le soutien **3 points**. Une partie 0.11 chargée conserve son tarif **6 points**, indiqué au-dessus des choix intégrés et dans l'aide ; aucun point déjà dépensé n'est remboursé. Les états en attente gardent aussi leur ancien prix. Le format 4 conserve ce profil lors des sauvegardes suivantes. Recommencer crée une nouvelle partie aux règles 0.12. Les autres coefficients et les dates d'expiration restent identiques.
 
 Avant une nouvelle partie Dégel, activer « Décision logistique (J28) ». Au jour 28, le jeu s'arrête en pause et présente trois options :
 
@@ -143,4 +143,4 @@ Avant une nouvelle partie Dégel, activer « Décision logistique (J28) ». Au j
 
 Un seul choix est possible, sans annulation. Les points insuffisants sont expliqués avant et après une tentative. Les effets commencent le lendemain : choix au J28 → effets du J29 au J40 inclus, expiration au J41. Les multiplicateurs se combinent avec les autres effets ; une route fermée reste fermée. Le choix ne change directement ni le score ni le statut des objectifs facultatifs.
 
-« Revenir à la partie en pause » permet de réfléchir ou de sauvegarder sans décider. F2 rouvre l'écran. On peut choisir au J28, J29 ou J30 ; au J31, le maintien neutre est automatique et gratuit. Une partie terminée avant décision annule ou clôt le choix sans coût. Les sauvegardes conservent le choix, les points et la date de fin. L'aide F1 propose le sujet « Décision logistique ».
+Les choix apparaissent sous la carte, en pause, sans masquer les évolutions. On peut réfléchir ou sauvegarder sans décider. F2 revient à la carte et aux choix intégrés. On peut choisir au J28, J29 ou J30 ; au J31, le maintien neutre est automatique et gratuit. Une partie terminée avant décision annule ou clôt le choix sans coût. Les sauvegardes conservent le choix, les points et la date de fin. L'aide F1 propose le sujet « Décision logistique ».

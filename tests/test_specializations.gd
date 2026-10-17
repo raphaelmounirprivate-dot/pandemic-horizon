@@ -164,7 +164,6 @@ func run(tree: SceneTree, check: Callable) -> void:
 	for i in range(3): await tree.process_frame
 	var target = scene.evolution_buttons.air_bridge
 	var scroll = target.get_parent().get_parent().get_parent()
-	scroll.scroll_vertical += roundi(target.get_global_rect().end.y - scroll.get_global_rect().end.y)
 	for i in range(2): await tree.process_frame
 	var original_rect = target.get_global_rect()
 	var center = original_rect.get_center()

@@ -12,6 +12,7 @@ const Decisions = preload("res://scripts/gameplay/decisions.gd")
 var decision: Dictionary = {}
 var decision_rules: Dictionary = {}
 var decision_profile: String = ""
+var latest_flows: Array = [] # Observation only; never serialized or used by the model.
 var objective: Dictionary = {}
 
 var regions: Array = []
@@ -162,6 +163,7 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	decision = Decisions.initial(decision_enabled)
 	decision_rules = Decisions.definition() if decision_enabled else {}
 	decision_profile = "0.12" if decision_enabled else ""
+	latest_flows.clear()
 	rng.seed = seed_value
 	for region in regions:
 		region["active"] = 200 if region.id == start_id else 0
@@ -382,6 +384,7 @@ func step() -> void:
 	if not outcome.is_empty() or regions.is_empty():
 		return
 	day += 1
+	latest_flows.clear()
 	_update_scenario()
 	Decisions.update(self)
 	_update_events_and_detection()
@@ -402,6 +405,7 @@ func step() -> void:
 				# Preserve the 0.7 operation order; apply the new specialization last.
 				var units = maxi(1, int(source.active * 0.001 * upgrade_modifier("exchange_multiplier") * seasonal * transport_base_factor(edge) * upgrade_modifier(route_mode(edge) + "_multiplier")))
 				incoming[direction[1]] += units
+				latest_flows.append({"from":direction[0],"to":direction[1],"units":units,"mode":route_mode(edge),"day":day})
 				Objectives.record_exchange(self,direction[0],direction[1],units)
 	for index in range(regions.size()):
 		var before = snapshot[index]

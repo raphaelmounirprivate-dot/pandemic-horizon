@@ -59,7 +59,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 		for i in range(buttons.size()):
 			var rect = buttons[i].get_rect()
 			contained = contained and bounds.encloses(rect)
-			targets = targets and rect.size.y >= 44 and rect.size.x >= 100
+			targets = targets and rect.size.y >= 44 and rect.size.x >= 44
 			for j in range(i + 1, buttons.size()):
 				separated = separated and not rect.intersects(buttons[j].get_rect())
 		check.call(contained, "24 régions dans les limites à " + str(resolution))

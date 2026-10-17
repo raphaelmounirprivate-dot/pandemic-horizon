@@ -4,11 +4,13 @@ Projet de jeu de stratégie original pour PC Windows, inspiré du genre de la si
 
 ## État du projet
 
-**Prototype 0.12 développé.** Deux scénarios sont jouables sur **24 régions** sous Godot 4.7.2 : Standard et Dégel 2042. La carte schématique contient 38 connexions, plus une route arctique propre à Dégel, et 3,53 millions d'habitants fictifs. Le menu propose trois difficultés avec leurs effets affichés. Dégel impose le départ en Boréale et ajoute quatre phases, des routes saisonnières, des tempêtes et trois évolutions climatiques. Détection, réactions, événements, remède, pause, vitesses, journal et bilan sont implémentés. Trois sauvegardes manuelles et une automatique permettent de reprendre en pause, avec récupération de la copie précédente si le fichier principal est endommagé. Un tutoriel facultatif de six exercices et l'aide F1 accompagnent la découverte du jeu.
+**Prototype 0.13 développé.** Deux scénarios sont jouables sur **24 régions** sous Godot 4.7.2 : Standard et Dégel 2042. Le réseau fictif contient 38 connexions, plus une route arctique propre à Dégel, et 3,53 millions d'habitants fictifs. Le menu propose trois difficultés avec leurs effets affichés. Dégel impose le départ en Boréale et ajoute quatre phases, des routes saisonnières, des tempêtes et trois évolutions climatiques. Détection, réactions, événements, remède, pause, vitesses, journal et bilan sont implémentés. Trois sauvegardes manuelles et une automatique permettent de reprendre en pause, avec récupération de la copie précédente si le fichier principal est endommagé. Un tutoriel facultatif de six exercices et l'aide F1 accompagnent la découverte du jeu.
 
-L'exécutable actuel se trouve dans `build/windows-0.12.0/PandemicHorizon.exe`, hors de Git. Les exports sont séparés par version ; les anciens dossiers conservent leurs versions précédentes. Aucune release binaire GitHub n'est publiée à ce stade.
+L'exécutable actuel se trouve dans `build/windows-0.13.0/PandemicHorizon.exe`, hors de Git. Les exports sont séparés par version ; les anciens dossiers conservent leurs versions précédentes. Aucune release binaire GitHub n'est publiée à ce stade.
 
 ## Lancer et développer le prototype
+
+La 0.13 remplace la grille par une carte du monde nocturne : foyers et couverture en rouge, échanges animés dans le sens réel de propagation, routes fermées signalées. Les six ou neuf évolutions et les choix logistiques sont intégrés au même écran, sans défilement des achats. La pause fige les déplacements. Les règles, tarifs et sauvegardes restent ceux de la 0.12. Voir le [point 17](docs/suivi/17-monde-et-interface.md).
 
 La version 0.12 réduit le soutien des ports à **3 points** pour les nouvelles parties. À mer, remède et calendrier identiques, ce tarif gagne cinq victoires sans perdre de Relais face au tarif 6 dans les 135 cas appariés avec réserve. Les sauvegardes 0.11 gardent exactement leur tarif de 6 points ; le format 4 conserve ce profil. Voir le [point 16](docs/suivi/16-parametres-logistiques.md) et le [rapport de 1 620 parties](docs/EQUILIBRAGE-0.12-PARAMETRES.md). Les autres effets restent inchangés et l'équilibrage humain reste à éprouver.
 

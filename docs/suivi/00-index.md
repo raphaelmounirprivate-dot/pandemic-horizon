@@ -19,15 +19,16 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 - [Point 14 — Décision logistique](14-decision-logistique.md) : prototype 0.11, événement facultatif à choix explicites et compatibilité 0.10.
 - [Point 15 — Analyse des décisions](15-analyse-decisions.md) : 1 080 parties, budgets et choix effectifs, contrastes des résultats et dates ; coefficients 0.11 conservés.
 - [Point 16 — Paramètres logistiques](16-parametres-logistiques.md) : prototype 0.12, 1 620 parties et soutien réduit à 3 points ; profil historique 0.11 conservé.
+- [Point 17 — Monde et interface](17-monde-et-interface.md) : prototype 0.13, carte géographique, propagation et flux animés, évolutions et choix intégrés sans défilement.
 - [Règles effectives](../REGLES.md) : paramètres du code actuel.
 - [Développement](../DEVELOPPEMENT.md) : préparation, tests et export.
 - [Guide joueur](../GUIDE-JOUEUR.md) : parcours et limites.
 
 ## Priorités après la carte étendue
 
-1. Compléter l'essai physique souris/clavier, plein écran et défilement du journal ; organiser un essai sur un autre PC Windows. Le parcours synthétique Godot est testé.
+1. Compléter l'essai physique souris/clavier, plein écran et lecture du journal et des choix intégrés ; organiser un essai sur un autre PC Windows. Le parcours synthétique Godot est testé.
 2. Éprouver le tutoriel et l'aide contextuelle auprès de joueurs débutants. Les fonctionnalités de J5 sont implémentées : sauvegardes en 0.5, tutoriel facultatif et aide F1 en 0.6 ; la compréhension et le confort réels restent à valider.
-3. Éprouver le soutien à 3 points et la compréhension du tarif historique 6, puis examiner sa valeur pendant les fenêtres de routes ouvertes. Le lot 16 gagne cinq victoires sans perdre de Relais face au prix 6, à autres paramètres identiques. Cela ne démontre pas un choix optimal dans toutes les parties. Conserver les références 0.7 à 0.11 ; figer la 0.12 avant un nouveau changement de règles.
+3. Éprouver le soutien à 3 points et la compréhension du tarif historique 6, puis examiner sa valeur pendant les fenêtres de routes ouvertes. Le lot 16 gagne cinq victoires sans perdre de Relais face au prix 6, à autres paramètres identiques. Cela ne démontre pas un choix optimal dans toutes les parties. Conserver les références 0.7 à 0.11 ; conserver les coefficients 0.12 pendant les essais de la nouvelle présentation 0.13.
 4. J6/J7 : finition et release distribuable.
 
-Créer `17-<lot>.md` pour la prochaine livraison. Y noter périmètre, fichiers principaux, tests exécutés, limites et prochaine action. Mettre à jour cet index à chaque lot livré.
+Créer `18-<lot>.md` pour la prochaine livraison. Y noter périmètre, fichiers principaux, tests exécutés, limites et prochaine action. Mettre à jour cet index à chaque lot livré.

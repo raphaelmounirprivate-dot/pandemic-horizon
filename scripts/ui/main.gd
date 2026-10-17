@@ -27,6 +27,8 @@ var decision_enabled = false
 var decision_choice: CheckButton
 var decision_buttons: Dictionary = {}
 var decision_notice: Label
+var decision_area: VBoxContainer
+var decision_signature = ""
 var scenario_choice: OptionButton
 var difficulty_choice: OptionButton
 var start_choice: OptionButton
@@ -170,15 +172,8 @@ func select_region(index: int) -> void:
 	if tutorial != null: tutorial.select_region(index, world)
 	_refresh()
 
-func reveal_evolution_group(group: Control) -> void:
-	# Wrapped labels and containers need their final layout before scrolling.
-	var tree = get_tree()
-	await tree.process_frame
-	if not is_instance_valid(group) or not group.is_inside_tree(): return
-	await tree.process_frame
-	if not is_instance_valid(group) or not group.is_inside_tree(): return
-	if group.get_child(0).has_focus() and not mouse_press_active:
-		group.get_parent().get_parent().ensure_control_visible(group)
+func reveal_evolution_group(_group: Control) -> void:
+	pass # All upgrades are permanently visible.
 
 func autosave() -> String:
 	if tutorial != null or not autosave_enabled or world.regions.is_empty(): return ""
@@ -532,16 +527,17 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var margin = MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	for side in ["left", "right", "top", "bottom"]:
-		margin.add_theme_constant_override("margin_" + side, 24)
+		margin.add_theme_constant_override("margin_" + side, 16 if screen == "game" else 24)
 	add_child(margin)
 	body = VBoxContainer.new()
+	if screen == "game": body.add_theme_constant_override("separation",6)
 	margin.add_child(body)
 	var heading = HBoxContainer.new()
 	body.add_child(heading)
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.12", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.13", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -735,11 +731,11 @@ func restart_game() -> void:
 
 func show_game() -> void:
 	screen = "game"
-	_reset_screen("Tutoriel guidé" if tutorial != null else "Pandemic Horizon", "Entraînement séparé · Six exercices courts · Quitter à tout moment sans perdre votre partie." if tutorial != null else "%s · %s · Objectif : 90 %% avant le remède · Défaite si extinction." % [world.scenario.name, world.difficulty.name])
-	metrics = _label("", 22, ACCENT)
+	_reset_screen("Tutoriel guidé" if tutorial != null else "Pandemic Horizon", "Entraînement séparé · Six exercices" if tutorial != null else "%s · %s · Objectif : 90 %% avant le remède" % [world.scenario.name,world.difficulty.name])
+	body.get_child(0).get_child(0).add_theme_font_size_override("font_size",22)
+	metrics = _label("",20,ACCENT)
 	body.add_child(metrics)
-	objective_details = _label("", 14, MUTED)
-	objective_details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	objective_details = _label("",13,MUTED)
 	objective_details.visible = not world.objective.is_empty()
 	body.add_child(objective_details)
 	var content = HBoxContainer.new()
@@ -753,51 +749,62 @@ func show_game() -> void:
 	map_view.selected = selected
 	map_view.region_selected.connect(select_region)
 	map_column.add_child(map_view)
-	map_column.add_child(_label("Terre : trait · Air : tirets · Mer : points · Fermée : croix ambre", 16, MUTED))
+	map_column.add_child(_label("Rouge : touchés · Flèches : échanges du jour · 24 régions fictives",13,MUTED))
+	decision_area = VBoxContainer.new()
+	decision_signature = ""
+	map_column.add_child(decision_area)
+	build_inline_decision(decision_area)
 	effects_label = RichTextLabel.new()
-	effects_label.custom_minimum_size.y = 86
-	effects_label.add_theme_font_size_override("normal_font_size", 15)
-	effects_label.add_theme_color_override("default_color", AMBER)
+	effects_label.custom_minimum_size.y = 48
+	effects_label.visible = not World.Decisions.pending(world)
+	effects_label.add_theme_font_size_override("normal_font_size",13)
+	effects_label.add_theme_color_override("default_color",AMBER)
 	map_column.add_child(effects_label)
-	var sidebar_scroll = ScrollContainer.new()
-	sidebar_scroll.custom_minimum_size.x = 360
-	sidebar_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	sidebar_scroll.follow_focus = true
-	content.add_child(sidebar_scroll)
 	var sidebar = VBoxContainer.new()
-	sidebar.add_theme_constant_override("separation", 4)
-	sidebar.custom_minimum_size.x = 340
-	sidebar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	sidebar_scroll.add_child(sidebar)
-	region_details = _label("", 16)
+	sidebar.custom_minimum_size.x = 500
+	sidebar.add_theme_constant_override("separation",4)
+	content.add_child(sidebar)
+	region_details = _label("",14)
 	sidebar.add_child(region_details)
-	transport_details = _label("", 14, MUTED)
-	transport_details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	transport_details = _label("",13,MUTED)
 	sidebar.add_child(transport_details)
-	sidebar.add_child(_label("Évolutions", 22))
-	specialization_details = _label("", 14, AMBER)
+	sidebar.add_child(_label("Évolutions · arbre complet",20))
+	specialization_details = _label("",13,AMBER)
 	specialization_details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	sidebar.add_child(specialization_details)
+	var grid = GridContainer.new()
+	grid.columns = 3
+	grid.add_theme_constant_override("h_separation",8)
+	grid.add_theme_constant_override("v_separation",8)
+	sidebar.add_child(grid)
+	var effects = {"transmission":"Croissance +8 points", "mobility":"Échanges ×3", "discretion":"Remède ×0,70", "land_network":"Terre ×1,8 · remède +8%", "air_bridge":"Air ×3 · remède +18%", "sea_logistics":"Mer ×2,5 · remède +12%", "polar":"Croissance froide ×1,25", "seasonal":"Routes saisonnières ×2", "resilience":"Pénalités froid ÷2"}
 	for id in world.evolutions:
-		var evolution = world.evolutions[id]
 		var group = VBoxContainer.new()
-		group.add_theme_constant_override("separation", 4)
-		sidebar.add_child(group)
-		var button = _button("", func(): buy_evolution(id), group)
-		button.focus_entered.connect(func(): reveal_evolution_group(group))
-		button.tooltip_text = evolution.effect
+		group.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		group.add_theme_constant_override("separation",3)
+		grid.add_child(group)
+		var button = _button("",func(): buy_evolution(id),group)
+		button.add_theme_font_size_override("font_size",13)
+		for state in ["normal","hover","pressed","disabled","focus"]:
+			var style = button.get_theme_stylebox(state).duplicate()
+			style.content_margin_top = 4
+			style.content_margin_bottom = 4
+			style.content_margin_left = 8
+			style.content_margin_right = 8
+			button.add_theme_stylebox_override(state,style)
+		button.tooltip_text = world.evolutions[id].effect
 		evolution_buttons[id] = button
-		var effect_label = _label(evolution.effect, 14, MUTED)
+		var effect_label = _label(effects.get(id,world.evolutions[id].effect),13,MUTED)
 		effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		group.add_child(effect_label)
-		var reason = _label("", 14, AMBER)
+		var reason = _label("",13,AMBER)
 		reason.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		group.add_child(reason)
 		evolution_reasons[id] = reason
-	status_label = _label("", 16, MUTED)
+	status_label = _label("",14,MUTED)
 	body.add_child(status_label)
-	journal_label = _label("", 16, MUTED)
-	journal_label.custom_minimum_size.y = 44
+	journal_label = _label("",14,MUTED)
+	journal_label.custom_minimum_size.y = 22 if tutorial == null else 44
 	body.add_child(journal_label)
 	var controls = HBoxContainer.new()
 	body.add_child(controls)
@@ -812,7 +819,6 @@ func show_game() -> void:
 		_button("Recommencer", restart_game, controls)
 		_button("Menu", show_menu, controls)
 		_button("Sauvegardes", open_saves, controls)
-		if not world.decision.is_empty(): _button("Décision [F2]",show_decision,controls)
 	else:
 		if tutorial.stage == 5: initial_focus = _button("Sauvegardes d'essai", open_saves, controls)
 		tutorial_next = _button("Terminer" if tutorial.stage == 5 else "Continuer", next_lesson, controls)
@@ -836,42 +842,47 @@ func buy_evolution(id: String) -> void:
 		var group = evolution_buttons[id].get_parent()
 		reveal_evolution_group(group)
 
-func show_decision() -> void:
-	if tutorial != null or world.decision.is_empty(): return
-	screen = "decision"
-	paused = true
-	elapsed = 0.0
-	_reset_screen("Logistique sous tension",World.Decisions.summary(world))
+func build_inline_decision(parent: Control) -> void:
+	for child in parent.get_children():
+		parent.remove_child(child)
+		child.queue_free()
+	decision_signature = JSON.stringify(world.decision)+str(world.points)
 	decision_buttons.clear()
-	var info = _label("Jour %d · %d points disponibles\nUn seul choix, irréversible. Les effets commencent le lendemain et se combinent avec les événements ; une route fermée le reste." % [world.day,world.points],18,MUTED)
-	info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body.add_child(info)
-	if world.decision_profile == "0.11": body.add_child(_label("Partie 0.11 · Tarif historique conservé : soutien à 6 points.",16,AMBER))
+	decision_notice = null
+	if world.decision.is_empty(): return
+	decision_notice = _label("",13,AMBER)
+	var title = World.Decisions.summary(world)
+	if world.decision_profile == "0.11": title += " · Tarif historique 6 pts"
+	parent.add_child(_label(title,13,AMBER))
 	if World.Decisions.pending(world):
+		var choices = HBoxContainer.new()
+		choices.add_theme_constant_override("separation",8)
+		parent.add_child(choices)
 		for choice in World.Decisions.definition(world).choices:
 			var id = choice.id
-			decision_buttons[id] = _button("%s · %d pts" % [choice.name,choice.cost],func():
+			var column = VBoxContainer.new()
+			column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			choices.add_child(column)
+			var button = _button("%s · %d pts" % [choice.name,choice.cost],func():
 				var error = World.Decisions.choose(world,id)
 				if error.is_empty():
 					autosave()
 					show_game()
 				else: decision_notice.text = error
-			,body)
-			var detail = _label(choice.description,18,MUTED)
+			,column)
+			button.add_theme_font_size_override("font_size",13)
+			decision_buttons[id] = button
+			var detail = _label(("Sans ajout d'effet" if id == "observe" else "Mer ×%.2f · remède ×%.2f\n12 jours dès demain" % [choice.sea,choice.cure])+"\n"+World.Decisions.reason(world,id),13,MUTED)
 			detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			body.add_child(detail)
-			var reason = World.Decisions.reason(world,id)
-			if not reason.is_empty(): body.add_child(_label(reason,16,AMBER))
-		body.add_child(_label("Sans décision avant le jour 31 : maintien de la situation, sans coût ni effet supplémentaire.",16,AMBER))
-	decision_notice = _label("",16,AMBER)
-	body.add_child(decision_notice)
-	var space = Control.new()
-	space.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	body.add_child(space)
-	var back = _button("Revenir à la partie en pause",show_game,body)
-	_button("Aide [F1]",open_help,body)
-	back.grab_focus()
+			column.add_child(detail)
+		parent.add_child(_label("Choix irréversible · Sans choix : maintien gratuit au J31 · Les fermetures restent prioritaires",12,AMBER))
+	parent.add_child(decision_notice)
 
+func show_decision() -> void:
+	if tutorial != null or world.decision.is_empty(): return
+	paused = true
+	elapsed = 0.0
+	show_game()
 func toggle_pause() -> void:
 	if tutorial != null and not tutorial.can_run(): return
 	paused = not paused
@@ -881,19 +892,21 @@ func toggle_pause() -> void:
 func _refresh() -> void:
 	if screen != "game":
 		return
+	if decision_signature != JSON.stringify(world.decision)+str(world.points): build_inline_decision(decision_area)
+	effects_label.visible = not World.Decisions.pending(world)
 	metrics.text = "Jour %d     Touchés : %.1f %%     Remède : %.1f %%     Points : %d     Détectées : %d/%d" % [world.day, world.coverage() * 100, world.cure, world.points, world.detected_count(), world.regions.size()]
 	objective_details.text = World.Objectives.summary(world)
 	var region = world.regions[selected]
-	region_details.text = "%s · Population : %d\nSains : %d · Actifs : %d\nRetirés : %d · %s" % [region.name, region.population, region.healthy, region.active, region.removed, "Détectée" if region.detected else "Non détectée"]
+	region_details.text = "%s · Population : %d\nSains : %d · Actifs : %d · Retirés : %d\n%s" % [region.name, region.population, region.healthy, region.active, region.removed, "Détectée" if region.detected else "Non détectée"]
 	if world.scenario.id != "standard":
-		region_details.text += "\nClimat local : croissance ×%.2f" % world.climate_factor(region.id)
-	transport_details.text = world.transport_summary(region.id) + " · Détail : F1 → Transports"
+		region_details.text += " · Climat local ×%.2f" % world.climate_factor(region.id)
+	transport_details.text = world.transport_summary(region.id)
 	var specialization = world.specialization_id()
 	specialization_details.text = "Après Mobilité : une seule spécialisation au choix." if specialization.is_empty() else "Spécialisation : " + world.evolutions[specialization].name
 	for id in evolution_buttons:
 		var evolution = world.evolutions[id]
 		var acquired = id in world.purchased
-		evolution_buttons[id].text = "%s · %s" % [evolution.name, "acquise" if acquired else "%d pts" % evolution.cost]
+		evolution_buttons[id].text = "%s\n%s" % [evolution.name, "acquise" if acquired else "%d pts" % evolution.cost]
 		# Keep insufficient purchases focusable so keyboard users can read the reason.
 		evolution_buttons[id].disabled = acquired or (tutorial != null and (tutorial.stage != 2 or id != "transmission"))
 		var reason = world.purchase_reason(id)
@@ -906,7 +919,7 @@ func _refresh() -> void:
 	status_label.text = ("En pause" if paused else "Simulation en cours") + " · Vitesse ×%d" % speed
 	if not save_notice.is_empty(): status_label.text += " · " + save_notice
 	status_label.clip_text = true
-	journal_label.text = "\n".join(world.journal.slice(maxi(0, world.journal.size() - 2)))
+	journal_label.text = world.journal[-1] if not world.journal.is_empty() else ""
 	journal_label.clip_text = true
 	if tutorial != null:
 		status_label.text = "Étape %d / 6 · %s · %s" % [tutorial.stage + 1, Tutorial.TITLES[tutorial.stage], "Action réussie : continuez." if tutorial.ready else "À vous de jouer"]
@@ -921,6 +934,7 @@ func _refresh() -> void:
 	var climate = "Phase %s · %.0f °C fictifs · Remède de phase ×%.2f\n" % [world.phase.name, world.phase.temperature, world.phase.cure_multiplier] if world.scenario.id != "standard" else ""
 	effects_label.text = climate + "Événements actifs\n" + ("Aucun effet temporaire." if lines.is_empty() else "\n".join(lines))
 	map_view.refresh()
+	map_view.motion_enabled = not paused and world.outcome.is_empty()
 
 func _process(delta: float) -> void:
 	advance_time(delta)
