@@ -2,7 +2,7 @@
 
 P0 : prochain lot. P1 : suite du cycle. P2 : contenu et finition après les fondations. Effort relatif S/M/L : limité / plusieurs fichiers / changement transversal ; il ne correspond pas à une durée promise.
 
-Au 17 octobre 2026, **MON-01 à MON-03 sont terminés en 0.14**, voir le [point 19](../suivi/19-exploration-carte.md), et **MON-04 à MON-06 en 0.15**, voir le [point 20](../suivi/20-transports-visibles.md). MON-06 utilise des teintes illustratives, sans données altimétriques. Les autres lignes restent au statut **proposé**. Prochain lot : EVO-01 à EVO-03.
+Au 17 octobre 2026 : MON, EVO, EVT et STA terminés. CNT-01 à CNT-03 implémentés et vérifiés en 0.18 ; CNT-04 : mesures faites, essais joueurs en attente. FIN-01 à FIN-03 restent à réaliser. Voir les points 19 à 23.
 
 | ID | Priorité | Tâche | Dépendance | Effort | Critère de fin |
 | --- | --- | --- | --- | --- | --- |
@@ -43,3 +43,5 @@ EVT-01, EVT-02, STA-01 et STA-02 sont terminés en 0.17, voir le [point 22](../s
 | Ajouter plusieurs types d'agents ? | Après stabilisation de la 1.0 | Différé |
 
 Pour démarrer une tâche, changer son statut explicitement et créer sa fiche avec le [modèle](04-validation.md). Une proposition ne devient pas une fonctionnalité livrée parce qu'elle figure ici.
+
+État du lot E : [point 23](../suivi/23-contenu-enrichi.md). CNT-01/02/03 terminés ; CNT-04 à vérifier auprès de joueurs.

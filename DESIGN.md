@@ -1,6 +1,6 @@
 ---
 name: Pandemic Horizon
-description: Monde en crise et commandes intégrées du prototype Godot 0.17
+description: Monde en crise et commandes intégrées du prototype Godot 0.18
 colors:
   ink: "#e1eee9"
   muted: "#a7c4c9"
@@ -85,7 +85,7 @@ Le fond géographique est réel ; les 24 régions, leurs populations et leurs li
 
 - Monde nocturne vectoriel, foyers et flux rouge corail.
 - Sélection turquoise ; fermetures et blocages ambre.
-- Carte, arbre complet des évolutions et choix logistiques dans la même vue.
+- Carte, évolutions des profils classique et enrichi et choix logistiques dans la même vue.
 - Animation observatrice, figée en pause et indépendante du hasard du modèle.
 - Historique observé et actualités en lecture séparée, sans déplacer les achats.
 
@@ -109,6 +109,9 @@ La police est celle fournie par défaut par Godot ; aucune famille ni graisse pe
 Les titres des écrans utilisent 30 px, celui du jeu 22 px, les indicateurs et le titre des évolutions 20 px. Le corps général est à 18 px, le secondaire à 16 px. Le détail régional, le statut et le journal sont à 14 px ; les achats, effets, états, légendes et décisions à 13 px. Les numéros des hubs et mentions cartographiques utilisent 12 px ; le nom de la région sélectionnée utilise 14 px. L’aide utilise 20 px pour son texte riche. Les effets et motifs d’achat reviennent à la ligne.
 
 ## Layout
+L’extension 0.18 conserve la palette, la police Godot et les angles de 6 px. Le classique garde trois colonnes, six ou neuf nœuds, avec leurs états courts. Le profil enrichi affiche 18 ou 21 nœuds sur six colonnes, séparées de 8 px horizontalement et de 10 px verticalement, sans défilement des achats. Les libellés courts d’au plus huit caractères utilisent le jeton existant de 12 px ; les cibles gardent au moins 44 px de hauteur. Les marges internes du bouton enrichi réservent 26 px à gauche au symbole et 12 px à droite. Seuls les prérequis directs de la sélection sont reliés, via un corridor situé 4 px à droite de la grille et des segments 5 px au-dessus des nœuds. La fiche complète et le bouton séparé restent sous la grille.
+
+Les 24 captures 0.18 `.impeccable/review/expanded-{menu-classic,menu-enriched,standard,degel,available,prerequisite,loaded-classic,loaded-enriched}-{1280,1920,2395}.png` mesurent réellement 1280 × 720, 1920 × 1080 et 2395 × 1060. La revue de livraison conclut à la livraison sans correction ; ces captures et les 3 097 contrôles automatisés ne constituent pas des essais humains. L’exploration de 240 parties est documentée dans `docs/EQUILIBRAGE-0.18-ENRICHI.md`.
 
 Les captures 0.17 `.impeccable/review/history-{start,ongoing,pending,victory,defeat,legacy}-{1280,1920,2395}.png` couvrent six états aux dimensions 1280 × 720, 1920 × 1080 et 2395 × 1060. Elles documentent le développement ; elles ne prouvent aucun essai physique Windows ni essai avec des joueurs. La vue Monde place la situation et une courbe de hauteur minimale 190 px avant trois colonnes extensibles séparées de 16 px. Chaque texte riche focalisable a une hauteur minimale de 130 px et son propre défilement. Les achats et décisions restent dans le jeu.
 
@@ -120,7 +123,7 @@ Les captures 0.15 `.impeccable/review/transport-{pending,all,land,air,sea,zoom,m
 
 La composition logique de référence est 1280 × 720, avec `canvas_items` et, depuis la 0.14, `window/stretch/aspect="expand"` dans `project.godot`. À 1920 × 1080, le même rapport 16:9 met cette composition à l’échelle. Une fenêtre plus large étend l’espace logique et la carte extensible. Les captures 0.14 dans `.impeccable/review/camera-{world,zoom,edge,keyboard,reset}-{1280,1920,2395}.png` mesurent respectivement 1280 × 720, 1920 × 1080 et 2395 × 1060. Les anciennes captures annoncées à la largeur 2395, dont `user-2395.png`, mesuraient en réalité 1884 × 1060 : elles documentent le rendu 16:9 antérieur, sans prouver la disposition à pleine largeur 2395.
 
-En jeu, les marges sont de 16 px et la séparation verticale principale de 6 px. Les indicateurs et le suivi facultatif précèdent la zone centrale : carte extensible à gauche, détails régionaux et évolutions à droite. La carte demande au minimum 640 × 220 px ; la colonne droite demande 500 px. Les six évolutions Standard ou neuf Dégel occupent trois colonnes, sans `ScrollContainer`. Chaque groupe rassemble le nœud et son état court ; la fiche complète et le bouton séparé suivent la grille.
+En jeu, les marges sont de 16 px et la séparation verticale principale de 6 px. Les indicateurs et le suivi facultatif précèdent la zone centrale : carte extensible à gauche, détails régionaux et évolutions à droite. La carte demande au minimum 640 × 220 px ; la colonne droite demande 500 px. Les six évolutions Standard ou neuf Dégel du profil classique occupent trois colonnes, sans `ScrollContainer`. Chaque groupe rassemble le nœud et son état court ; la fiche complète et le bouton séparé suivent la grille.
 
 Les trois choix logistiques en attente sont côte à côte sous la carte. Leur apparition réduit la hauteur disponible pour la carte ; les évolutions restent visibles. Les événements actifs de 48 px minimum sont masqués pendant ce choix et restent consultables dans l’aide. Le statut, la dernière entrée du journal et les commandes restent au bas du jeu. Hors jeu, les marges sont de 24 px. L’aide et les sauvegardes restent des écrans distincts, avec leurs propres besoins de lecture.
 
@@ -137,6 +140,9 @@ Les boutons généraux ont un rayon de 6 px, un focus transparent bordé de turq
 Le fond local Natural Earth `assets/maps/world-land.geojson` dessine continents et contours vectoriels. Les routes sont courbes ; une fermeture ajoute des segments et une croix ambre au milieu. Aucun raster n’est livré par cette réalisation.
 
 ## Components
+**Identité et profils (0.18).** NACRE utilise un emblème vectoriel abstrait original de 72 × 72 px, dessiné dans `agent_emblem.gd` : centre corail, six relais turquoise, liens `terrain-coast` et arc `muted`. Il reprend la palette existante sans nouvelle famille graphique ni symbole biologique. Le menu présente cette identité et une fiche de scénario dont les comptes suivent le profil. La case « Contenu enrichi · 18 à 21 évolutions » est facultative et décochée par défaut : Standard compte 18 évolutions et 14 événements programmés, Dégel 21 évolutions et 12 événements programmés. Le classique garde six ou neuf évolutions. Le catalogue enrichi validé ajoute douze évolutions et huit événements.
+
+**Évolutions enrichies (0.18).** La grille compacte à six colonnes conserve les symboles vectoriels, la sélection persistante turquoise, les acquisitions textuelles et les cibles de 44 px. Le titre « Évolutions · liens de la sélection » annonce que seuls les prérequis directs du nœud sélectionné sont tracés ; les liens passent par le corridor extérieur, neutres ou turquoise selon l’acquisition. Les libellés courts à 12 px remplacent les noms longs dans ces seuls nœuds ; les états sous chaque nœud sont masqués. Nom complet, effet et motif précis restent dans la fiche et l’infobulle. L’inspection reste gratuite et « Évoluer » reste l’unique achat explicite. Le classique conserve son titre « arbre complet », ses trois colonnes et ses états entiers. Les sauvegardes enrichies utilisent le format 5 et `rules_profile="enriched-0.18"`, avec empreinte distincte dans `content` ; le classique garde le format 4. Monde F3, l’historique, la carte et les choix intégrés conservent leur fonctionnement.
 
 **Monde, historique et actualités (0.17).** F3, le bouton du bas de partie et la dernière actualité cliquable ouvrent « Monde · Actualités et bilan » hors tutoriel ; le bilan possède aussi un accès. La simulation est mise en pause. La situation actuelle et l’objectif éventuel précèdent les courbes, puis trois colonnes présentent les achats datés, les effets en cours et le journal réel inversé, plus récent en haut. Le résumé de décision n’est pas répété s’il figure déjà parmi les effets. Le graphique vectoriel emploie le corail pour la proportion cumulée touchée et le turquoise pour le remède, avec légende textuelle, repères de 0 à 100 % et jours extrêmes ; un seul échantillon apparaît comme un point. L’absence d’historique et les dates d’achats antérieures manquantes sont explicitement signalées, sans passé inventé. Les colonnes utilisent les textes secondaires de 14 px, leurs titres 16 px et la légende 13 px. Retour, F3 ou Échap ramènent à la partie en pause ou au bilan ; le focus initial vise Retour. F1 ouvre l’aide puis revient à Monde. Les achats et les choix logistiques restent dans leur composition intégrée. Aucun nouveau jeton visuel n’est introduit.
 

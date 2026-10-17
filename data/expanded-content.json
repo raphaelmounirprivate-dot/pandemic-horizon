@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "profile": "enriched-0.18",
+  "agent": {"id":"nacre","name":"NACRE","description":"Agent fictif de réseau : diffusion, discrétion et logistique. Aucun modèle biologique réel."},
+  "evolutions": [
+    {"id":"relay","name":"Relais locaux","short":"Relais","cost":8,"requires":["transmission"],"effect":"Croissance +2,5 points ; remède ×1,04.","modifiers":{"growth_bonus":0.025,"cure_multiplier":1.04}},
+    {"id":"cohesion","name":"Cohésion du réseau","short":"Cohésion","cost":9,"requires":["transmission"],"effect":"Croissance +2 points ; remède ×1,02.","modifiers":{"growth_bonus":0.02,"cure_multiplier":1.02}},
+    {"id":"network","name":"Maillage régional","short":"Réseau","cost":11,"requires":["mobility"],"effect":"Échanges ×1,5 ; remède ×1,06.","modifiers":{"exchange_multiplier":1.5,"cure_multiplier":1.06}},
+    {"id":"timing","name":"Cadence mesurée","short":"Tempo","cost":10,"requires":["discretion"],"effect":"Remède ×0,94 ; échanges ×0,90.","modifiers":{"cure_multiplier":0.94,"exchange_multiplier":0.9}},
+    {"id":"redundancy","name":"Redondance logistique","short":"Repli","cost":8,"requires":["mobility"],"effect":"Échanges ×1,2 ; remède ×0,97.","modifiers":{"exchange_multiplier":1.2,"cure_multiplier":0.97}},
+    {"id":"diversity","name":"Diversification","short":"Divers.","cost":12,"requires":["mobility"],"effect":"Échanges ×1,3 ; remède ×1,03.","modifiers":{"exchange_multiplier":1.3,"cure_multiplier":1.03}},
+    {"id":"focus","name":"Foyers persistants","short":"Foyers","cost":9,"requires":["transmission"],"effect":"Croissance +3,5 points ; remède ×1,08.","modifiers":{"growth_bonus":0.035,"cure_multiplier":1.08}},
+    {"id":"retention","name":"Maintien régional","short":"Maintien","cost":10,"requires":["relay"],"effect":"Croissance +2 points ; remède ×1,02.","modifiers":{"growth_bonus":0.02,"cure_multiplier":1.02}},
+    {"id":"land_relay","name":"Relais routiers","short":"Routes","cost":8,"requires":["land_network"],"effect":"Terre ×1,35 ; remède ×1,03.","modifiers":{"land_multiplier":1.35,"cure_multiplier":1.03}},
+    {"id":"air_relay","name":"Escales coordonnées","short":"Escales","cost":9,"requires":["air_bridge"],"effect":"Air ×1,4 ; remède ×1,07.","modifiers":{"air_multiplier":1.4,"cure_multiplier":1.07}},
+    {"id":"sea_relay","name":"Réseau portuaire","short":"Ports","cost":9,"requires":["sea_logistics"],"effect":"Mer ×1,4 ; remède ×1,05.","modifiers":{"sea_multiplier":1.4,"cure_multiplier":1.05}},
+    {"id":"delay","name":"Délai de recherche","short":"Retard","cost":12,"requires":["discretion"],"effect":"Remède ×0,85 ; échanges ×0,95.","modifiers":{"cure_multiplier":0.85,"exchange_multiplier":0.95}}
+  ],
+  "events": [
+    {"id":"local_caution","name":"Prudence dans le Delta","kind":"growth_multiplier","start_day":47,"duration":6,"target":"delta","factor":0.8},
+    {"id":"surface_disruption","name":"Perturbation des routes","kind":"transport_multiplier","start_day":52,"duration":6,"target":"land","factor":0.75},
+    {"id":"air_corridor","name":"Ouverture des corridors aériens","kind":"transport_multiplier","start_day":58,"duration":6,"target":"air","factor":1.2},
+    {"id":"sea_convoy","name":"Convois coordonnés","kind":"transport_multiplier","start_day":61,"duration":7,"target":"sea","factor":1.2},
+    {"id":"research_delay","name":"Retards de coordination","kind":"cure_multiplier","start_day":64,"duration":5,"target":"global","factor":0.85},
+    {"id":"research_coordination","name":"Coordination scientifique","kind":"cure_multiplier","start_day":72,"duration":7,"target":"global","factor":1.18},
+    {"id":"mobility_recovery","name":"Reprise du réseau terrestre","kind":"transport_multiplier","start_day":78,"duration":6,"target":"land","factor":1.15},
+    {"id":"port_maintenance","name":"Maintenance des ports","kind":"transport_multiplier","start_day":82,"duration":5,"target":"sea","factor":0.8}
+  ]
+}

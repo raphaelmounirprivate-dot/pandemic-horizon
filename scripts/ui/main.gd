@@ -24,6 +24,8 @@ var objective_choice: CheckButton
 var menu_objective_detail: Label
 var objective_details: Label
 var decision_enabled = false
+var advanced_mode = false
+var advanced_choice: CheckButton
 var decision_choice: CheckButton
 var decision_buttons: Dictionary = {}
 var decision_notice: Label
@@ -252,6 +254,7 @@ func load_saved(slot: String) -> void:
 	difficulty_id = world.difficulty.id
 	if tutorial == null: objective_id = world.objective.get("id", "")
 	if tutorial == null: decision_enabled = not world.decision.is_empty()
+	if tutorial == null: advanced_mode = world.expanded_content
 	paused = true
 	elapsed = 0.0
 	save_notice = result.get("warning", "Partie chargée en pause.")
@@ -502,7 +505,14 @@ func _smoke_test() -> void:
 	if not optional_loaded.error.is_empty() or optional_loaded.world.decision_profile != "0.11" or World.Decisions.option("support",optional_loaded.world).cost != 6:
 		get_tree().quit(1)
 		return
-	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, persistence replay, six tutorial lessons, contextual help, optional objectives and arctic flows, logistics decision cost/replay/expiration, restart, settings, menu")
+	if not optional_world.start("boreale",2042,null,null,"degel2042","normal",null,null,"arctic_relays",true,true).is_empty():
+		get_tree().quit(1)
+		return
+	optional_loaded = smoke_store.decode(smoke_store.encode(optional_world))
+	if not optional_loaded.error.is_empty() or not optional_loaded.world.expanded_content or optional_loaded.world.evolutions.size() != 21:
+		get_tree().quit(1)
+		return
+	print("RUNTIME_SMOKE_OK: standard victory/defeat, Degel phases and routes, climatic upgrades, difficulties, persistence replay, six tutorial lessons, contextual help, optional objectives and arctic flows, logistics decision cost/replay/expiration, enriched profile and format 5, restart, settings, menu")
 	get_tree().quit()
 
 func _apply_theme() -> void:
@@ -551,7 +561,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.17", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.18", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -583,10 +593,16 @@ func show_menu() -> void:
 	presentation.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	center.add_child(presentation)
 	var spacer = Control.new()
-	spacer.custom_minimum_size.y = 40
+	spacer.custom_minimum_size.y = 16
 	presentation.add_child(spacer)
-	presentation.add_child(_label("Chaque région compte.", 36))
-	var description = _label("Pilotez un agent fictif dans 24 régions reliées.\nFaites évoluer sa diffusion et surveillez le remède.\n\nObjectif : toucher 90 % de la population\navant l'achèvement du remède.", 22)
+	var identity = HBoxContainer.new()
+	presentation.add_child(identity)
+	var emblem = load("res://scripts/ui/agent_emblem.gd").new()
+	emblem.custom_minimum_size = Vector2(72,72)
+	emblem.tooltip_text = "NACRE · Emblème abstrait de réseau, sans représentation biologique réelle."
+	identity.add_child(emblem)
+	identity.add_child(_label("NACRE\nChaque région compte.",26))
+	var description = _label("Agent fictif dans 24 régions reliées.\nFaites évoluer sa diffusion et surveillez le remède.\nObjectif : toucher 90 % avant le remède.",18)
 	presentation.add_child(description)
 	menu_scenario_detail = _label("", 16, MUTED)
 	menu_scenario_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -616,6 +632,15 @@ func show_menu() -> void:
 	presentation.add_child(learning)
 	_button("Tutoriel guidé", start_tutorial, learning)
 	_button("Aide [F1]", open_help, learning)
+	advanced_choice = CheckButton.new()
+	advanced_choice.text = "Contenu enrichi · 18 à 21 évolutions"
+	advanced_choice.custom_minimum_size.y = 44
+	advanced_choice.button_pressed = advanced_mode
+	advanced_choice.tooltip_text = "Profil distinct : 18 évolutions de base, 21 dans Dégel, événements supplémentaires. Les parties classiques gardent leurs règles."
+	advanced_choice.toggled.connect(func(enabled):
+		advanced_mode = enabled
+		_update_menu_choices(World.Scenarios.load_catalog()))
+	learning.add_child(advanced_choice)
 	var actions = VBoxContainer.new()
 	actions.custom_minimum_size.x = 320
 	center.add_child(actions)
@@ -691,6 +716,7 @@ func _update_menu_choices(catalog: Dictionary) -> void:
 			start_choice.disabled = item.forced_start != ""
 			if item.forced_start != "": start_id = item.forced_start
 			menu_scenario_detail.text = item.description
+			menu_scenario_detail.text += "\n" + ("Profil enrichi : %d évolutions · %d événements programmés." % [21 if scenario_id == "degel2042" else 18,12 if scenario_id == "degel2042" else 14] if advanced_mode else "Profil classique : %d évolutions · règles historiques conservées." % [9 if scenario_id == "degel2042" else 6])
 	for i in range(start_choice.item_count):
 		if start_choice.get_item_metadata(i) == start_id: start_choice.select(i)
 	for item in catalog.difficulties:
@@ -722,7 +748,7 @@ func show_settings() -> void:
 
 func start_game() -> void:
 	reset_map_camera = true
-	var error = world.start(start_id, 2042, null, null, scenario_id, difficulty_id, null, null, objective_id,decision_enabled)
+	var error = world.start(start_id, 2042, null, null, scenario_id, difficulty_id, null, null, objective_id,decision_enabled,advanced_mode)
 	if not error.is_empty():
 		show_menu()
 		body.add_child(_label("Impossible de démarrer : " + error))
@@ -742,6 +768,7 @@ func restart_game() -> void:
 	start_id = world.start_region_id
 	objective_id = world.objective.get("id", "")
 	decision_enabled = not world.decision.is_empty()
+	advanced_mode = world.expanded_content
 	start_game()
 
 func show_game() -> void:
@@ -785,17 +812,22 @@ func show_game() -> void:
 	sidebar.add_child(region_details)
 	transport_details = _label("",13,MUTED)
 	sidebar.add_child(transport_details)
-	sidebar.add_child(_label("Évolutions · arbre complet",20))
+	sidebar.add_child(_label("Évolutions · liens de la sélection" if world.expanded_content else "Évolutions · arbre complet",20))
 	specialization_details = _label("",13,AMBER)
 	specialization_details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	sidebar.add_child(specialization_details)
 	var grid = load("res://scripts/ui/evolution_tree.gd").new()
 	evolution_tree = grid
 	grid.world = world
-	grid.columns = 3
+	grid.columns = 6 if world.expanded_content else 3
 	grid.add_theme_constant_override("h_separation",8)
-	grid.add_theme_constant_override("v_separation",14)
-	sidebar.add_child(grid)
+	grid.add_theme_constant_override("v_separation",10 if world.expanded_content else 14)
+	if world.expanded_content:
+		var graph_margin = MarginContainer.new()
+		graph_margin.add_theme_constant_override("margin_top",8)
+		sidebar.add_child(graph_margin)
+		graph_margin.add_child(grid)
+	else: sidebar.add_child(grid)
 	for id in world.evolutions:
 		var group = VBoxContainer.new()
 		group.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -809,13 +841,13 @@ func show_game() -> void:
 			if not evolution_purchase.disabled: evolution_purchase.grab_focus())
 		button.focus_entered.connect(func(): select_evolution(id))
 		group.add_child(button)
-		button.add_theme_font_size_override("font_size",13)
+		button.add_theme_font_size_override("font_size",12 if world.expanded_content else 13)
 		for state in ["normal","hover","pressed","disabled","focus"]:
 			var style = button.get_theme_stylebox(state).duplicate()
 			style.content_margin_top = 4
 			style.content_margin_bottom = 4
-			style.content_margin_left = 28
-			style.content_margin_right = 8
+			style.content_margin_left = 26 if world.expanded_content else 28
+			style.content_margin_right = 12 if world.expanded_content else 8
 			button.add_theme_stylebox_override(state,style)
 		button.tooltip_text = world.evolutions[id].effect
 		evolution_buttons[id] = button
@@ -823,6 +855,7 @@ func show_game() -> void:
 		var reason = _label("",13,AMBER)
 		reason.clip_text = true
 		group.add_child(reason)
+		reason.visible = not world.expanded_content
 		evolution_reasons[id] = reason
 	evolution_detail = _label("",13,MUTED)
 	evolution_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -944,16 +977,19 @@ func _refresh() -> void:
 	for id in evolution_buttons:
 		var evolution = world.evolutions[id]
 		var acquired = id in world.purchased
-		evolution_buttons[id].text = "%s\n%s" % [evolution.name, "acquise" if acquired else "%d pts" % evolution.cost]
+		var short_names = {"transmission":"Diffus.","mobility":"Mobil.","discretion":"Discr.","land_network":"Terre","air_bridge":"Air","sea_logistics":"Mer","polar":"Polaire","seasonal":"Saison","resilience":"Climat"}
+		var displayed_name = evolution.get("short",short_names.get(id,evolution.name)) if world.expanded_content else evolution.name
+		evolution_buttons[id].text = "%s\n%s" % [displayed_name, "acquise" if acquired else "%d pts" % evolution.cost]
 		# Keep insufficient purchases focusable so keyboard users can read the reason.
 		evolution_buttons[id].disabled = tutorial != null and (tutorial.stage != 2 or id != "transmission")
 		evolution_buttons[id].add_theme_color_override("font_color",ACCENT if id == selected_evolution or acquired else INK)
 		evolution_buttons[id].selected_node = id == selected_evolution
+		evolution_buttons[id].blocked = not world.purchase_reason(id).is_empty() and not acquired
 		evolution_buttons[id].queue_redraw()
 		var reason = world.purchase_reason(id)
 		if tutorial != null and not acquired and (tutorial.stage != 2 or id != "transmission"):
 			reason = "Hors exercice" + (" · " + reason if not reason.is_empty() else "")
-		evolution_buttons[id].tooltip_text = evolution.effect + " " + reason
+		evolution_buttons[id].tooltip_text = evolution.name + " · " + evolution.effect + " " + reason
 		var short_reason = "Prérequis manquant" if reason.begins_with("Prérequis") else ("Incompatible" if "Incompatible" in reason else reason)
 		if reason.begins_with("Hors exercice"): short_reason = "Prérequis (exercice)" if "Prérequis" in reason else "Hors exercice"
 		evolution_reasons[id].text = "Acquise" if acquired else ("Disponible" if reason.is_empty() else short_reason)
@@ -966,6 +1002,7 @@ func _refresh() -> void:
 	evolution_purchase.text = "Évoluer : %s · %d pts" % [chosen.name,chosen.cost]
 	evolution_purchase.disabled = not world.purchase_reason(selected_evolution).is_empty() or (tutorial != null and (tutorial.stage != 2 or selected_evolution != "transmission"))
 	evolution_tree.queue_redraw()
+	evolution_tree.selected_id = selected_evolution
 	pause_button.text = "Reprendre [Espace]" if paused else "Pause [Espace]"
 	status_label.text = ("En pause" if paused else "Simulation en cours") + " · Vitesse ×%d" % speed
 	if not save_notice.is_empty(): status_label.text += " · " + save_notice

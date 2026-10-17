@@ -1,12 +1,14 @@
 extends GridContainer
 var world: RefCounted
 var nodes: Dictionary = {}
+var selected_id = ""
 func _ready() -> void:
 	resized.connect(queue_redraw)
 	sort_children.connect(func(): call_deferred("queue_redraw"))
 func _draw() -> void:
 	if world == null: return
 	for id in nodes:
+		if nodes.size() > 9 and id != selected_id: continue
 		var target = nodes[id]
 		for required in world.evolutions[id].requires:
 			if not nodes.has(required): continue
@@ -18,11 +20,16 @@ func _draw() -> void:
 			var a: Vector2
 			var b: Vector2
 			var color = Color("69d6bd") if required in world.purchased else Color("a7c4c9")
-			if absf(source_rect.position.y-target_rect.position.y) < 2:
+			if nodes.size() > 9:
+				a = source_rect.position+Vector2(source_rect.size.x*.5,0)
+				b = target_rect.position+Vector2(target_rect.size.x*.5,0)
+				var gutter = size.x+4
+				draw_polyline(PackedVector2Array([a,a-Vector2(0,5),Vector2(gutter,a.y-5),Vector2(gutter,b.y-5),b-Vector2(0,5),b]),color,1.4,true)
+			elif absf(source_rect.position.y-target_rect.position.y) < 2:
 				var siblings = 0
 				for candidate in nodes:
 					if required in world.evolutions[candidate].requires and absf(nodes[candidate].position.y-target.position.y) < 2: siblings += 1
-				if siblings > 1:
+				if siblings > 1 or nodes.size() > 9:
 					a = source_rect.position+Vector2(source_rect.size.x*.5,0)
 					b = target_rect.position+Vector2(target_rect.size.x*.5,0)
 					var corridor = a.y-7

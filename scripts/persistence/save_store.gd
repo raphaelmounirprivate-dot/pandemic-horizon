@@ -17,6 +17,8 @@ func content_hash() -> String:
 	for path in ["regions", "evolutions", "events", "scenarios", "transports", "objectives", "decisions", "decisions-0.11"]:
 		text += FileAccess.get_file_as_string("res://data/%s.json" % path).replace("\r\n", "\n")
 	return text.sha256_text()
+func expanded_hash() -> String:
+	return (content_hash()+"\n"+FileAccess.get_file_as_string(World.Expanded.PATH).replace("\r\n","\n")).sha256_text()
 
 func encode(world: RefCounted, selected: int = 0, speed: int = 1) -> Dictionary:
 	if world.regions.is_empty(): return {}
@@ -26,7 +28,7 @@ func encode(world: RefCounted, selected: int = 0, speed: int = 1) -> Dictionary:
 	var effects: Array = []
 	for effect in world.active_events:
 		effects.append({"id": effect.id, "start_day": effect.start_day, "end_day": effect.end_day})
-	return {"format": 4, "content": content_hash(), "engine": Engine.get_version_info().string,"decision_profile":world.decision_profile,
+	var data = {"format": 5 if world.expanded_content else 4, "content": expanded_hash() if world.expanded_content else content_hash(), "engine": Engine.get_version_info().string,"decision_profile":world.decision_profile,
 		"saved_at": Time.get_datetime_string_from_system(), "scenario": world.scenario.id,
 		"difficulty": world.difficulty.id, "start": world.start_region_id,
 		"day": world.day, "points": world.points, "cure": PackedFloat64Array([world.cure]).to_byte_array().hex_encode(), "outcome": world.outcome,
@@ -35,6 +37,8 @@ func encode(world: RefCounted, selected: int = 0, speed: int = 1) -> Dictionary:
 		"seed": str(world.rng.seed), "rng": str(world.rng.state),
 		"selected": world.regions[clampi(selected, 0, world.regions.size() - 1)].id, "speed": speed,
 		"history":world.history.duplicate(true),"purchase_history":world.purchase_history.duplicate(true)}
+	if world.expanded_content: data["rules_profile"] = World.Expanded.PROFILE
+	return data
 
 func _integer(value: Variant, minimum: int, maximum: int) -> bool:
 	return (value is int or value is float) and is_finite(float(value)) and value == floor(value) and value >= minimum and value <= maximum
@@ -55,9 +59,12 @@ func decode(data: Variant) -> Dictionary:
 	var legacy09 = data.get("format") == 2 and data.get("content") == LEGACY_09_HASH
 	var legacy10 = data.get("format") == 2 and data.get("content") == LEGACY_10_HASH
 	var legacy11 = data.get("format") == 3 and data.get("content") == LEGACY_11_HASH
-	var current_format = data.get("format") == 4 and data.get("content") == content_hash()
+	var enriched = data.get("format") == 5 and data.get("content") == expanded_hash()
+	var current_format = (data.get("format") == 4 and data.get("content") == content_hash()) or enriched
 	if (not old_format and not current_format and not legacy09 and not legacy10 and not legacy11) or data.get("engine") != Engine.get_version_info().string:
 		return {"error": "Sauvegarde incompatible avec cette version du jeu.", "incompatible": true}
+	if enriched and data.get("rules_profile") != World.Expanded.PROFILE: return invalid
+	if not enriched and data.has("rules_profile"): return invalid
 	if not current_format and not legacy11 and data.has("decision"): return invalid
 	if not current_format and data.has("decision_profile"): return invalid
 	if old_format and data.has("objective"): return invalid
@@ -78,7 +85,7 @@ func decode(data: Variant) -> Dictionary:
 	if not _integer(data.get("speed"), 1, 4) or int(data.speed) not in [1, 2, 4]: return invalid
 	if not _strings(data.get("purchased"), 100) or not _strings(data.get("journal"), 10000) or not _strings(data.get("activated"), 200): return invalid
 	var world = World.new()
-	if not world.start(data.start, data.seed.to_int(), null, null, data.scenario, data.difficulty).is_empty(): return invalid
+	if not world.start(data.start, data.seed.to_int(), null, null, data.scenario, data.difficulty,null,null,"",false,enriched).is_empty(): return invalid
 	if not data.get("regions") is Array or data.regions.size() != world.regions.size(): return invalid
 	var ids: Array = []
 	for i in range(world.regions.size()):

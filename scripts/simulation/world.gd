@@ -10,6 +10,8 @@ const SPECIALIZATIONS = ["land_network", "air_bridge", "sea_logistics"]
 const Objectives = preload("res://scripts/gameplay/objectives.gd")
 const Decisions = preload("res://scripts/gameplay/decisions.gd")
 const History = preload("res://scripts/gameplay/history.gd")
+const Expanded = preload("res://scripts/gameplay/expanded_content.gd")
+var expanded_content = false
 var history: Array = []
 var purchase_history: Array = []
 var decision: Dictionary = {}
@@ -88,7 +90,7 @@ static func validate_data(data: Variant) -> String:
 		edges.append(pair)
 	return ""
 
-func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null, transport_source: Variant = null, objective_id: String = "", decision_enabled: bool = false) -> String:
+func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null, transport_source: Variant = null, objective_id: String = "", decision_enabled: bool = false, expanded_enabled: bool = false, expanded_source: Variant = null) -> String:
 	if decision_enabled:
 		var item = Decisions.definition()
 		if item.is_empty() or item.scenario != scenario_id: return "Décision indisponible pour ce scénario."
@@ -138,13 +140,21 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	if transports == null: transports = Transports.load_file() if source == null else Transports.neutral(data, catalog)
 	error = Transports.validate(transports, data, catalog)
 	if not error.is_empty(): return error
+	var effective_gameplay = Scenarios.gameplay_for(gameplay,chosen_scenario)
+	if expanded_enabled:
+		var enriched = Expanded.build(effective_gameplay,expanded_source)
+		if not enriched.error.is_empty(): return enriched.error
+		effective_gameplay = enriched.content
+		error = Content.validate(effective_gameplay,data.regions,Scenarios.connections_for(data,chosen_scenario))
+		if not error.is_empty(): return error
 	transport_profiles = transports.profiles.duplicate(true)
 	transport_modes.clear()
 	for route in transports.routes: transport_modes[Transports.key(route.edge)] = route.mode
 	scenario = chosen_scenario.duplicate(true)
 	difficulty = chosen_difficulty.duplicate(true)
 	phase = scenario.phases[0].duplicate(true)
-	gameplay = Scenarios.gameplay_for(gameplay, scenario)
+	gameplay = effective_gameplay
+	expanded_content = expanded_enabled
 	regions = data.regions.duplicate(true)
 	connections = Scenarios.connections_for(data, scenario)
 	evolutions.clear()

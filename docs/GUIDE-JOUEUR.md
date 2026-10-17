@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.17
+# Jouer à Pandemic Horizon 0.18
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.17.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.18.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -156,3 +156,11 @@ Avant une nouvelle partie Dégel, activer « Décision logistique (J28) ». Au j
 Un seul choix est possible, sans annulation. Les points insuffisants sont expliqués avant et après une tentative. Les effets commencent le lendemain : choix au J28 → effets du J29 au J40 inclus, expiration au J41. Les multiplicateurs se combinent avec les autres effets ; une route fermée reste fermée. Le choix ne change directement ni le score ni le statut des objectifs facultatifs.
 
 Les choix apparaissent sous la carte, en pause, sans masquer les évolutions. On peut réfléchir ou sauvegarder sans décider. F2 revient à la carte et aux choix intégrés. On peut choisir au J28, J29 ou J30 ; au J31, le maintien neutre est automatique et gratuit. Une partie terminée avant décision annule ou clôt le choix sans coût. Les sauvegardes conservent le choix, les points et la date de fin. L'aide F1 propose le sujet « Décision logistique ».
+
+## NACRE et contenu enrichi
+
+Activer Contenu enrichi avant une nouvelle partie ajoute douze évolutions et huit événements : 18 évolutions en Standard, 21 dans Dégel. Le profil classique reste proposé par défaut et le tutoriel conserve ses règles. NACRE est un agent fictif représenté par un emblème de réseau original.
+
+Les nœuds compacts affichent nom court et coût. Sélectionner ou survoler révèle le nom complet et les raisons ; le losange indique un blocage. Les liens montrent les prérequis directs de la sélection. Utiliser Évoluer pour acheter. Tous les choix logistiques restent sous la carte.
+
+Le profil enrichi utilise le format de sauvegarde 5, à reprendre avec la version 0.18 ou suivante compatible. Les parties classiques gardent leur format et leurs règles ; aucun ajout rétroactif aux anciennes parties.

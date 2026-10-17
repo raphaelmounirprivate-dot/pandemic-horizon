@@ -47,7 +47,7 @@ Dépendance : définir le stockage de l'historique avant les courbes. Les sauveg
 
 Terminé quand EVT-01, EVT-02, STA-01 et STA-02 sont validés, y compris après sauvegarde/chargement et sur une partie interrompue.
 
-## Lot E — Contenu et équilibrage vers la 1.0
+## Lot E — Contenu implémenté en 0.18, essais joueurs en attente
 
 - Donner une identité visuelle au premier agent et améliorer les fiches Standard/Dégel.
 - Proposer les évolutions supplémentaires et événements nécessaires aux objectifs du plan général.
