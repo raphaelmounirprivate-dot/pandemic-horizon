@@ -544,7 +544,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.14", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.15", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -759,7 +759,7 @@ func show_game() -> void:
 	map_column.add_child(map_view)
 	map_view.restore_camera(map_camera)
 	reset_map_camera = false
-	map_column.add_child(_label("Rouge : touchés · Flèches : échanges du jour · 24 régions fictives",13,MUTED))
+	map_column.add_child(_label("Rouge : touchés · Véhicules : échanges du jour · 24 régions fictives",13,MUTED))
 	decision_area = VBoxContainer.new()
 	decision_signature = ""
 	map_column.add_child(decision_area)

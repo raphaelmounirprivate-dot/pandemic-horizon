@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.14
+# Jouer à Pandemic Horizon 0.15
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.14.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.15.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -22,6 +22,7 @@ La carte du monde utilise les contours terrestres Natural Earth. Les 24 régions
 | Molette sur la carte | Zoomer autour du pointeur entre ×1 et ×4 |
 | Glisser au bouton droit ou central | Déplacer la carte agrandie |
 | Boutons − / + / Vue mondiale | Dézoomer, zoomer ou retrouver le monde entier |
+| Flux : tous / terre / air / mer | Parcourir les filtres de véhicules ; les fermetures restent visibles |
 | + / −, flèches, Origine sur la carte focalisée | Zoom, déplacement, retour au monde |
 | Menu → Reprendre la partie | Retrouver la partie en mémoire, en pause |
 | Sauvegardes | Enregistrer ou charger une partie sur ce PC |
@@ -65,6 +66,8 @@ L'entraînement conserve une partie et des fichiers séparés, dans `user://trai
 « Aide [F1] » est accessible au menu, en partie et au bilan. F1 fonctionne aussi depuis les paramètres et les sauvegardes. « Situation actuelle » résume le scénario, la région sélectionnée, les raisons d'indisponibilité des évolutions et les effets actifs. Le sélecteur propose également neuf sujets : commandes, régions, évolutions, détection, événements, sauvegardes, Dégel, transports et décision logistique. Faire défiler le texte, ou le focaliser avec Tab et utiliser les flèches. F1, Échap ou « Retour » ramènent à l'écran précédent, en pause.
 
 ## Transports
+
+Les véhicules rouges représentent les échanges du jour : avion, bateau ou camion selon le type de route. Leur taille est illustrative, sans correspondance avec un nombre de personnes. Les petits symboles neutres près des hubs signalent une infrastructure aérienne ou maritime, y compris si ses routes sont fermées. Les teintes de terrain et de glace sont illustratives, sans mesure d'altitude.
 
 Chaque liaison a un seul type : terrestre (coefficient ×1), aérien (×1,2) ou maritime (×0,8). Les courbes représentent le réseau ; consulter le type dans les statistiques régionales ou F1 → Transports. Les valeurs sont des paramètres fictifs du jeu. Une route fermée porte toujours des pointillés et une croix ambre, quel que soit son type.
 

@@ -24,6 +24,11 @@ var dragging = false
 var camera_tools: HBoxContainer
 var zoom_out: Button
 var zoom_in: Button
+var flow_filter = "all"
+var filter_button: Button
+var terrain_mesh: ArrayMesh
+var projected_coasts: Array[PackedVector2Array] = []
+var terrain_view: Array = []
 signal region_selected(index: int)
 func setup(model: PandemicWorld) -> void:
 	world = model
@@ -40,6 +45,7 @@ func setup(model: PandemicWorld) -> void:
 			var polygon: PackedVector2Array = []
 			for point in part[0]: polygon.append(Vector2((point[0]+180.0)/360.0,(85.0-point[1])/145.0))
 			polygons.append(polygon)
+	build_terrain()
 	for id in ANCHORS:
 		land_dots[id] = []
 		for dot in range(100):
@@ -78,6 +84,7 @@ func setup(model: PandemicWorld) -> void:
 	zoom_out = camera_button("−",func(): zoom_at(size*.5,zoom/1.25))
 	zoom_in = camera_button("+",func(): zoom_at(size*.5,zoom*1.25))
 	camera_button("Vue mondiale",reset_view)
+	filter_button = camera_button("Flux : tous",cycle_filter)
 	resized.connect(refresh)
 	refresh()
 func camera_button(title: String, action: Callable) -> Button:
@@ -88,6 +95,44 @@ func camera_button(title: String, action: Callable) -> Button:
 	button.pressed.connect(action)
 	camera_tools.add_child(button)
 	return button
+func cycle_filter() -> void:
+	var filters = ["all","land","air","sea"]
+	set_flow_filter(filters[(filters.find(flow_filter)+1)%filters.size()])
+func set_flow_filter(value: String) -> void:
+	flow_filter = value if value in ["all","land","air","sea"] else "all"
+	filter_button.text = "Flux : " + {"all":"tous","land":"terre","air":"air","sea":"mer"}[flow_filter]
+	filter_button.tooltip_text = "Filtrer les mouvements : tous, terre, air, mer. Les fermetures restent visibles."
+	refresh()
+func build_terrain() -> void:
+	var vertices: PackedVector3Array = []
+	var colors: PackedColorArray = []
+	var indices: PackedInt32Array = []
+	for polygon in polygons:
+		var triangles = Geometry2D.triangulate_polygon(polygon)
+		if triangles.is_empty(): continue
+		var offset = vertices.size()
+		for point in polygon:
+			vertices.append(Vector3(point.x,point.y,0))
+			var latitude = absf(85-point.y*145)
+			var color = Color("263f3b").lerp(Color("41443c"),maxf(0,1-absf(latitude-27)/20)*.7)
+			colors.append(color.lerp(Color("90aaa9"),smoothstep(52,78,latitude)*.75))
+		for index in triangles: indices.append(index+offset)
+	var arrays = []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_COLOR] = colors
+	arrays[Mesh.ARRAY_INDEX] = indices
+	terrain_mesh = ArrayMesh.new()
+	terrain_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES,arrays)
+func update_coasts() -> void:
+	var view = [size,zoom,pan]
+	if view == terrain_view: return
+	terrain_view = view
+	projected_coasts.clear()
+	for polygon in polygons:
+		var projected: PackedVector2Array = []
+		for point in polygon: projected.append(project(point))
+		projected_coasts.append(projected)
 func clamp_pan() -> void:
 	pan = pan.clamp(size*(1.0-zoom),Vector2.ZERO)
 func zoom_at(point: Vector2, value: float) -> void:
@@ -102,11 +147,12 @@ func reset_view() -> void:
 	dragging = false
 	refresh()
 func camera_state() -> Dictionary:
-	return {"zoom":zoom,"center":(size*.5-pan)/zoom/size}
+	return {"zoom":zoom,"center":(size*.5-pan)/zoom/size,"filter":flow_filter}
 func restore_camera(state: Dictionary) -> void:
 	if state.is_empty(): return
 	zoom = clampf(state.zoom,1.0,4.0)
 	pan = size*.5-state.center*size*zoom
+	set_flow_filter(state.get("filter","all"))
 	clamp_pan()
 	refresh()
 func move_camera(offset: Vector2) -> void:
@@ -182,6 +228,7 @@ func refresh() -> void:
 		camera_tools.position = Vector2(size.x-camera_tools.size.x-8,4)
 		zoom_out.disabled = zoom <= 1.0
 		zoom_in.disabled = zoom >= 4.0
+	update_coasts()
 	queue_redraw()
 func _process(delta: float) -> void:
 	if motion_enabled:
@@ -190,18 +237,29 @@ func _process(delta: float) -> void:
 func curve(a: Vector2,b: Vector2,t: float) -> Vector2:
 	return a.lerp(b,t)+(b-a).orthogonal().normalized()*minf(a.distance_to(b)*.12,38.0)*sin(t*PI)
 func visible_flows() -> Array:
-	return world.latest_flows.filter(func(flow): return flow.day == world.day and world.route_is_open([flow.from,flow.to]))
+	return world.latest_flows.filter(func(flow): return flow.day == world.day and world.route_is_open([flow.from,flow.to]) and (flow_filter == "all" or flow.mode == flow_filter))
+func transport_icon(mode: String, center: Vector2, angle: float, scale_value: float, color: Color) -> void:
+	var outline: PackedVector2Array
+	match mode:
+		"air": outline = PackedVector2Array([Vector2(-7,-1),Vector2(-1,-1),Vector2(2,-7),Vector2(4,-7),Vector2(2,-1),Vector2(8,0),Vector2(2,1),Vector2(4,7),Vector2(2,7),Vector2(-1,1),Vector2(-7,1),Vector2(-5,0),Vector2(-7,-1)])
+		"sea": outline = PackedVector2Array([Vector2(-6,-4),Vector2(3,-4),Vector2(8,0),Vector2(3,4),Vector2(-6,4),Vector2(-6,-4),Vector2(-2,-4),Vector2(-2,-1),Vector2(2,-1),Vector2(2,-4)])
+		_: outline = PackedVector2Array([Vector2(-7,-3),Vector2(3,-3),Vector2(3,-1),Vector2(7,-1),Vector2(7,3),Vector2(-7,3),Vector2(-7,-3)])
+	var transformed: PackedVector2Array = []
+	for point in outline: transformed.append(center+point.rotated(angle)*scale_value)
+	draw_polyline(transformed,color,1.4,true)
+	if mode == "land":
+		draw_circle(center+Vector2(-4,4).rotated(angle)*scale_value,1.5*scale_value,color)
+		draw_circle(center+Vector2(4,4).rotated(angle)*scale_value,1.5*scale_value,color)
 func _draw() -> void:
 	if world == null: return
 	draw_rect(Rect2(Vector2.ZERO,size),Color("0a161d"))
 	for x in range(0,13): draw_line(Vector2(size.x*x/12.0,0),Vector2(size.x*x/12.0,size.y),Color("11232c"),1)
 	for y in range(1,6): draw_line(Vector2(0,size.y*y/6.0),Vector2(size.x,size.y*y/6.0),Color("11232c"),1)
-	for polygon in polygons:
-		var projected: PackedVector2Array = []
-		for point in polygon: projected.append(project(point))
-		if projected.size() >= 3:
-			draw_colored_polygon(projected,Color("233b40"))
-			draw_polyline(projected,Color("3d5659"),1,true)
+	draw_set_transform_matrix(Transform2D(Vector2((size.x-48)*zoom,0),Vector2(0,(size.y-50)*zoom),Vector2(24,25)*zoom+pan))
+	draw_mesh(terrain_mesh,null)
+	draw_set_transform_matrix(Transform2D.IDENTITY)
+	for projected in projected_coasts:
+		if projected.size() >= 3: draw_polyline(projected,Color("557374"),1,true)
 	var positions: Dictionary = {}
 	for region in world.regions: positions[region.id] = map_position(region)
 	for edge in world.connections:
@@ -227,6 +285,9 @@ func _draw() -> void:
 		if i == selected: draw_arc(p,20,0,TAU,32,ACCENT,2,true)
 		draw_circle(p,12,Color("8f302f") if region.active > 0 else Color("20363e"))
 		if i == selected: draw_string(ThemeDB.fallback_font,p+Vector2(23,4),region.name,HORIZONTAL_ALIGNMENT_LEFT,-1,14,Color("e1eee9"))
+		for mode in ["air","sea"]:
+			if world.connections.any(func(edge): return region.id in edge and world.route_mode(edge) == mode):
+				transport_icon(mode,p+Vector2(-13 if mode == "air" else 13,15),0,.55,Color("a7c4c9"))
 	for flow in visible_flows():
 		var a: Vector2 = positions[flow.from]
 		var b: Vector2 = positions[flow.to]
@@ -235,6 +296,5 @@ func _draw() -> void:
 		draw_line(curve(a,b,maxf(0,t-.08)),p,RED,2,true)
 		draw_circle(p,3,RED)
 		var direction = (curve(a,b,minf(1,t+.02))-p).normalized()
-		draw_line(p,p-direction.rotated(.6)*7,RED,1.5,true)
-		draw_line(p,p-direction.rotated(-.6)*7,RED,1.5,true)
+		transport_icon(flow.mode,p,direction.angle(),1.0,RED)
 	draw_string(ThemeDB.fallback_font,Vector2(14,18),"MONDE EN CRISE · %d FOYERS ACTIFS" % world.regions.filter(func(r): return r.active > 0).size(),HORIZONTAL_ALIGNMENT_LEFT,-1,12,RED)
