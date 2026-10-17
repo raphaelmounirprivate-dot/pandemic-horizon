@@ -231,5 +231,6 @@ func run() -> void:
 	await load("res://tests/test_map_camera.gd").new().run(self,check)
 	check(checks - before_camera >= 100,"Suite exploration de carte entièrement exécutée")
 	await load("res://tests/test_transport_presentation.gd").new().run(self,check)
+	await load("res://tests/test_evolution_presentation.gd").new().run(self,check)
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

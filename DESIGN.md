@@ -1,6 +1,6 @@
 ---
 name: Pandemic Horizon
-description: Monde en crise et commandes intégrées du prototype Godot 0.15
+description: Monde en crise et commandes intégrées du prototype Godot 0.16
 colors:
   ink: "#e1eee9"
   muted: "#a7c4c9"
@@ -48,6 +48,7 @@ spacing:
   horizontal: "16px"
   upgrade-grid: "8px"
   upgrade-group: "3px"
+  upgrade-row: "14px"
 components:
   button:
     backgroundColor: "{colors.button}"
@@ -63,7 +64,7 @@ components:
     textColor: "{colors.ink}"
     typography: "{typography.compact}"
     rounded: "{rounded.button}"
-    padding: "4px 8px"
+    padding: "4px 8px 4px 28px"
   region-hub:
     rounded: "{rounded.hub}"
     width: "44px"
@@ -108,11 +109,15 @@ Les titres des écrans utilisent 30 px, celui du jeu 22 px, les indicateurs et l
 
 ## Layout
 
+Les captures 0.16 `.impeccable/review/evolution-{insufficient,prerequisite,available,acquired,excluded,pending,arctic,tutorial}-{1280,1920,2395}.png` couvrent huit états aux dimensions 1280 × 720, 1920 × 1080 et 2395 × 1060. Elles documentent la composition de développement ; elles ne prouvent aucun essai physique Windows ni essai avec des joueurs. Le suivi est dans `docs/suivi/21-evolutions-integrees.md`.
+
+La 0.16 conserve les trois colonnes et les six ou neuf nœuds sans défilement. Les colonnes sont séparées de 8 px, les rangées de 14 px ; chaque groupe espace le nœud et son état de 3 px. Une fiche unique sous la grille affiche l’effet complet et le motif précis, puis le bouton séparé « Évoluer ». Les liens de prérequis sont redessinés après le tri des enfants du `GridContainer`, par appel différé, pour suivre leurs positions finales.
+
 Les captures 0.15 `.impeccable/review/transport-{pending,all,land,air,sea,zoom,motion}-{1280,1920,2395}.png` sont vérifiées aux dimensions exactes 1280 × 720, 1920 × 1080 et 2395 × 1060. Elles documentent les états du filtre, le choix en attente, le zoom et un état du mouvement ; elles ne constituent pas une vidéo ni un essai avec des joueurs.
 
 La composition logique de référence est 1280 × 720, avec `canvas_items` et, depuis la 0.14, `window/stretch/aspect="expand"` dans `project.godot`. À 1920 × 1080, le même rapport 16:9 met cette composition à l’échelle. Une fenêtre plus large étend l’espace logique et la carte extensible. Les captures 0.14 dans `.impeccable/review/camera-{world,zoom,edge,keyboard,reset}-{1280,1920,2395}.png` mesurent respectivement 1280 × 720, 1920 × 1080 et 2395 × 1060. Les anciennes captures annoncées à la largeur 2395, dont `user-2395.png`, mesuraient en réalité 1884 × 1060 : elles documentent le rendu 16:9 antérieur, sans prouver la disposition à pleine largeur 2395.
 
-En jeu, les marges sont de 16 px et la séparation verticale principale de 6 px. Les indicateurs et le suivi facultatif précèdent la zone centrale : carte extensible à gauche, détails régionaux et évolutions à droite. La carte demande au minimum 640 × 220 px ; la colonne droite demande 500 px. Les six évolutions Standard ou neuf Dégel occupent trois colonnes, sans `ScrollContainer`. Chaque groupe rassemble bouton, effet et état.
+En jeu, les marges sont de 16 px et la séparation verticale principale de 6 px. Les indicateurs et le suivi facultatif précèdent la zone centrale : carte extensible à gauche, détails régionaux et évolutions à droite. La carte demande au minimum 640 × 220 px ; la colonne droite demande 500 px. Les six évolutions Standard ou neuf Dégel occupent trois colonnes, sans `ScrollContainer`. Chaque groupe rassemble le nœud et son état court ; la fiche complète et le bouton séparé suivent la grille.
 
 Les trois choix logistiques en attente sont côte à côte sous la carte. Leur apparition réduit la hauteur disponible pour la carte ; les évolutions restent visibles. Les événements actifs de 48 px minimum sont masqués pendant ce choix et restent consultables dans l’aide. Le statut, la dernière entrée du journal et les commandes restent au bas du jeu. Hors jeu, les marges sont de 24 px. L’aide et les sauvegardes restent des écrans distincts, avec leurs propres besoins de lecture.
 
@@ -138,7 +143,7 @@ Le fond local Natural Earth `assets/maps/world-land.geojson` dessine continents 
 
 **Flux.** Les véhicules rouges orientés utilisent uniquement `latest_flows` : échanges effectivement ajoutés aux imports pour le jour courant, sur une route encore ouverte. Le temps de dessin anime leur position, sans modifier la simulation ni son RNG. La pause fige cette horloge ; après chargement, les véhicules attendent le prochain jour simulé, car les observations ne sont pas sérialisées. Les courbes ne représentent pas des trajets géographiques réels.
 
-**Évolutions.** Toute la grille reste visible. Chaque bouton porte le nom et le coût, puis « acquise » après achat ; un effet compact et un état l’accompagnent. Le motif complet et l’effet sont aussi dans l’infobulle. Les achats acquis sont désactivés. Les achats bloqués restent focalisables afin de lire la raison ; le tutoriel désactive les achats hors exercice. Après Mobilité, une seule des trois spécialisations facultatives peut être acquise. Le rappel du choix et le nom acquis restent au-dessus de la grille.
+**Évolutions (0.16).** Toute la grille reste visible. Chaque nœud porte un symbole vectoriel, le nom et le coût, puis « acquise » après achat. Les liens de prérequis sont neutres, puis turquoise lorsque le prérequis est acquis. Une bordure turquoise persistante de 2 px, rayon 6 px, marque la sélection ; le texte turquoise et « Acquise » indiquent les acquisitions sans leur donner cette bordure. La marge gauche de 28 px réserve la place du symbole. Un état court entier sous chaque nœud indique la disponibilité, l’acquisition, le prérequis manquant, l’incompatibilité, la restriction d’exercice ou le manque de points. La fiche unique présente l’effet complet et le motif précis, aussi accessibles dans l’infobulle. Sélectionner ou focaliser consulte sans dépense ; même acquis ou bloqué, un nœud reste consultable en partie ordinaire. Le bouton séparé « Évoluer : nom · coût » est la seule commande d’achat et devient indisponible selon la raison réelle. Entrée sur un nœud disponible focalise ce bouton ; une activation distincte achète. Le tutoriel guide cette séquence sur Diffusion et désactive les autres nœuds selon l’exercice. Après Mobilité, une seule spécialisation peut être acquise ; le rappel reste au-dessus de la grille. Coûts, règles et format 4 sont conservés.
 
 **Décision logistique.** Au J28, si activée dans Dégel, la partie se met en pause et les trois choix apparaissent sous la carte. Coût, effet, durée et raison de blocage sont visibles. Soutenir les ports conserve le tarif courant de 3 points depuis la 0.12 ; un profil historique 0.11 garde 6 points et son libellé. Les règles et le format de sauvegarde 4 ne changent pas. F2, depuis le jeu, met en pause et ramène à cette vue intégrée ; le choix reste possible jusqu’au J30 inclus, puis le maintien neutre est automatique au J31.
 

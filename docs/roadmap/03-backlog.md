@@ -29,6 +29,8 @@ Au 17 octobre 2026, **MON-01 à MON-03 sont terminés en 0.14**, voir le [point 
 
 ## Décisions à prendre au moment du lot concerné
 
+EVO-01, EVO-02 et EVO-03 sont terminés en 0.16, voir le [point 21](../suivi/21-evolutions-integrees.md). EVT-01, EVT-02, STA-01 et STA-02 constituent le lot suivant.
+
 | Question | Quand | Choix provisoire |
 | --- | --- | --- |
 | Glisser au bouton central ou droit ? | Lot A | Tester la cohérence avec clic gauche de sélection |

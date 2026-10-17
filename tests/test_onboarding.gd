@@ -71,6 +71,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 	scene.buy_evolution("mobility")
 	check.call(scene.world.purchased.is_empty(), "L'exercice ne permet pas l'achat d'une autre évolution")
 	await io.click(tree, scene.evolution_buttons.transmission)
+	await io.click(tree, scene.evolution_purchase)
 	check.call(scene.tutorial.ready and scene.world.points == 2 and "transmission" in scene.world.purchased, "Achat réel de Diffusion validé")
 	scene.next_lesson()
 	check.call(scene.world.day == 23 and scene.world.detected_count() > 0, "Détection réelle atteinte dans l'exercice")
@@ -125,6 +126,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 	await io.key(tree, KEY_ENTER)
 	check.call(scene.evolution_buttons.transmission.has_focus(), "Clavier : Diffusion ciblée")
 	check.call("Hors exercice" in scene.evolution_reasons.discretion.text and "Hors exercice" in Help.text_for(0, scene.world, scene.selected, scene.tutorial.stage), "États pédagogiques explicites dans le jeu et l'aide")
+	await io.key(tree, KEY_ENTER) # Sélectionner puis focaliser le bouton d'achat explicite.
 	await io.key(tree, KEY_ENTER)
 	await io.key(tree, KEY_ENTER)
 	check.call(scene.map_view.buttons[0].has_focus(), "Clavier : Boréale ciblée")

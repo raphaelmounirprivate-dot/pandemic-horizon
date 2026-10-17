@@ -9,7 +9,7 @@ func instruction(day: int) -> String:
 	match stage:
 		0: return "Appuyez sur Espace ou Reprendre : une journée passera, puis le jeu reviendra en pause."
 		1: return "Sélectionnez Centrale sur la carte, à la souris ou avec Tab puis Entrée. Lisez ses statistiques à droite."
-		2: return "Le temps a avancé au jour 10 pour gagner des points. Achetez Diffusion ; Mobilité exige d'abord cette évolution."
+		2: return "Au jour 10, sélectionnez Diffusion puis le bouton Évoluer. Mobilité exige cette évolution."
 		3: return "Au jour 23, sélectionnez Boréale : sa détection déclenche une réaction locale et renforce le remède mondial."
 		4:
 			if day < 26: return "Reprenez jusqu'au jour 26 : deux événements ferment la route Boréale ↔ Centrale. La tempête va expirer."

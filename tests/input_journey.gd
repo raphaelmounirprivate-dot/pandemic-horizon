@@ -58,17 +58,20 @@ func run(tree: SceneTree, check: Callable) -> void:
 	scene.world.points = 100
 	scene._refresh()
 	await click(tree, scene.evolution_buttons.mobility)
-	check.call(scene.world.purchased.is_empty() and scene.status_label.text.begins_with("Prérequis"), "Clic achat refusé avec raison visible")
+	check.call(scene.world.purchased.is_empty() and "Prérequis" in scene.evolution_detail.text, "Sélection sans achat avec prérequis visible")
 	await click(tree, scene.evolution_buttons.transmission)
-	check.call("transmission" in scene.world.purchased and scene.evolution_buttons.transmission.disabled, "Clic achat applique et désactive")
+	check.call(scene.world.purchased.is_empty(),"Sélection de Diffusion ne dépense rien")
+	await click(tree, scene.evolution_purchase)
+	check.call("transmission" in scene.world.purchased and scene.evolution_purchase.disabled, "Achat explicite applique et désactive")
 	await click(tree, scene.evolution_buttons.mobility)
+	await click(tree, scene.evolution_purchase)
 	check.call("mobility" in scene.world.purchased, "Achat prérequis débloqué à la souris")
 	await key(tree, KEY_ESCAPE)
 	check.call(scene.screen == "menu" and scene.paused, "Échap conserve la partie en pause")
 	await key(tree, KEY_ENTER)
 	check.call(scene.screen == "game" and scene.world.day == 0 and scene.world.purchased.is_empty(), "Entrée relance une nouvelle partie depuis le menu")
 	var reachable: Array = []
-	for i in range(scene.world.regions.size() + scene.world.evolutions.size() + 14):
+	for i in range(scene.world.regions.size() + scene.world.evolutions.size() + 20):
 		await key(tree, KEY_TAB)
 		var focused = scene.get_viewport().gui_get_focus_owner()
 		if focused not in reachable:

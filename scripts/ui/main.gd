@@ -48,6 +48,10 @@ var pause_button: Button
 var map_view: Control
 var evolution_buttons: Dictionary = {}
 var evolution_reasons: Dictionary = {}
+var selected_evolution = "transmission"
+var evolution_detail: Label
+var evolution_purchase: Button
+var evolution_tree: GridContainer
 var effects_label: RichTextLabel
 var save_store = SaveStore.new()
 var autosave_enabled = true
@@ -544,7 +548,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.15", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.16", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -782,35 +786,46 @@ func show_game() -> void:
 	specialization_details = _label("",13,AMBER)
 	specialization_details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	sidebar.add_child(specialization_details)
-	var grid = GridContainer.new()
+	var grid = load("res://scripts/ui/evolution_tree.gd").new()
+	evolution_tree = grid
+	grid.world = world
 	grid.columns = 3
 	grid.add_theme_constant_override("h_separation",8)
-	grid.add_theme_constant_override("v_separation",8)
+	grid.add_theme_constant_override("v_separation",14)
 	sidebar.add_child(grid)
-	var effects = {"transmission":"Croissance +8 points", "mobility":"Échanges ×3", "discretion":"Remède ×0,70", "land_network":"Terre ×1,8 · remède +8%", "air_bridge":"Air ×3 · remède +18%", "sea_logistics":"Mer ×2,5 · remède +12%", "polar":"Croissance froide ×1,25", "seasonal":"Routes saisonnières ×2", "resilience":"Pénalités froid ÷2"}
 	for id in world.evolutions:
 		var group = VBoxContainer.new()
 		group.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		group.add_theme_constant_override("separation",3)
 		grid.add_child(group)
-		var button = _button("",func(): buy_evolution(id),group)
+		var button = load("res://scripts/ui/evolution_node.gd").new()
+		button.evolution_id = id
+		button.custom_minimum_size.y = 44
+		button.pressed.connect(func():
+			select_evolution(id)
+			if not evolution_purchase.disabled: evolution_purchase.grab_focus())
+		button.focus_entered.connect(func(): select_evolution(id))
+		group.add_child(button)
 		button.add_theme_font_size_override("font_size",13)
 		for state in ["normal","hover","pressed","disabled","focus"]:
 			var style = button.get_theme_stylebox(state).duplicate()
 			style.content_margin_top = 4
 			style.content_margin_bottom = 4
-			style.content_margin_left = 8
+			style.content_margin_left = 28
 			style.content_margin_right = 8
 			button.add_theme_stylebox_override(state,style)
 		button.tooltip_text = world.evolutions[id].effect
 		evolution_buttons[id] = button
-		var effect_label = _label(effects.get(id,world.evolutions[id].effect),13,MUTED)
-		effect_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		group.add_child(effect_label)
+		grid.nodes[id] = group
 		var reason = _label("",13,AMBER)
-		reason.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		reason.clip_text = true
 		group.add_child(reason)
 		evolution_reasons[id] = reason
+	evolution_detail = _label("",13,MUTED)
+	evolution_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	sidebar.add_child(evolution_detail)
+	evolution_purchase = _button("",func(): buy_evolution(selected_evolution),sidebar)
+	evolution_purchase.add_theme_font_size_override("font_size",13)
 	status_label = _label("",14,MUTED)
 	body.add_child(status_label)
 	journal_label = _label("",14,MUTED)
@@ -851,6 +866,10 @@ func buy_evolution(id: String) -> void:
 	if evolution_buttons.has(id) and evolution_buttons[id].has_focus():
 		var group = evolution_buttons[id].get_parent()
 		reveal_evolution_group(group)
+
+func select_evolution(id: String) -> void:
+	selected_evolution = id
+	if is_instance_valid(evolution_purchase): _refresh()
 
 func build_inline_decision(parent: Control) -> void:
 	for child in parent.get_children():
@@ -918,13 +937,26 @@ func _refresh() -> void:
 		var acquired = id in world.purchased
 		evolution_buttons[id].text = "%s\n%s" % [evolution.name, "acquise" if acquired else "%d pts" % evolution.cost]
 		# Keep insufficient purchases focusable so keyboard users can read the reason.
-		evolution_buttons[id].disabled = acquired or (tutorial != null and (tutorial.stage != 2 or id != "transmission"))
+		evolution_buttons[id].disabled = tutorial != null and (tutorial.stage != 2 or id != "transmission")
+		evolution_buttons[id].add_theme_color_override("font_color",ACCENT if id == selected_evolution or acquired else INK)
+		evolution_buttons[id].selected_node = id == selected_evolution
+		evolution_buttons[id].queue_redraw()
 		var reason = world.purchase_reason(id)
 		if tutorial != null and not acquired and (tutorial.stage != 2 or id != "transmission"):
 			reason = "Hors exercice" + (" · " + reason if not reason.is_empty() else "")
 		evolution_buttons[id].tooltip_text = evolution.effect + " " + reason
-		evolution_reasons[id].text = "Acquise" if acquired else ("Disponible" if reason.is_empty() else reason)
+		var short_reason = "Prérequis manquant" if reason.begins_with("Prérequis") else ("Incompatible" if "Incompatible" in reason else reason)
+		if reason.begins_with("Hors exercice"): short_reason = "Prérequis (exercice)" if "Prérequis" in reason else "Hors exercice"
+		evolution_reasons[id].text = "Acquise" if acquired else ("Disponible" if reason.is_empty() else short_reason)
 		evolution_reasons[id].add_theme_color_override("font_color", ACCENT if acquired or reason.is_empty() else AMBER)
+	if not world.evolutions.has(selected_evolution): selected_evolution = world.evolutions.keys()[0]
+	var chosen = world.evolutions[selected_evolution]
+	var full_reason = "Acquise" if selected_evolution in world.purchased else world.purchase_reason(selected_evolution)
+	if tutorial != null and (tutorial.stage != 2 or selected_evolution != "transmission"): full_reason = "Hors exercice · " + full_reason
+	evolution_detail.text = "%s\n%s" % [chosen.effect,"Disponible" if full_reason.is_empty() else full_reason]
+	evolution_purchase.text = "Évoluer : %s · %d pts" % [chosen.name,chosen.cost]
+	evolution_purchase.disabled = not world.purchase_reason(selected_evolution).is_empty() or (tutorial != null and (tutorial.stage != 2 or selected_evolution != "transmission"))
+	evolution_tree.queue_redraw()
 	pause_button.text = "Reprendre [Espace]" if paused else "Pause [Espace]"
 	status_label.text = ("En pause" if paused else "Simulation en cours") + " · Vitesse ×%d" % speed
 	if not save_notice.is_empty(): status_label.text += " · " + save_notice

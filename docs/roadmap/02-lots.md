@@ -1,6 +1,6 @@
 # Lots proposés et dépendances
 
-Le lot A est réalisé en 0.14, voir le [point 19](../suivi/19-exploration-carte.md). Les lots B à F restent proposés. Ce document décrit leur périmètre ; les preuves de réalisation sont consignées dans les points de suivi.
+Les lots A, B et C sont réalisés en 0.14, 0.15 et 0.16, voir les points 19, 20 et 21 dans le [suivi](../suivi/00-index.md). Les lots D à F restent à réaliser. Ce document décrit leur périmètre ; les preuves de réalisation sont consignées dans les points de suivi.
 
 ## Lot A — Explorer la carte, réalisé en 0.14
 
@@ -13,7 +13,7 @@ Objectif : inspecter le monde et les foyers avec un zoom confortable.
 
 Terminé quand MON-01 à MON-03 sont validés aux trois tailles de référence, avec reprise des sauvegardes et sans changement de population ou de RNG dû à la caméra. Le choix du bouton de glisser doit éviter la confusion avec un clic de sélection.
 
-## Lot B — Monde vivant et transports
+## Lot B — Monde vivant et transports, réalisé en 0.15
 
 Dépend du lot A pour placer et dimensionner correctement les éléments pendant le zoom.
 
@@ -25,7 +25,7 @@ Dépend du lot A pour placer et dimensionner correctement les éléments pendant
 
 Terminé quand MON-04 à MON-06 sont validés : aucune traversée d'une route fermée, pause respectée, fonctionnement après chargement expliqué, dessin stable aux différents zooms. Relever le temps de rendu avant/après sur une même scène tardive et le même matériel avant de fixer le budget acceptable.
 
-## Lot C — Évolutions plus lisibles
+## Lot C — Évolutions plus lisibles, réalisé en 0.16
 
 Peut commencer après A ; ne dépend pas d'une nouvelle règle de simulation.
 

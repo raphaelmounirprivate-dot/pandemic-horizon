@@ -1,11 +1,11 @@
-# Jouer à Pandemic Horizon 0.15
+# Jouer à Pandemic Horizon 0.16
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.15.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.16.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
 3. Cliquer sur une région pour consulter sa population et ses cas actifs.
-4. Reprendre avec Espace, puis acheter des évolutions lorsque les points et prérequis le permettent. Mobilité exige d'abord Diffusion. Les effets et raisons d'indisponibilité sont affichés avant achat.
+4. Reprendre avec Espace, sélectionner une évolution pour consulter sa fiche, puis activer le bouton Évoluer lorsque les points et prérequis le permettent. Mobilité exige d'abord Diffusion. Les effets et raisons d'indisponibilité sont affichés avant achat.
 5. Atteindre 90 % de population touchée avant la fin du remède. Le bilan explique le résultat et présente le journal complet.
 
 La carte du monde utilise les contours terrestres Natural Earth. Les 24 régions du jeu restent fictives : sélectionner un marqueur numéroté au clic ou avec Tab puis Entrée pour lire son nom et ses statistiques à droite. Les halos et points rouges illustrent le cumul touché ; ce ne sont ni des personnes localisées ni des frontières de simulation réelles. Les noms complets sont aussi disponibles au survol.

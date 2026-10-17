@@ -4,13 +4,15 @@ Projet de jeu de stratégie original pour PC Windows, inspiré du genre de la si
 
 ## État du projet
 
+La 0.16 sépare la consultation et l'achat d'une évolution : prérequis reliés, sélection persistante et fiche complète, puis bouton Évoluer explicite. Le [point 21](docs/suivi/21-evolutions-integrees.md) consigne la vérification et la sauvegarde de cette étape.
+
 La 0.15 ajoute les avions, bateaux et véhicules terrestres sur les échanges observés, avec filtre de transport et terrain illustratif enrichi. Voir le [point 20](docs/suivi/20-transports-visibles.md).
 
 La 0.14 ajoute l'exploration de la carte : zoom à la molette, déplacement au bouton droit ou central, boutons − / + / Vue mondiale, clavier et recentrage des régions au focus. Les achats et choix restent fixes. Les écrans larges utilisent tout l'espace disponible. Voir le [point 19](docs/suivi/19-exploration-carte.md).
 
-**Prototype 0.15 développé.** Deux scénarios sont jouables sur **24 régions** sous Godot 4.7.2 : Standard et Dégel 2042. Le réseau fictif contient 38 connexions, plus une route arctique propre à Dégel, et 3,53 millions d'habitants fictifs. Le menu propose trois difficultés avec leurs effets affichés. Dégel impose le départ en Boréale et ajoute quatre phases, des routes saisonnières, des tempêtes et trois évolutions climatiques. Détection, réactions, événements, remède, pause, vitesses, journal et bilan sont implémentés. Trois sauvegardes manuelles et une automatique permettent de reprendre en pause, avec récupération de la copie précédente si le fichier principal est endommagé. Un tutoriel facultatif de six exercices et l'aide F1 accompagnent la découverte du jeu.
+**Prototype 0.16 développé.** Deux scénarios sont jouables sur **24 régions** sous Godot 4.7.2 : Standard et Dégel 2042. Le réseau fictif contient 38 connexions, plus une route arctique propre à Dégel, et 3,53 millions d'habitants fictifs. Le menu propose trois difficultés avec leurs effets affichés. Dégel impose le départ en Boréale et ajoute quatre phases, des routes saisonnières, des tempêtes et trois évolutions climatiques. Détection, réactions, événements, remède, pause, vitesses, journal et bilan sont implémentés. Trois sauvegardes manuelles et une automatique permettent de reprendre en pause, avec récupération de la copie précédente si le fichier principal est endommagé. Un tutoriel facultatif de six exercices et l'aide F1 accompagnent la découverte du jeu.
 
-L'exécutable actuel se trouve dans `build/windows-0.15.0/PandemicHorizon.exe`, hors de Git. Les exports sont séparés par version ; les anciens dossiers conservent leurs versions précédentes. Aucune release binaire GitHub n'est publiée à ce stade.
+L'exécutable actuel se trouve dans `build/windows-0.16.0/PandemicHorizon.exe`, hors de Git. Les exports sont séparés par version ; les anciens dossiers conservent leurs versions précédentes. Aucune release binaire GitHub n'est publiée à ce stade.
 
 ## Lancer et développer le prototype
 
