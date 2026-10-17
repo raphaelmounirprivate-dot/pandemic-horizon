@@ -1,6 +1,8 @@
 # Plan de développement — Pandemic Horizon
 
-Date : 16 octobre 2026.
+Date : 17 octobre 2026.
+
+La [feuille de route de la suite](roadmap/README.md) détaille les inspirations fournies par le joueur, les lots proposés, les tâches et leurs critères de validation. Commencer par ce dossier pour préparer le prochain développement ; le présent plan conserve la cible générale de la 1.0.
 
 Dépôt : [raphaelmounirprivate-dot/plague-inc-evolved](https://github.com/raphaelmounirprivate-dot/plague-inc-evolved).
 

@@ -20,6 +20,8 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 - [Point 15 — Analyse des décisions](15-analyse-decisions.md) : 1 080 parties, budgets et choix effectifs, contrastes des résultats et dates ; coefficients 0.11 conservés.
 - [Point 16 — Paramètres logistiques](16-parametres-logistiques.md) : prototype 0.12, 1 620 parties et soutien réduit à 3 points ; profil historique 0.11 conservé.
 - [Point 17 — Monde et interface](17-monde-et-interface.md) : prototype 0.13, carte géographique, propagation et flux animés, évolutions et choix intégrés sans défilement.
+- [Point 18 — Feuille de route](18-feuille-de-route.md) : organisation documentaire des inspirations, six lots et vingt tâches proposées ; aucun changement du jeu.
+- [Feuille de route de la suite](../roadmap/README.md) : liste vivante des développements, dépendances et critères de fin.
 - [Règles effectives](../REGLES.md) : paramètres du code actuel.
 - [Développement](../DEVELOPPEMENT.md) : préparation, tests et export.
 - [Guide joueur](../GUIDE-JOUEUR.md) : parcours et limites.
@@ -31,4 +33,4 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 3. Éprouver le soutien à 3 points et la compréhension du tarif historique 6, puis examiner sa valeur pendant les fenêtres de routes ouvertes. Le lot 16 gagne cinq victoires sans perdre de Relais face au prix 6, à autres paramètres identiques. Cela ne démontre pas un choix optimal dans toutes les parties. Conserver les références 0.7 à 0.11 ; conserver les coefficients 0.12 pendant les essais de la nouvelle présentation 0.13.
 4. J6/J7 : finition et release distribuable.
 
-Créer `18-<lot>.md` pour la prochaine livraison. Y noter périmètre, fichiers principaux, tests exécutés, limites et prochaine action. Mettre à jour cet index à chaque lot livré.
+Créer `19-<lot>.md` pour la prochaine livraison. Y noter périmètre, fichiers principaux, tests exécutés, limites et prochaine action. Mettre à jour cet index à chaque lot livré. Pour le prochain développement, commencer par le lot A de la feuille de route : zoom, déplacement et sélection de la carte.
