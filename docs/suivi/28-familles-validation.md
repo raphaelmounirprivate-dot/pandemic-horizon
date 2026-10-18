@@ -13,3 +13,5 @@ La 0.22 publiée au 2b65f07 possède checkpoint, archive Windows et CI réussie 
 L'audit 05-audit-2026-10-18.md a été réécrit ; son état initial est conservé en archive. Prochaine étape : trois sessions exploratoires selon docs/tests-joueurs/README.md, puis corrections fondées sur les observations. Aucun essai réel, DPI ou second PC déclaré terminé.
 
 Recontrôle des débordements : 2 972 contrôles ciblés réussis ; vingt-sept captures finales incluant suivi arctique classique et choix en attente avec 24 compétences. Verdict de la revue sur les corrections et ces états : résolus, disposition ship. Le kit joueurs et la matrice de compatibilité sont inclus dans le ZIP Windows.
+
+Réserve finale de livraison : binaire original cf733b3 testé (smoke/graphique), ZIP et bundle vérifiés. Contrôle du chemin accentué bloqué localement ; restauration de scripts/package-windows.ps1 refusée par Windows. Le script intact reste commité, la suppression locale ne doit pas être commitée. Voir la réserve détaillée dans l'audit. Les manifestes locaux signalent la limite ; aucun essai physique de compatibilité n'est déduit des contrôles passés.
