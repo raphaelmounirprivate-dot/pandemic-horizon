@@ -31,3 +31,7 @@ Les étiquettes 0.14 et suivantes sont des versions candidates, sans date de liv
 ## Extension demandée : aléas et résilience
 
 La 0.20 ajoute trois compétences, Réseaux fragiles et douze incidents variables de huit types, avec graine et format 6. Implémentation et mesures : [point 26](../suivi/26-reperes-incidents.md). Essais humains toujours en attente.
+
+## Suite de l'audit du 18 octobre
+
+0.21 clôturée (9018202). 0.22 : ciblage réactif, réponses intégrées, Double relais obligatoire et sauvegarde 7 ; voir [point 27](../suivi/27-crises-reactives.md). Prochain lot : familles de compétences, effets comparés, découpage du contrôleur et protocole joueurs. Les essais physiques ne sont pas réalisés.

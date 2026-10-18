@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "profile": "tactics-0.22",
+  "targeting": "active_and_healthy_at_activation",
+  "response": {
+    "template": "communications", "window": 3, "duration": 6,
+    "choices": [
+      {"id":"detour","name":"Financer un détour","cost":3,"air":1.35,"cure":1.0,"description":"Air ×1,35 pendant 6 jours dès demain ; aucune route rouverte."},
+      {"id":"endure","name":"Subir la panne","cost":0,"air":1.0,"cure":1.0,"description":"Conserver ses points ; la panne suit sa durée normale."},
+      {"id":"opportunity","name":"Exploiter une ouverture","cost":1,"air":1.7,"cure":1.18,"description":"Air ×1,70 mais remède ×1,18 pendant 6 jours dès demain."}
+    ]
+  },
+  "goal": {"name":"Double relais","scenario":"fragile2042","source":"centrale","targets":["meridien","savane"],"quota":6000,"deadline":60}
+}

@@ -30,6 +30,8 @@ var decision_enabled = false
 var advanced_mode = false
 var advanced_choice: CheckButton
 var crises_mode = false
+var reactive_mode = false
+var reactive_choice: CheckButton
 var crises_choice: CheckButton
 var simulation_seed = 2042
 var decision_choice: CheckButton
@@ -292,6 +294,7 @@ func load_saved(slot: String) -> void:
 	if tutorial == null: advanced_mode = world.expanded_content
 	if tutorial == null:
 		crises_mode = world.crises_enabled
+		reactive_mode = world.tactics_enabled
 		simulation_seed = world.rng.seed
 	paused = true
 	elapsed = 0.0
@@ -579,7 +582,26 @@ func _smoke_test() -> void:
 	if incident_button == null or not "mondiaux" in map_legend.text or not Incidents.entries(world).all(func(e): return e.start_day <= world.day):
 		get_tree().quit(1)
 		return
-	print("RUNTIME_SMOKE_OK: classic scenarios and replay, tutorial, help, objectives and decisions, enriched profile5, comfort and audio, crises profile6 and fragile scenario, active incident map and scopes, restart, settings, menu")
+	if not optional_world.start("centrale",2042,null,null,"fragile2042","normal",null,null,"",false,true,null,true,null,true).is_empty():
+		get_tree().quit(1)
+		return
+	for day in range(55):
+		for id in ["transmission","mobility","discretion"]:
+			if id not in optional_world.purchased:
+				optional_world.purchase(id)
+				break
+		if World.Tactics.pending(optional_world): World.Tactics.choose(optional_world,"endure")
+		optional_world.step()
+	optional_loaded = smoke_store.decode(smoke_store.encode(optional_world))
+	if not optional_loaded.error.is_empty() or not optional_loaded.world.tactics_enabled or optional_loaded.world.tactics != optional_world.tactics:
+		get_tree().quit(1)
+		return
+	world = optional_loaded.world
+	show_game()
+	if not "Double relais" in objective_details.text:
+		get_tree().quit(1)
+		return
+	print("RUNTIME_SMOKE_OK: classic scenarios and replay, tutorial, help, objectives and decisions, enriched profile5, comfort and audio, crises profile6, reactive profile7 targets/response/goal, active incident map and scopes, restart, settings, menu")
 	get_tree().quit()
 
 func _apply_theme() -> void:
@@ -629,7 +651,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.21", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.22", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -720,6 +742,15 @@ func show_menu() -> void:
 		crises_mode = enabled
 		_update_menu_choices(_menu_catalog()))
 	profile_choices.add_child(crises_choice)
+	reactive_choice = CheckButton.new()
+	reactive_choice.text = "Crises réactives"
+	reactive_choice.custom_minimum_size.y = 44
+	reactive_choice.button_pressed = reactive_mode
+	reactive_choice.tooltip_text = "Ciblage des foyers actifs, réponse à la première panne aérienne et Double relais obligatoire dans Réseaux fragiles. Profil de sauvegarde distinct."
+	reactive_choice.toggled.connect(func(enabled):
+		reactive_mode = enabled
+		_update_menu_choices(_menu_catalog()))
+	profile_choices.add_child(reactive_choice)
 	learning.add_child(_label("Graine",16,MUTED))
 	var seed_input = SpinBox.new()
 	seed_input.name = "seed_input"
@@ -795,10 +826,11 @@ func _menu_catalog() -> Dictionary:
 	return World.Crises.catalog(World.Scenarios.load_catalog())
 
 func _update_menu_choices(catalog: Dictionary) -> void:
+	if reactive_mode: crises_mode = true
 	if scenario_id == "fragile2042": crises_mode = true
 	if crises_mode: advanced_mode = true
 	crises_choice.set_pressed_no_signal(crises_mode)
-	crises_choice.disabled = scenario_id == "fragile2042"
+	crises_choice.disabled = scenario_id == "fragile2042" or reactive_mode
 	advanced_choice.set_pressed_no_signal(advanced_mode)
 	advanced_choice.disabled = crises_mode
 	decision_choice.visible = scenario_id == "degel2042"
@@ -811,6 +843,9 @@ func _update_menu_choices(catalog: Dictionary) -> void:
 		objective_id = ""
 	objective_choice.set_pressed_no_signal(not objective_id.is_empty())
 	menu_objective_detail.text = World.Objectives.description(optional)
+	if reactive_mode:
+		menu_objective_detail.text = "Crises réactives : choix à la première panne aérienne."
+		if scenario_id == "fragile2042": menu_objective_detail.text += "\nObligatoire : Centrale → Méridien et Savane, 6 000 unités chacun avant J60 inclus."
 	for item in catalog.scenarios:
 		if item.id == scenario_id:
 			start_choice.disabled = item.forced_start != ""
@@ -880,7 +915,7 @@ func show_settings() -> void:
 
 func start_game() -> void:
 	reset_map_camera = true
-	var error = world.start(start_id, simulation_seed, null, null, scenario_id, difficulty_id, null, null, objective_id,decision_enabled,advanced_mode,null,crises_mode)
+	var error = world.start(start_id, simulation_seed, null, null, scenario_id, difficulty_id, null, null, objective_id,decision_enabled,advanced_mode,null,crises_mode,null,reactive_mode)
 	if not error.is_empty():
 		show_menu()
 		body.add_child(_label("Impossible de démarrer : " + error))
@@ -902,6 +937,7 @@ func restart_game() -> void:
 	decision_enabled = not world.decision.is_empty()
 	advanced_mode = world.expanded_content
 	crises_mode = world.crises_enabled
+	reactive_mode = world.tactics_enabled
 	simulation_seed = world.rng.seed
 	start_game()
 
@@ -912,7 +948,7 @@ func show_game() -> void:
 	metrics = _label("",20,ACCENT)
 	body.add_child(metrics)
 	objective_details = _label("",13,MUTED)
-	objective_details.visible = not world.objective.is_empty()
+	objective_details.visible = not world.objective.is_empty() or (world.tactics_enabled and not world.tactics.goal.is_empty())
 	body.add_child(objective_details)
 	var content = HBoxContainer.new()
 	content.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -936,7 +972,7 @@ func show_game() -> void:
 	build_inline_decision(decision_area)
 	effects_label = RichTextLabel.new()
 	effects_label.custom_minimum_size.y = 48
-	effects_label.visible = not World.Decisions.pending(world)
+	effects_label.visible = not World.Decisions.pending(world) and not World.Tactics.pending(world)
 	effects_label.add_theme_font_size_override("normal_font_size",13)
 	effects_label.add_theme_color_override("default_color",AMBER)
 	map_column.add_child(effects_label)
@@ -1055,9 +1091,12 @@ func build_inline_decision(parent: Control) -> void:
 	for child in parent.get_children():
 		parent.remove_child(child)
 		child.queue_free()
-	decision_signature = JSON.stringify(world.decision)+str(world.points)
+	decision_signature = JSON.stringify(world.decision)+JSON.stringify(world.tactics)+str(world.points)
 	decision_buttons.clear()
 	decision_notice = null
+	if World.Tactics.pending(world) or (world.tactics_enabled and not world.tactics.response.is_empty() and not World.Decisions.pending(world)):
+		load("res://scripts/ui/crisis_response_view.gd").build(self,parent)
+		return
 	if world.decision.is_empty(): return
 	decision_notice = _label("",13,AMBER)
 	var title = World.Decisions.summary(world)
@@ -1089,7 +1128,7 @@ func build_inline_decision(parent: Control) -> void:
 	parent.add_child(decision_notice)
 
 func show_decision() -> void:
-	if tutorial != null or world.decision.is_empty(): return
+	if tutorial != null or (world.decision.is_empty() and not World.Tactics.pending(world)): return
 	paused = true
 	elapsed = 0.0
 	show_game()
@@ -1102,10 +1141,10 @@ func toggle_pause() -> void:
 func _refresh() -> void:
 	if screen != "game":
 		return
-	if decision_signature != JSON.stringify(world.decision)+str(world.points): build_inline_decision(decision_area)
-	effects_label.visible = not World.Decisions.pending(world)
+	if decision_signature != JSON.stringify(world.decision)+JSON.stringify(world.tactics)+str(world.points): build_inline_decision(decision_area)
+	effects_label.visible = not World.Decisions.pending(world) and not World.Tactics.pending(world)
 	metrics.text = "Jour %d     Touchés : %.1f %%     Remède : %.1f %%     Points : %d     Détectées : %d/%d" % [world.day, world.coverage() * 100, world.cure, world.points, world.detected_count(), world.regions.size()]
-	objective_details.text = World.Objectives.summary(world)
+	objective_details.text = World.Tactics.goal_summary(world) if world.tactics_enabled and not world.tactics.goal.is_empty() else World.Objectives.summary(world)
 	var region = world.regions[selected]
 	region_details.text = "%s · Population : %d\nSains : %d · Actifs : %d · Retirés : %d\n%s" % [region.name, region.population, region.healthy, region.active, region.removed, "Détectée" if region.detected else "Non détectée"]
 	if world.scenario.id != "standard":
@@ -1196,7 +1235,7 @@ func advance_time(delta: float) -> void:
 			feedback.play_cue("outcome")
 			show_result()
 			return
-		if World.Decisions.pending(world) and world.day == World.Decisions.definition().start_day:
+		if (World.Decisions.pending(world) and world.day == World.Decisions.definition().start_day) or (World.Tactics.pending(world) and world.tactics.response.opened == world.day):
 			show_decision()
 			return
 	_refresh()
@@ -1299,7 +1338,7 @@ func _input(event: InputEvent) -> void:
 	elif event.keycode == KEY_F1:
 		open_help()
 		get_viewport().set_input_as_handled()
-	elif event.keycode == KEY_F2 and screen == "game" and not world.decision.is_empty():
+	elif event.keycode == KEY_F2 and screen == "game" and (not world.decision.is_empty() or World.Tactics.pending(world)):
 		show_decision()
 		get_viewport().set_input_as_handled()
 	elif event.keycode == KEY_F3 and screen in ["game","result","overview"]:

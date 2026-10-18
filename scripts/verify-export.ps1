@@ -1,4 +1,4 @@
-﻿$ErrorActionPreference = 'Stop'
+$ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path $PSScriptRoot -Parent
 $env:APPDATA = Join-Path $projectRoot '.tools/user/roaming'
 $env:LOCALAPPDATA = Join-Path $projectRoot '.tools/user/local'
@@ -24,5 +24,7 @@ function Check-Run([string]$Name, [string[]]$GameArgs) {
     if ($Name -eq 'export-smoke' -and $output -notmatch 'RUNTIME_SMOKE_OK') { throw 'Missing success marker' }
 }
 Check-Run 'export-smoke' @('--headless', '--', '--smoke-test')
-Check-Run 'export-render' @('--quit-after', '10')
+# Hosted CI runners have no physical audio endpoint; select Dummy explicitly there.
+$renderArgs = if ($env:CI -eq 'true') { @('--audio-driver', 'Dummy', '--quit-after', '10') } else { @('--quit-after', '10') }
+Check-Run 'export-render' $renderArgs
 Get-FileHash -LiteralPath $exportExe -Algorithm SHA256

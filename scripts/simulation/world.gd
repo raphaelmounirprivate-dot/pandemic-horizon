@@ -12,6 +12,9 @@ const Decisions = preload("res://scripts/gameplay/decisions.gd")
 const History = preload("res://scripts/gameplay/history.gd")
 const Expanded = preload("res://scripts/gameplay/expanded_content.gd")
 const Crises = preload("res://scripts/gameplay/crises.gd")
+const Tactics = preload("res://scripts/gameplay/tactics.gd")
+var tactics_enabled = false
+var tactics: Dictionary = {}
 var crises_enabled = false
 var expanded_content = false
 var history: Array = []
@@ -92,7 +95,10 @@ static func validate_data(data: Variant) -> String:
 		edges.append(pair)
 	return ""
 
-func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null, transport_source: Variant = null, objective_id: String = "", decision_enabled: bool = false, expanded_enabled: bool = false, expanded_source: Variant = null, crises_active: bool = false, crises_source: Variant = null) -> String:
+func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null, transport_source: Variant = null, objective_id: String = "", decision_enabled: bool = false, expanded_enabled: bool = false, expanded_source: Variant = null, crises_active: bool = false, crises_source: Variant = null, reactive: bool = false) -> String:
+	if reactive:
+		if not Tactics.validate().is_empty(): return Tactics.validate()
+		crises_active = true
 	if scenario_id == "fragile2042" and not crises_active: return "Réseaux fragiles exige l'option Aléas et résilience."
 	if crises_active: expanded_enabled = true
 	if decision_enabled:
@@ -165,6 +171,8 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	gameplay = effective_gameplay
 	expanded_content = expanded_enabled
 	crises_enabled = crises_active
+	tactics_enabled = reactive
+	tactics = Tactics.initial(scenario_id) if reactive else {}
 	regions = data.regions.duplicate(true)
 	connections = Scenarios.connections_for(data, scenario)
 	evolutions.clear()
@@ -349,7 +357,7 @@ func event_modifier(kind: String, target: String = "global") -> float:
 	for effect in active_events:
 		if effect.kind == kind and effect.target == target:
 			factor *= effect_factor(effect)
-	return factor * Decisions.modifier(self,kind,target)
+	return factor * Decisions.modifier(self,kind,target) * Tactics.modifier(self,kind,target)
 
 func effect_factor(effect: Dictionary) -> float:
 	var factor = float(effect.factor)
@@ -370,11 +378,12 @@ func effect_description(effect: Dictionary) -> String:
 func _add_event(definition: Dictionary) -> bool:
 	if definition.id in activated_events:
 		return false
-	var effect = definition.duplicate(true)
+	var effect = Tactics.resolve_target(self,definition)
 	effect["start_day"] = day
 	effect["end_day"] = day + int(definition.duration)
 	activated_events.append(effect.id)
 	active_events.append(effect)
+	Tactics.on_event(self,effect)
 	journal.append("Jour %d · %s — %s ; fin au jour %d." % [day, effect.name, effect_description(effect), effect.end_day])
 	return true
 
@@ -415,6 +424,7 @@ func active_event_lines() -> Array[String]:
 	for effect in active_events:
 		lines.append("%s · %s · %d j restants" % [effect.name, effect_description(effect), effect.end_day - day])
 	if decision.get("status") in ["pending","active"]: lines.append(Decisions.summary(self))
+	if tactics_enabled and not tactics.response.is_empty(): lines.append(Tactics.summary(self))
 	return lines
 
 func step() -> void:
@@ -425,6 +435,7 @@ func step() -> void:
 	_update_scenario()
 	Decisions.update(self)
 	_update_events_and_detection()
+	Tactics.update(self)
 	var incoming: Dictionary = {}
 	var snapshot = regions.duplicate(true)
 	var by_id: Dictionary = {}
@@ -444,6 +455,7 @@ func step() -> void:
 				incoming[direction[1]] += units
 				latest_flows.append({"from":direction[0],"to":direction[1],"units":units,"mode":route_mode(edge),"day":day})
 				Objectives.record_exchange(self,direction[0],direction[1],units)
+				Tactics.record_exchange(self,direction[0],direction[1],units)
 	for index in range(regions.size()):
 		var before = snapshot[index]
 		var region = regions[index]
@@ -461,24 +473,33 @@ func step() -> void:
 		cure = minf(100.0, cure + gain * upgrade_modifier("cure_multiplier") * event_modifier("cure_multiplier") * difficulty.cure_multiplier * phase.cure_multiplier)
 	if day % 5 == 0:
 		points += 3
+	Tactics.update_goal(self)
 	resolve_outcome()
 	Objectives.update(self)
 	Decisions.update(self)
+	Tactics.update(self)
 	History.record(self)
 
 func resolve_outcome() -> void:
-	if cure >= 100.0:
-		outcome = "defeat_cure"
-	elif coverage() >= 0.9:
-		outcome = "victory"
-	elif totals().active == 0:
-		outcome = "defeat_extinction"
+	outcome = expected_outcome()
 	if not outcome.is_empty():
 		journal.append("Jour %d · %s" % [day, outcome_text()])
+
+func expected_outcome() -> String:
+	if cure >= 100.0:
+		return "defeat_cure"
+	elif tactics_enabled and tactics.goal.get("status") == "failed":
+		return "defeat_network"
+	elif coverage() >= 0.9 and (not tactics_enabled or tactics.goal.is_empty() or tactics.goal.status == "completed"):
+		return "victory"
+	elif totals().active == 0:
+		return "defeat_extinction"
+	return ""
 
 func outcome_text() -> String:
 	match outcome:
 		"victory": return "Objectif atteint : 90 % de la population a été touchée."
 		"defeat_cure": return "Défaite : le remède a été achevé avant l'objectif."
 		"defeat_extinction": return "Défaite : aucun cas actif ne subsiste avant l'objectif."
+		"defeat_network": return "Défaite : les deux relais de Centrale n'ont pas atteint 6 000 unités chacun avant J60 inclus."
 	return "Partie en cours."

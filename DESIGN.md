@@ -1,6 +1,6 @@
 ---
 name: Pandemic Horizon
-description: Monde en crise, commandes intégrées, confort et aléas facultatifs du prototype Godot 0.21
+description: Monde en crise, commandes intégrées, confort et crises réactives facultatives du prototype Godot 0.22
 colors:
   ink: "#e1eee9"
   muted: "#a7c4c9"
@@ -110,6 +110,8 @@ Les titres des écrans utilisent 30 px, celui du jeu 22 px, les indicateurs et l
 
 ## Layout
 
+Les douze captures 0.22 `.impeccable/review/tactics-{menu,pending,active,fragile}-{1280,1920,2395}.png` ont été vues aux dimensions 1280 × 720, 1920 × 1080 et 2395 × 1060. La revue indépendante de finition conclut à la livraison sans correction requise sur le périmètre interface/code ; 15 978 contrôles réactifs et 3 444 contrôles de non-régression passent. Ces preuves ne constituent pas une validation avec des joueurs, de l'écoute physique, du DPI Windows, d'un second PC ou d'une publication de binaire. Cette extension native conserve le monde, les jetons et les compositions existants : aucun raster ni nouvelle composition de référence ; le détecteur web ne s'applique pas.
+
 Les 24 captures 0.21 `.impeccable/review/incidents-{none,pending,storm,earthquake,communications,favorable,focused,overview}-{1280,1920,2395}.png` couvrent absence d’incident, choix en attente, tempête, séisme, communications mondiales, effet favorable, localisation et Monde, aux dimensions 1280 × 720, 1920 × 1080 et 2395 × 1060. La revue conclut à la livraison sans correction requise ; 3 444 contrôles passent, dont 129 ciblés. Ces preuves ne valident pas les essais humains, l’écoute physique, le DPI Windows ou un second PC. Palette, typographie, angles et grille des achats sont conservés.
 
 Les 21 captures 0.20 `.impeccable/review/crises-{menu-classic,menu-crises,menu-fragile,skills,incident,fragile,loaded}-{1280,1920,2395}.png` documentent les menus, les évolutions, un incident, Réseaux fragiles et un chargement aux dimensions 1280 × 720, 1920 × 1080 et 2395 × 1060. La revue conclut à la livraison sans correction requise ; essais humains, physiques et DPI Windows restent à réaliser. Le menu sépare la rangée Catalogue enrichi/Aléas de la rangée tutoriel/aide/graine/Autre. Les six colonnes compactes gardent tous les achats visibles : 21 nœuds Standard/Réseaux fragiles et 24 Dégel avec aléas. Aucun jeton de palette, typographie ou angle n’est ajouté.
@@ -146,6 +148,12 @@ Les boutons généraux ont un rayon de 6 px, un focus transparent bordé de turq
 Le fond local Natural Earth `assets/maps/world-land.geojson` dessine continents et contours vectoriels. Les routes sont courbes ; une fermeture ajoute des segments et une croix ambre au milieu. Aucun raster n’est livré par cette réalisation.
 
 ## Components
+
+**Crises réactives (0.22).** La case « Crises réactives », facultative et décochée par défaut, implique catalogue enrichi et aléas. Son infobulle annonce le ciblage des foyers actifs, la réponse à la première panne aérienne et Double relais obligatoire dans Réseaux fragiles. Les profils précédents restent disponibles. Le ciblage au déclenchement utilise uniquement les régions ayant actifs et sains ; les repères existants lisent la cible réelle résolue, sauvegardée dans le profil `tactics-0.22`, format 7.
+
+**Réponse intégrée (0.22).** `crisis_response_view.gd` place le résumé ambre et trois colonnes de choix sous la carte, avec séparation de 8 px. Les boutons existants conservent leur cible minimale de 44 px et leur style ; boutons et détails utilisent 13 px, le rappel final 12 px. Chaque colonne expose nom, coût, coefficients air/remède, durée et motif de blocage. Financer un détour coûte 3 points (air ×1,35), Subir la panne est gratuit et neutre, Exploiter une ouverture coûte 1 point (air ×1,70 et remède ×1,18). Le texte précise le choix irréversible, les six jours dès le lendemain et les routes fermées conservées. La pause et F2 ramènent à cette composition ; la décision logistique reste prioritaire. La fenêtre de trois journées et le choix neutre automatique sans réponse sont explicites ; les résumés gardent les dates des effets après le choix.
+
+**Double relais (0.22).** Dans Réseaux fragiles réactif, le menu, le suivi en partie et le bilan nomment l'objectif obligatoire, les deux destinations de Centrale, les compteurs `/6000`, J60 inclus et l'état. L'issue exige cet objectif et 90 % de couverture ; l'échéance manquée produit une défaite réseau explicite. Les textes distinguent ces unités abstraites des personnes et cet objectif des objectifs facultatifs. La palette, les marqueurs géographiques, la grille des achats et les préférences de confort sont conservés.
 
 **Incidents localisés et mondiaux (0.21).** `incident_view.gd` lit exclusivement les aléas actifs, avec portée, effet réel, durée restante et fin ; aucune définition future n’est présentée. Séisme et rétablissement régional utilisent un repère près du hub ; la tempête occupe le milieu de la courbe effectivement dessinée de sa liaison. Les effets mondiaux de transport et de recherche restent dans les textes et Monde, sans repère géographique fictif. Les compteurs locaux/mondiaux complètent les symboles et les aléas actifs précèdent les autres effets dans les listes et F3. Les repères défavorables sont ambre, les favorables turquoise ; la focalisation ajoute un anneau extérieur clair issu de la palette existante.
 

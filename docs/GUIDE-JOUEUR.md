@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.21
+# Jouer à Pandemic Horizon 0.22
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.21.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.22.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -187,6 +187,12 @@ Réseaux fragiles impose Centrale et l’option des aléas : incidents environ t
 
 Le profil utilise le format de sauvegarde 6, à reprendre avec 0.20 compatible. Les anciens formats classiques/enrichis 4/5 restent reconnus sans ajout rétroactif d’incidents. Les catastrophes sont des effets de jeu abstraits : aucune nouvelle mortalité ni destruction économique simulée.
 
-## Localiser les incidents (0.21)
+## Localiser les incidents (0.22)
 
 Local [F4] parcourt les aléas locaux actifs, avec zoom borné et repère clair. Survoler la région ou le pictogramme révèle l’effet et la fin. Les effets mondiaux restent dans Monde/F3, sans localisation inventée. Aucun tirage futur n’est montré ; les marqueurs expirent avec leurs effets. Les règles et formats 4/5/6 sont conservés.
+
+## Crises réactives (0.22)
+
+L'option du menu active le catalogue enrichi et les aléas. Un foyer actif possédant encore des sains est choisi au déclenchement des aléas régionaux de croissance. À la première panne aérienne, le jeu se met en pause : trois choix intégrés sous la carte [F2]. Détour : 3 points, air ×1,35 ; subir : gratuit, panne conservée ; occasion : 1 point, air ×1,70 et remède ×1,18. Coefficients ajoutés par multiplication pendant six jours dès le lendemain. Aucune route fermée n'est rouverte. Trois journées pour choisir ; ensuite subir est retenu gratuitement.
+
+Dans Réseaux fragiles réactif, Double relais est obligatoire : 6 000 unités depuis Centrale vers Méridien et autant vers Savane avant J60 inclus. Un échec entraîne la défaite. Les unités sont des flux simulés sur routes ouvertes, pas de nouveaux cas. La victoire demande aussi 90 % touchés avant le remède. Les anciennes parties conservent leurs profils.

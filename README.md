@@ -4,6 +4,8 @@ Projet de jeu de stratégie original pour PC Windows, inspiré du genre de la si
 
 ## État du projet
 
+Candidat courant **0.22** : [crises réactives et Double relais](docs/suivi/27-crises-reactives.md), ciblage au déclenchement et réponses intégrées. Mesures : 48/76 incidents régionaux sans occasion de croissance dans le profil historique, 0/76 dans le nouveau protocole apparié. [Rapport](docs/EQUILIBRAGE-0.22-REACTIF.md). La 0.21 est clôturée et archivée au commit 9018202. Essais humains encore à réaliser.
+
 La 0.20 ajoute l’option **Aléas et résilience** : 12 incidents tirés par graine parmi huit types, trois compétences de protection et le scénario **Réseaux fragiles**. Tempêtes, séismes et pannes côtoient des occasions favorables à la diffusion. Les 21/24 compétences restent intégrées ; les anciennes parties conservent leurs règles. Voir le [point 25](docs/suivi/25-aleas-resilience.md) et les [140 parties comparées](docs/EQUILIBRAGE-0.20-ALEAS.md).
 
 La 0.19 ajoute mouvements réduits, lecture agrandie et sons facultatifs avec volume. Le candidat Windows et son archive sont vérifiés ; les essais joueurs, auditifs et sur un second PC restent à faire. Voir le [point 24](docs/suivi/24-confort-distribution.md) et le [protocole joueurs](docs/TESTS-JOUEURS.md). Les sauvegardes de chaque étape se trouvent dans build/checkpoints/.
