@@ -5,6 +5,9 @@ const MapView = preload("res://scripts/ui/region_map.gd")
 const SaveStore = preload("res://scripts/persistence/save_store.gd")
 const Tutorial = preload("res://scripts/ui/tutorial.gd")
 const Help = preload("res://scripts/ui/help.gd")
+const Incidents = preload("res://scripts/ui/incident_view.gd")
+var incident_button: Button
+var map_legend: Label
 const INK = Color("e1eee9")
 const MUTED = Color("a7c4c9")
 const ACCENT = Color("69d6bd")
@@ -571,7 +574,12 @@ func _smoke_test() -> void:
 	if not optional_loaded.error.is_empty() or not optional_loaded.world.crises_enabled or optional_loaded.world.event_definitions != optional_world.event_definitions:
 		get_tree().quit(1)
 		return
-	print("RUNTIME_SMOKE_OK: classic scenarios and replay, tutorial, help, objectives and decisions, enriched profile5, comfort and audio, crises profile6 and fragile scenario, restart, settings, menu")
+	world = optional_loaded.world
+	show_game()
+	if incident_button == null or not "mondiaux" in map_legend.text or not Incidents.entries(world).all(func(e): return e.start_day <= world.day):
+		get_tree().quit(1)
+		return
+	print("RUNTIME_SMOKE_OK: classic scenarios and replay, tutorial, help, objectives and decisions, enriched profile5, comfort and audio, crises profile6 and fragile scenario, active incident map and scopes, restart, settings, menu")
 	get_tree().quit()
 
 func _apply_theme() -> void:
@@ -621,7 +629,7 @@ func _reset_screen(title: String, subtitle: String) -> void:
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.20", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.21", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -919,7 +927,9 @@ func show_game() -> void:
 	map_column.add_child(map_view)
 	map_view.restore_camera(map_camera)
 	reset_map_camera = false
-	map_column.add_child(_label("Rouge : touchés · Véhicules : échanges du jour · 24 régions fictives",13,MUTED))
+	map_legend = _label("",13,MUTED)
+	map_legend.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	map_column.add_child(map_legend)
 	decision_area = VBoxContainer.new()
 	decision_signature = ""
 	map_column.add_child(decision_area)
@@ -1012,6 +1022,7 @@ func show_game() -> void:
 		_button("Menu", show_menu, controls)
 		_button("Sauvegardes", open_saves, controls)
 		_button("Monde [F3]",open_overview,controls)
+		incident_button = _button("Local [F4]",func(): map_view.focus_next_incident(),controls) if world.crises_enabled else null
 	else:
 		if tutorial.stage == 5: initial_focus = _button("Sauvegardes d'essai", open_saves, controls)
 		tutorial_next = _button("Terminer" if tutorial.stage == 5 else "Continuer", next_lesson, controls)
@@ -1147,7 +1158,13 @@ func _refresh() -> void:
 		tutorial_next.disabled = not tutorial.ready
 		if just_completed: tutorial_next.grab_focus()
 		pause_button.disabled = not tutorial.can_run()
-	var lines = world.active_event_lines()
+	var counts = Incidents.counts(world)
+	map_legend.text = "Rouge : touchés · Véhicules : échanges du jour · 24 régions fictives"
+	if world.crises_enabled:
+		map_legend.text = "Aléas locaux : %d · mondiaux : %d · F4 : localiser" % [counts.local,counts.global]
+		incident_button.disabled = counts.local == 0
+		incident_button.tooltip_text = "Localiser l'aléa local suivant : repère, région ou liaison. Les effets mondiaux restent dans Monde [F3]."
+	var lines = Incidents.active_lines(world)
 	var climate = "Phase %s · %.0f °C fictifs · Remède de phase ×%.2f\n" % [world.phase.name, world.phase.temperature, world.phase.cure_multiplier] if world.scenario.id != "standard" else ""
 	effects_label.text = climate + "Événements actifs\n" + ("Aucun effet temporaire." if lines.is_empty() else "\n".join(lines))
 	map_view.refresh()
@@ -1240,7 +1257,7 @@ func show_overview() -> void:
 	for purchase in world.purchase_history: purchase_lines.append("J%d · %s · %d pts" % [purchase.day,world.evolutions[purchase.id].name,purchase.cost])
 	if purchase_lines.is_empty(): purchase_lines.append("Aucun achat daté enregistré.")
 	if world.purchase_history.size() < world.purchased.size(): purchase_lines.append("Dates antérieures absentes de cette sauvegarde.")
-	var effects: Array[String] = world.active_event_lines()
+	var effects: Array[String] = Incidents.active_lines(world)
 	if effects.is_empty(): effects.append("Aucun effet temporaire.")
 	if not world.decision.is_empty() and world.Decisions.summary(world) not in effects: effects.append(world.Decisions.summary(world))
 	for section in [{"title":"Achats datés","text":"\n".join(purchase_lines)},{"title":"Effets en cours","text":"\n".join(effects)},{"title":"Actualités · plus récentes en haut","text":"\n".join(reversed_news())}]:
@@ -1287,6 +1304,9 @@ func _input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 	elif event.keycode == KEY_F3 and screen in ["game","result","overview"]:
 		open_overview()
+		get_viewport().set_input_as_handled()
+	elif event.keycode == KEY_F4 and screen == "game" and world.crises_enabled:
+		map_view.focus_next_incident()
 		get_viewport().set_input_as_handled()
 	elif screen == "game":
 		if event.keycode == KEY_SPACE:

@@ -144,3 +144,7 @@ Le script de paquet vérifie les ressources de l’exécutable, sa copie en chem
 ## Extension 0.20
 
 Aléas : tests/test_crises.gd ; captures : tests/capture_crises.gd ; mesures : scripts/balance_crises.gd (140 parties). Aucun JSON historique modifié : crises.json séparé, format 6, profils 4/5 inchangés. Le script package-windows.ps1 choisit désormais les notes correspondant à la version du projet. Export séparé build/windows-0.20.0/ ; sauvegarde et archive identifiées par commit après vérification.
+
+## Provenance vérifiée (0.21)
+
+Après Import et Test, commiter les sources avant Export : celui-ci exige un dépôt propre et crée BUILD.json (commit, version, empreintes exécutable et moteur). package-windows.ps1 refuse un binaire ancien ou modifié avant d’écrire VERSION.json. Ne pas retoucher ces manifestes. test-build-identity.ps1 vérifie les refus ; la CI exporte le commit testé et conserve le ZIP avec ses empreintes.

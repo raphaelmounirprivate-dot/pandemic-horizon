@@ -2,6 +2,8 @@
 const RED = Color("ff766d")
 const ACCENT = Color("69d6bd")
 const AMBER = Color("efbc70")
+const Incidents = preload("res://scripts/ui/incident_view.gd")
+var focused_incident = ""
 const ANCHORS = {
  "toundra":Vector2(.105,.16),"boreale":Vector2(.25,.13),"hauts_pays":Vector2(.14,.34),"occident":Vector2(.28,.34),
  "peninsule":Vector2(.20,.51),"equateur":Vector2(.34,.50),"atlantide":Vector2(.39,.66),"plateaux":Vector2(.28,.69),"australe":Vector2(.32,.88),
@@ -71,6 +73,7 @@ func setup(model: PandemicWorld) -> void:
 		focus.set_corner_radius_all(22)
 		button.add_theme_stylebox_override("focus",focus)
 		button.pressed.connect(func():
+			focused_incident = ""
 			selected = i
 			region_selected.emit(i)
 			refresh())
@@ -147,12 +150,13 @@ func reset_view() -> void:
 	dragging = false
 	refresh()
 func camera_state() -> Dictionary:
-	return {"zoom":zoom,"center":(size*.5-pan)/zoom/size,"filter":flow_filter}
+	return {"zoom":zoom,"center":(size*.5-pan)/zoom/size,"filter":flow_filter,"incident":focused_incident}
 func restore_camera(state: Dictionary) -> void:
 	if state.is_empty(): return
 	zoom = clampf(state.zoom,1.0,4.0)
 	pan = size*.5-state.center*size*zoom
 	set_flow_filter(state.get("filter","all"))
+	focused_incident = state.get("incident","")
 	clamp_pan()
 	refresh()
 func move_camera(offset: Vector2) -> void:
@@ -166,7 +170,13 @@ func reveal_region(index: int) -> void:
 	if not safe.has_point(point): move_camera(size*.5-point)
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
-		if event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN] and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			for entry in Incidents.entries(world):
+				if entry.scope == "route" and event.position.distance_to(incident_position(entry)) <= 16:
+					focus_incident(entry.id)
+					accept_event()
+					return
+		elif event.button_index in [MOUSE_BUTTON_WHEEL_UP,MOUSE_BUTTON_WHEEL_DOWN] and event.pressed:
 			zoom_at(event.position,zoom*(1.25 if event.button_index == MOUSE_BUTTON_WHEEL_UP else .8))
 			accept_event()
 		elif event.button_index in [MOUSE_BUTTON_RIGHT,MOUSE_BUTTON_MIDDLE]:
@@ -223,6 +233,8 @@ func refresh() -> void:
 		buttons[i].position = map_position(region)-Vector2(22,22)
 		buttons[i].size = Vector2(44,44)
 		buttons[i].tooltip_text = "%s · %.1f %% touchés · %d actifs\n%s" % [region.name,100.0*(region.active+region.removed)/region.population,region.active,world.transport_summary(region.id)]
+		for entry in Incidents.entries(world):
+			if (entry.scope == "region" and entry.target == region.id) or (entry.scope == "route" and region.id in entry.target): buttons[i].tooltip_text += "\n"+entry.text
 	if is_instance_valid(camera_tools):
 		camera_tools.size = camera_tools.get_combined_minimum_size()
 		camera_tools.position = Vector2(size.x-camera_tools.size.x-8,4)
@@ -230,6 +242,53 @@ func refresh() -> void:
 		zoom_in.disabled = zoom >= 4.0
 	update_coasts()
 	queue_redraw()
+func incident_position(entry: Dictionary) -> Vector2:
+	if entry.scope == "region": return display_positions[entry.target]*zoom+pan+Vector2(16,-16)
+	if entry.scope == "route": return curve(display_positions[entry.target[0]]*zoom+pan,display_positions[entry.target[1]]*zoom+pan,0.5)
+	return Vector2(-1000,-1000)
+func focus_incident(id: String) -> bool:
+	for entry in Incidents.entries(world):
+		if entry.id != id or entry.scope == "global": continue
+		var region_id = entry.target if entry.scope == "region" else entry.target[0]
+		for i in range(world.regions.size()):
+			if world.regions[i].id == region_id: selected = i
+		zoom = maxf(zoom,1.8)
+		pan += size*.5-incident_position(entry)
+		clamp_pan()
+		focused_incident = id
+		refresh()
+		grab_focus()
+		region_selected.emit(selected)
+		return true
+	return false
+func focus_next_incident() -> bool:
+	var local = Incidents.entries(world).filter(func(e): return e.scope != "global")
+	if local.is_empty(): return false
+	var current = -1
+	for i in range(local.size()):
+		if local[i].id == focused_incident: current = i
+	return focus_incident(local[(current+1)%local.size()].id)
+func _get_tooltip(at_position: Vector2) -> String:
+	for entry in Incidents.entries(world):
+		if entry.scope != "global" and at_position.distance_to(incident_position(entry)) <= 16: return entry.text
+	return tooltip_text
+func draw_incidents() -> void:
+	for entry in Incidents.entries(world):
+		if entry.scope == "global": continue
+		var point = incident_position(entry)
+		var color = ACCENT if entry.impact == "favorable" else AMBER
+		draw_circle(point,12,Color("091519"))
+		draw_arc(point,11,0,TAU,24,ACCENT if entry.id == focused_incident else color,2,true)
+		if entry.id == focused_incident: draw_arc(point,14,0,TAU,28,Color("e1eee9"),1.5,true)
+		match entry.template:
+			"storm":
+				draw_arc(point+Vector2(-2,-2),5,PI*.15,PI*1.8,16,color,1.5,true)
+				draw_polyline(PackedVector2Array([point+Vector2(2,0),point+Vector2(-2,4),point+Vector2(2,4),point+Vector2(-1,8)]),color,1.5,true)
+			"earthquake":
+				draw_polyline(PackedVector2Array([point+Vector2(-8,1),point+Vector2(-4,1),point+Vector2(-1,-6),point+Vector2(2,6),point+Vector2(5,0),point+Vector2(8,0)]),color,1.5,true)
+			_:
+				draw_line(point+Vector2(-6,0),point+Vector2(6,0),color,2,true)
+				draw_line(point+Vector2(0,-6),point+Vector2(0,6),color,2,true)
 func _process(delta: float) -> void:
 	if motion_enabled:
 		visual_time += minf(delta,.1)
@@ -297,4 +356,5 @@ func _draw() -> void:
 		draw_circle(p,3,RED)
 		var direction = (curve(a,b,minf(1,t+.02))-p).normalized()
 		transport_icon(flow.mode,p,direction.angle(),1.0,RED)
+	draw_incidents()
 	draw_string(ThemeDB.fallback_font,Vector2(14,18),"MONDE EN CRISE · %d FOYERS ACTIFS" % world.regions.filter(func(r): return r.active > 0).size(),HORIZONTAL_ALIGNMENT_LEFT,-1,12,RED)

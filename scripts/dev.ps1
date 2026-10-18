@@ -33,13 +33,25 @@ switch ($Action) {
     'BalanceParameters' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/balance_parameters.gd')) }
     'Play' { & $engine --path $projectRoot }
     'Export' {
+        $gitArgs = @('-c', "safe.directory=$($projectRoot.Replace('\','/'))", '-C', $projectRoot)
+        $dirty = & git @gitArgs status --porcelain
+        if ($LASTEXITCODE -ne 0 -or $dirty) { throw 'Commit source changes before exporting a release candidate.' }
+        $sourceCommit = (& git @gitArgs rev-parse HEAD).Trim()
         $version = [regex]::Match((Get-Content -LiteralPath (Join-Path $projectRoot 'project.godot') -Raw), 'config/version="([0-9]+\.[0-9]+\.[0-9]+)"').Groups[1].Value
         if (-not $version) { throw 'Project version missing' }
         $exportDirectory = Join-Path $projectRoot "build/windows-$version"
         New-Item -ItemType Directory -Force $exportDirectory | Out-Null
         Invoke-Godot ($baseArgs + @('--export-release', 'Windows Desktop', (Join-Path $exportDirectory 'PandemicHorizon.exe')))
+        $identity = [ordered]@{schema=1;version=$version;commit=$sourceCommit;executableSha256=(Get-FileHash -LiteralPath (Join-Path $exportDirectory 'PandemicHorizon.exe')).Hash;engineSha256=(Get-FileHash -LiteralPath $engine).Hash}
+        $identity | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $exportDirectory 'BUILD.json') -Encoding UTF8
         Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/GUIDE-JOUEUR.md') -Destination (Join-Path $exportDirectory 'GUIDE-JOUEUR.md')
-        Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/licences') -Destination $exportDirectory -Recurse -Force
+        $licenceDirectory = Join-Path $exportDirectory 'licences'
+        New-Item -ItemType Directory -Force $licenceDirectory | Out-Null
+        foreach ($licence in (Get-ChildItem -LiteralPath (Join-Path $projectRoot 'docs/licences') -File)) {
+            $target = Join-Path $licenceDirectory $licence.Name
+            if ((Test-Path -LiteralPath $target) -and (Get-FileHash $target).Hash -eq (Get-FileHash $licence.FullName).Hash) { continue }
+            Copy-Item -LiteralPath $licence.FullName -Destination $target -Force
+        }
         Write-Output "Export: $exportDirectory"
     }
     'Capture' {

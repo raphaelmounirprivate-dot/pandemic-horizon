@@ -10,6 +10,8 @@ $notesName = "NOTES-VERSION-$($version -replace '\.[0-9]+$','').md"
 $exportDirectory = Join-Path $projectRoot "build/windows-$version"
 $exe = Join-Path $exportDirectory 'PandemicHorizon.exe'
 if (-not (Test-Path -LiteralPath $exe)) { throw 'Export the candidate first.' }
+. (Join-Path $PSScriptRoot 'build-identity.ps1')
+$identity = Assert-ExportIdentity -Directory $exportDirectory -Commit $sha -Version $version
 # Verify the exact executable that will be archived, including its packed resources.
 & (Join-Path $PSScriptRoot 'verify-export.ps1')
 if ($LASTEXITCODE -ne 0) { throw 'Executable verification failed.' }
@@ -27,7 +29,7 @@ foreach ($licence in (Get-ChildItem -LiteralPath (Join-Path $projectRoot 'docs/l
     if ((Get-FileHash -LiteralPath $destination).Hash -ne (Get-FileHash -LiteralPath $licence.FullName).Hash) { throw "Licence copy mismatch: $($licence.Name)" }
 }
 $exeHash = (Get-FileHash -LiteralPath $exe -Algorithm SHA256).Hash
-$manifest = [ordered]@{version=$version;commit=$sha;status='candidate; human tests pending';executableSha256=$exeHash}
+$manifest = [ordered]@{version=$identity.version;commit=$identity.commit;status='candidate; human tests pending';executableSha256=$identity.executableSha256;engineSha256=$identity.engineSha256}
 $manifest | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $exportDirectory 'VERSION.json') -Encoding UTF8
 $releaseDirectory = Join-Path $projectRoot 'build/releases'
 New-Item -ItemType Directory -Force $releaseDirectory | Out-Null
@@ -37,7 +39,7 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 [IO.Compression.ZipFile]::CreateFromDirectory($exportDirectory,$archive,[IO.Compression.CompressionLevel]::Optimal,$false)
 $zip = [IO.Compression.ZipFile]::OpenRead($archive)
 try {
-    foreach ($required in @('PandemicHorizon.exe','GUIDE-JOUEUR.md','TESTS-JOUEURS.md',$notesName,'VERSION.json','licences/Godot-LICENSE.txt','licences/Godot-COPYRIGHT.txt','licences/Natural-Earth.txt')) {
+    foreach ($required in @('PandemicHorizon.exe','GUIDE-JOUEUR.md','TESTS-JOUEURS.md',$notesName,'VERSION.json','BUILD.json','licences/Godot-LICENSE.txt','licences/Godot-COPYRIGHT.txt','licences/Natural-Earth.txt')) {
         if (-not ($zip.Entries | Where-Object { $_.FullName.Replace('\','/') -eq $required })) { throw "Missing archive entry: $required" }
     }
     $entry = $zip.Entries | Where-Object { $_.FullName -eq 'PandemicHorizon.exe' }

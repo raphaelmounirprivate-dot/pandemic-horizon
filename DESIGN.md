@@ -1,6 +1,6 @@
 ---
 name: Pandemic Horizon
-description: Monde en crise, commandes intégrées, confort et aléas facultatifs du prototype Godot 0.20
+description: Monde en crise, commandes intégrées, confort et aléas facultatifs du prototype Godot 0.21
 colors:
   ink: "#e1eee9"
   muted: "#a7c4c9"
@@ -110,6 +110,8 @@ Les titres des écrans utilisent 30 px, celui du jeu 22 px, les indicateurs et l
 
 ## Layout
 
+Les 24 captures 0.21 `.impeccable/review/incidents-{none,pending,storm,earthquake,communications,favorable,focused,overview}-{1280,1920,2395}.png` couvrent absence d’incident, choix en attente, tempête, séisme, communications mondiales, effet favorable, localisation et Monde, aux dimensions 1280 × 720, 1920 × 1080 et 2395 × 1060. La revue conclut à la livraison sans correction requise ; 3 444 contrôles passent, dont 129 ciblés. Ces preuves ne valident pas les essais humains, l’écoute physique, le DPI Windows ou un second PC. Palette, typographie, angles et grille des achats sont conservés.
+
 Les 21 captures 0.20 `.impeccable/review/crises-{menu-classic,menu-crises,menu-fragile,skills,incident,fragile,loaded}-{1280,1920,2395}.png` documentent les menus, les évolutions, un incident, Réseaux fragiles et un chargement aux dimensions 1280 × 720, 1920 × 1080 et 2395 × 1060. La revue conclut à la livraison sans correction requise ; essais humains, physiques et DPI Windows restent à réaliser. Le menu sépare la rangée Catalogue enrichi/Aléas de la rangée tutoriel/aide/graine/Autre. Les six colonnes compactes gardent tous les achats visibles : 21 nœuds Standard/Réseaux fragiles et 24 Dégel avec aléas. Aucun jeton de palette, typographie ou angle n’est ajouté.
 
 Les douze captures 0.19 `.impeccable/review/comfort-{settings,help-large,overview-large,reduced-game}-{1280,1920,2395}.png` documentent Paramètres, l’aide et Monde en lecture agrandie et le jeu avec mouvements réduits, à 1280 × 720, 1920 × 1080 et 2395 × 1060. Les 3 141 contrôles automatisés réussissent sans échec, dont 44 contrôles de confort ; la revue de finition conclut à la livraison sans correction. Ces preuves ne constituent ni un essai humain ou une écoute physique, ni un essai sur second PC ou une validation DPI Windows. L’archive Windows reste une candidate prévue, sans publication de binaire GitHub établie.
@@ -144,6 +146,10 @@ Les boutons généraux ont un rayon de 6 px, un focus transparent bordé de turq
 Le fond local Natural Earth `assets/maps/world-land.geojson` dessine continents et contours vectoriels. Les routes sont courbes ; une fermeture ajoute des segments et une croix ambre au milieu. Aucun raster n’est livré par cette réalisation.
 
 ## Components
+
+**Incidents localisés et mondiaux (0.21).** `incident_view.gd` lit exclusivement les aléas actifs, avec portée, effet réel, durée restante et fin ; aucune définition future n’est présentée. Séisme et rétablissement régional utilisent un repère près du hub ; la tempête occupe le milieu de la courbe effectivement dessinée de sa liaison. Les effets mondiaux de transport et de recherche restent dans les textes et Monde, sans repère géographique fictif. Les compteurs locaux/mondiaux complètent les symboles et les aléas actifs précèdent les autres effets dans les listes et F3. Les repères défavorables sont ambre, les favorables turquoise ; la focalisation ajoute un anneau extérieur clair issu de la palette existante.
+
+**Localisation (0.21).** Le bouton fixe « Local [F4] », désactivé sans incident local, parcourt uniquement les incidents locaux actifs. Il sélectionne la région ou une extrémité de liaison, utilise un zoom d’au moins ×1,8 dans les limites existantes et déplace la caméra bornée. Les cibles régionales de 44 px restent disponibles ; un clic dans le rayon de 16 px du repère de tempête offre un accès direct, complété par F4. L’infobulle nomme portée, effet et fin. Caméra et identifiant focalisé survivent en mémoire au passage par Monde, sans sérialisation. Aucune modification des JSON, règles ou formats de sauvegarde n’est introduite.
 
 **Aléas et résilience (0.20).** La case « Aléas et résilience (+3) », facultative et décochée par défaut, implique Catalogue enrichi ; Réseaux fragiles l’impose avec un départ visible désactivé sur Centrale. La graine numérique et « Autre » rendent le renouvellement du tirage explicite avant lancement ; recommencer conserve cette graine. La fiche du scénario affiche les comptes propres au profil. Les trois compétences de résilience reprennent les nœuds vectoriels, liens directs de la sélection et fiche complète de la grille enrichie, sans changer sa palette ni l’achat séparé. Les incidents affichent leur effet favorable/défavorable du point de vue de la diffusion du virus fictif, leurs cibles et durées dans les effets, le journal et Monde. Une fermeture conserve son signal ambre et n’est jamais annulée par un bonus. Les textes gardent priorité sur la couleur. Le calendrier déterministe est lié au profil de sauvegarde 6 `crises-0.20` ; profils 4/5 et confort 0.19 sont conservés.
 

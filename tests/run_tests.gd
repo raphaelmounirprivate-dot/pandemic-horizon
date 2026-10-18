@@ -236,5 +236,6 @@ func run() -> void:
 	await load("res://tests/test_expanded_content.gd").new().run(self,check)
 	await load("res://tests/test_comfort.gd").new().run(self,check)
 	await load("res://tests/test_crises.gd").new().run(self,check)
+	await load("res://tests/test_incident_view.gd").new().run(self,check)
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.20
+# Jouer à Pandemic Horizon 0.21
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.20.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.21.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -186,3 +186,7 @@ Liaisons de secours coûte 10 points et exige Mobilité : les pénalités de tra
 Réseaux fragiles impose Centrale et l’option des aléas : incidents environ tous les six jours au lieu de huit, croissance ×0,95 jusqu’au J44, remède ×1,15 dès J45. L’objectif principal reste toucher 90 % avant le remède ; aucun objectif facultatif ni décision portuaire dans ce scénario.
 
 Le profil utilise le format de sauvegarde 6, à reprendre avec 0.20 compatible. Les anciens formats classiques/enrichis 4/5 restent reconnus sans ajout rétroactif d’incidents. Les catastrophes sont des effets de jeu abstraits : aucune nouvelle mortalité ni destruction économique simulée.
+
+## Localiser les incidents (0.21)
+
+Local [F4] parcourt les aléas locaux actifs, avec zoom borné et repère clair. Survoler la région ou le pictogramme révèle l’effet et la fin. Les effets mondiaux restent dans Monde/F3, sans localisation inventée. Aucun tirage futur n’est montré ; les marqueurs expirent avec leurs effets. Les règles et formats 4/5/6 sont conservés.

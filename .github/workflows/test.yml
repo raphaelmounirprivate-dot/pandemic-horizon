@@ -11,10 +11,25 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Prepare pinned Godot with checksum verification
         shell: pwsh
-        run: ./scripts/setup-godot.ps1
+        run: ./scripts/setup-godot.ps1 -WithExportTemplates
       - name: Import project
         shell: pwsh
         run: ./scripts/dev.ps1 Import
       - name: Test simulation and UI controller
         shell: pwsh
         run: ./scripts/dev.ps1 Test
+      - name: Test build identity rejection
+        shell: pwsh
+        run: ./scripts/test-build-identity.ps1
+      - name: Export exact committed candidate
+        shell: pwsh
+        run: ./scripts/dev.ps1 Export
+      - name: Verify and package Windows candidate
+        shell: pwsh
+        run: ./scripts/package-windows.ps1
+      - name: Retain candidate and checksums
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: windows-${{ github.sha }}
+          path: build/releases/*
+          if-no-files-found: error
