@@ -4,7 +4,11 @@ Projet de jeu de stratégie original pour PC Windows, inspiré du genre de la si
 
 ## État du projet
 
-Candidat courant **0.22** : [crises réactives et Double relais](docs/suivi/27-crises-reactives.md), ciblage au déclenchement et réponses intégrées. Mesures : 48/76 incidents régionaux sans occasion de croissance dans le profil historique, 0/76 dans le nouveau protocole apparié. [Rapport](docs/EQUILIBRAGE-0.22-REACTIF.md). La 0.21 est clôturée et archivée au commit 9018202. Essais humains encore à réaliser.
+Candidat courant **0.23** : familles Diffusion, Discrétion et Résilience, fiches avant/après et contrôleur découpé ([point 28](docs/suivi/28-familles-validation.md)). Le lot 0.22 a apporté les [crises réactives et Double relais](docs/suivi/27-crises-reactives.md), ciblage au déclenchement et réponses intégrées. Mesures : 48/76 incidents régionaux sans occasion de croissance dans le profil historique, 0/76 dans le nouveau protocole apparié. [Rapport](docs/EQUILIBRAGE-0.22-REACTIF.md). La 0.21 est clôturée et archivée au commit 9018202. Validation 0.23 : 6 061 contrôles, zéro échec. Essais humains encore à réaliser.
+
+Prochaine étape : [trois sessions exploratoires avec des joueurs](docs/tests-joueurs/README.md), puis corrections des problèmes observés. [Audit remis à jour](docs/roadmap/05-audit-2026-10-18.md).
+
+## Historique des versions
 
 La 0.20 ajoute l’option **Aléas et résilience** : 12 incidents tirés par graine parmi huit types, trois compétences de protection et le scénario **Réseaux fragiles**. Tempêtes, séismes et pannes côtoient des occasions favorables à la diffusion. Les 21/24 compétences restent intégrées ; les anciennes parties conservent leurs règles. Voir le [point 25](docs/suivi/25-aleas-resilience.md) et les [140 parties comparées](docs/EQUILIBRAGE-0.20-ALEAS.md).
 
@@ -20,7 +24,7 @@ La 0.15 ajoute les avions, bateaux et véhicules terrestres sur les échanges ob
 
 La 0.14 ajoute l'exploration de la carte : zoom à la molette, déplacement au bouton droit ou central, boutons − / + / Vue mondiale, clavier et recentrage des régions au focus. Les achats et choix restent fixes. Les écrans larges utilisent tout l'espace disponible. Voir le [point 19](docs/suivi/19-exploration-carte.md).
 
-**Candidat 0.21 développé.** Deux scénarios sont jouables sur **24 régions** sous Godot 4.7.2 : Standard et Dégel 2042. Le réseau fictif contient 38 connexions, plus une route arctique propre à Dégel, et 3,53 millions d'habitants fictifs. Le menu propose trois difficultés avec leurs effets affichés. Dégel impose le départ en Boréale et ajoute quatre phases, des routes saisonnières, des tempêtes et trois évolutions climatiques. Détection, réactions, événements, remède, pause, vitesses, journal et bilan sont implémentés. Trois sauvegardes manuelles et une automatique permettent de reprendre en pause, avec récupération de la copie précédente si le fichier principal est endommagé. Un tutoriel facultatif de six exercices et l'aide F1 accompagnent la découverte du jeu.
+**Socle 0.21 (historique).** Deux scénarios sont jouables sur **24 régions** sous Godot 4.7.2 : Standard et Dégel 2042. Le réseau fictif contient 38 connexions, plus une route arctique propre à Dégel, et 3,53 millions d'habitants fictifs. Le menu propose trois difficultés avec leurs effets affichés. Dégel impose le départ en Boréale et ajoute quatre phases, des routes saisonnières, des tempêtes et trois évolutions climatiques. Détection, réactions, événements, remède, pause, vitesses, journal et bilan sont implémentés. Trois sauvegardes manuelles et une automatique permettent de reprendre en pause, avec récupération de la copie précédente si le fichier principal est endommagé. Un tutoriel facultatif de six exercices et l'aide F1 accompagnent la découverte du jeu.
 
 L'exécutable actuel se trouve dans `build/windows-0.21.0/PandemicHorizon.exe`, hors de Git. Les exports sont séparés par version ; les anciens dossiers conservent leurs versions précédentes. Aucune release binaire GitHub n'est publiée à ce stade.
 

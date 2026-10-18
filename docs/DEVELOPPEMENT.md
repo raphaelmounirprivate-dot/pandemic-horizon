@@ -148,3 +148,13 @@ Aléas : tests/test_crises.gd ; captures : tests/capture_crises.gd ; mesures : s
 ## Provenance vérifiée (0.21)
 
 Après Import et Test, commiter les sources avant Export : celui-ci exige un dépôt propre et crée BUILD.json (commit, version, empreintes exécutable et moteur). package-windows.ps1 refuse un binaire ancien ou modifié avant d’écrire VERSION.json. Ne pas retoucher ces manifestes. test-build-identity.ps1 vérifie les refus ; la CI exporte le commit testé et conserve le ZIP avec ses empreintes.
+
+## Vues et vérification 0.23
+
+Le contrôleur garde les wrappers de navigation. menu_view.gd, settings_view.gd et overview_view.gd construisent leurs écrans. skill_presenter.gd lit data/skill-families.json et le modèle sans changer les règles sauvegardées ; family_symbol.gd partage les symboles entre légende et nœuds.
+
+Captures : Godot `--path . --script res://tests/capture_skills.gd -- --no-autosave`. Les tests clavier suivent l'ordre visible des familles, avec les mêmes contrôles de focus et de limites. Les états combinant objectif, fiche complète et choix en attente doivent rester dans la matrice.
+
+La suite réactive compare la reprise à la partie originale aux frontières du choix, au terme de ses effets et tous les dix jours sur 45 trajectoires. Cela évite de comparer deux reprises identiques entre elles ; les reprises quotidiennes ont déjà été vérifiées lors de la clôture 0.22.
+
+Compatibilité : COMPATIBILITE.md. Sessions humaines : tests-joueurs/README.md. Les captures automatiques ne sont pas des résultats joueurs.

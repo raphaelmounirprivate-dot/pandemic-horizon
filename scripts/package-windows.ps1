@@ -17,6 +17,12 @@ $identity = Assert-ExportIdentity -Directory $exportDirectory -Commit $sha -Vers
 if ($LASTEXITCODE -ne 0) { throw 'Executable verification failed.' }
 Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/GUIDE-JOUEUR.md') -Destination $exportDirectory -Force
 Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/TESTS-JOUEURS.md') -Destination $exportDirectory -Force
+Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/COMPATIBILITE.md') -Destination $exportDirectory -Force
+$playerKit = Join-Path $exportDirectory 'tests-joueurs'
+New-Item -ItemType Directory -Force $playerKit | Out-Null
+foreach ($document in (Get-ChildItem -LiteralPath (Join-Path $projectRoot 'docs/tests-joueurs') -File)) {
+    Copy-Item -LiteralPath $document.FullName -Destination $playerKit -Force
+}
 Copy-Item -LiteralPath (Join-Path $projectRoot "docs/$notesName") -Destination $exportDirectory -Force
 $licenceDirectory = Join-Path $exportDirectory 'licences'
 New-Item -ItemType Directory -Force $licenceDirectory | Out-Null
@@ -39,7 +45,7 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 [IO.Compression.ZipFile]::CreateFromDirectory($exportDirectory,$archive,[IO.Compression.CompressionLevel]::Optimal,$false)
 $zip = [IO.Compression.ZipFile]::OpenRead($archive)
 try {
-    foreach ($required in @('PandemicHorizon.exe','GUIDE-JOUEUR.md','TESTS-JOUEURS.md',$notesName,'VERSION.json','BUILD.json','licences/Godot-LICENSE.txt','licences/Godot-COPYRIGHT.txt','licences/Natural-Earth.txt')) {
+    foreach ($required in @('PandemicHorizon.exe','GUIDE-JOUEUR.md','TESTS-JOUEURS.md','COMPATIBILITE.md','tests-joueurs/README.md','tests-joueurs/fiche-session.md','tests-joueurs/resultats.csv',$notesName,'VERSION.json','BUILD.json','licences/Godot-LICENSE.txt','licences/Godot-COPYRIGHT.txt','licences/Natural-Earth.txt')) {
         if (-not ($zip.Entries | Where-Object { $_.FullName.Replace('\','/') -eq $required })) { throw "Missing archive entry: $required" }
     }
     $entry = $zip.Entries | Where-Object { $_.FullName -eq 'PandemicHorizon.exe' }

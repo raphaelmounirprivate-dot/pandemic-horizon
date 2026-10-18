@@ -140,7 +140,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 		scene.start_game()
 		await tree.process_frame
 		await tree.process_frame
-		var ids = scene.world.evolutions.keys()
+		var ids = scene.evolution_buttons.keys() # Actual visible family order, not definition order.
 		scene.evolution_buttons[ids[0]].grab_focus()
 		await tree.process_frame
 		await tree.process_frame

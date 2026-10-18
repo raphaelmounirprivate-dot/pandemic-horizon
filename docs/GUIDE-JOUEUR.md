@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.22
+# Jouer à Pandemic Horizon 0.23
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.22.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.23.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
@@ -196,3 +196,7 @@ Local [F4] parcourt les aléas locaux actifs, avec zoom borné et repère clair.
 L'option du menu active le catalogue enrichi et les aléas. Un foyer actif possédant encore des sains est choisi au déclenchement des aléas régionaux de croissance. À la première panne aérienne, le jeu se met en pause : trois choix intégrés sous la carte [F2]. Détour : 3 points, air ×1,35 ; subir : gratuit, panne conservée ; occasion : 1 point, air ×1,70 et remède ×1,18. Coefficients ajoutés par multiplication pendant six jours dès le lendemain. Aucune route fermée n'est rouverte. Trois journées pour choisir ; ensuite subir est retenu gratuitement.
 
 Dans Réseaux fragiles réactif, Double relais est obligatoire : 6 000 unités depuis Centrale vers Méridien et autant vers Savane avant J60 inclus. Un échec entraîne la défaite. Les unités sont des flux simulés sur routes ouvertes, pas de nouveaux cas. La victoire demande aussi 90 % touchés avant le remède. Les anciennes parties conservent leurs profils.
+
+## Familles et fiche de compétences (0.23)
+
+Les trois symboles de la légende identifient Diffusion (réseau), Discrétion (bouclier) et Résilience (anneau). Les compétences suivent cet ordre, avec les mêmes coûts, prérequis et exclusions. La sélection montre toute son ascendance, le nom complet, l'effet et les coefficients actuels → après achat. Ils sont calculés depuis vos compétences achetées, hors climat et événements temporaires ; une compétence acquise n'est pas comptée deux fois. Les effets cumulés restent décrits dans les événements et les transports. Seul le bouton Évoluer dépense des points.

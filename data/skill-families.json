@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "families": [
+    {"id":"diffusion","name":"Diffusion","skills":["transmission","relay","cohesion","focus","retention","mobility","network","diversity","land_network","land_relay","air_bridge","air_relay","sea_logistics","sea_relay"]},
+    {"id":"discretion","name":"Discrétion","skills":["discretion","timing","delay","research_watch"]},
+    {"id":"resilience","name":"Résilience","skills":["redundancy","polar","seasonal","resilience","backup_links","regional_reserves"]}
+  ]
+}

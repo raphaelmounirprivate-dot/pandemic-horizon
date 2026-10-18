@@ -1,6 +1,6 @@
 # Feuille de route — suite de Pandemic Horizon
 
-Date : 17 octobre 2026. État courant : candidat 0.21, lots A à F implémentés techniquement ; essais joueurs en attente, voir le [point 26](../suivi/26-reperes-incidents.md). Base de la planification : prototype 0.13, commit `f252baf`.
+Date : 18 octobre 2026. Candidat courant 0.23 : familles, fiches et vues extraites. La 0.22 est clôturée au commit 2b65f07 et sa CI est réussie. Essais humains à réaliser. Voir audit et point 28.
 
 Ce dossier organise le développement à venir à partir des captures fournies par le joueur. Les éléments marqués « proposé » ne sont pas encore développés. Les tâches terminées sont identifiées dans le backlog et reliées à leur point de suivi.
 
@@ -16,7 +16,7 @@ Le [plan général](../plan-developpement.md) conserve les objectifs de la versi
 
 ## Priorité proposée
 
-Les lots A à F sont implémentés techniquement et vérifiés automatiquement. CNT-04 et FIN-03 restent partiels : essais physiques, auditifs et joueurs à consigner dans TESTS-JOUEURS.md. La version 0.19 est candidate. Une sauvegarde vérifiée distincte est créée entre les étapes avec scripts/checkpoint.ps1.
+Les lots A à F sont implémentés techniquement et vérifiés automatiquement. CNT-04 et FIN-03 restent partiels : essais physiques, auditifs et joueurs à consigner dans TESTS-JOUEURS.md. La version 0.23 reste candidate : essais humains à consigner. Une sauvegarde vérifiée distincte est créée entre les étapes avec scripts/checkpoint.ps1.
 
 Les étiquettes 0.14 et suivantes sont des versions candidates, sans date de livraison engagée. Un lot peut être fractionné s'il devient trop large.
 
@@ -34,4 +34,4 @@ La 0.20 ajoute trois compétences, Réseaux fragiles et douze incidents variable
 
 ## Suite de l'audit du 18 octobre
 
-0.21 clôturée (9018202). 0.22 : ciblage réactif, réponses intégrées, Double relais obligatoire et sauvegarde 7 ; voir [point 27](../suivi/27-crises-reactives.md). Prochain lot : familles de compétences, effets comparés, découpage du contrôleur et protocole joueurs. Les essais physiques ne sont pas réalisés.
+0.21 clôturée (9018202). 0.22 : ciblage réactif, réponses intégrées, Double relais obligatoire et sauvegarde 7 ; voir [point 27](../suivi/27-crises-reactives.md). Lot 0.23 développé : familles, effets comparés, contrôleur découpé. Prochaine étape : sessions physiques et corrections observées. Les essais physiques ne sont pas réalisés.

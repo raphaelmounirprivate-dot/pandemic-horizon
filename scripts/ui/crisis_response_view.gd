@@ -17,7 +17,9 @@ static func build(ui, parent: Control) -> void:
 				ui.feedback.play_cue("purchase")
 				ui.autosave()
 				ui.show_game()
-			else: ui.decision_notice.text = error
+			else:
+				ui.decision_notice.text = error
+				ui.decision_notice.show()
 		,column)
 		button.add_theme_font_size_override("font_size",13)
 		ui.decision_buttons[id] = button
@@ -26,4 +28,5 @@ static func build(ui, parent: Control) -> void:
 		column.add_child(detail)
 	parent.add_child(ui._label("Choix irréversible · Sans choix : subir gratuitement · Les routes fermées restent fermées",12,ui.AMBER))
 	ui.decision_notice = ui._label("",13,ui.AMBER)
+	ui.decision_notice.visible = false
 	parent.add_child(ui.decision_notice)

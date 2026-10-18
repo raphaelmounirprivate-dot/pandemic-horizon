@@ -14,6 +14,7 @@ const ACCENT = Color("69d6bd")
 const AMBER = Color("efbc70")
 const CONFIG_PATH = "user://settings.cfg"
 
+const Skills = preload("res://scripts/ui/skill_presenter.gd")
 var world = World.new()
 var screen: String = "menu"
 var paused: bool = true
@@ -644,14 +645,14 @@ func _reset_screen(title: String, subtitle: String) -> void:
 		margin.add_theme_constant_override("margin_" + side, 16 if screen == "game" else 24)
 	add_child(margin)
 	body = VBoxContainer.new()
-	if screen == "game": body.add_theme_constant_override("separation",6)
+	if screen == "game": body.add_theme_constant_override("separation",4)
 	margin.add_child(body)
 	var heading = HBoxContainer.new()
 	body.add_child(heading)
 	var title_label = _label(title, 30)
 	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	heading.add_child(title_label)
-	heading.add_child(_label("PROTOTYPE 0.22", 16, MUTED))
+	heading.add_child(_label("PROTOTYPE 0.23", 16, MUTED))
 	body.add_child(_label(subtitle, 16, MUTED))
 
 func _label(text: String, font_size: int = 18, color: Color = INK) -> Label:
@@ -670,248 +671,16 @@ func _button(text: String, action: Callable, parent: Node) -> Button:
 	return button
 
 func show_menu() -> void:
-	if tutorial != null: _restore_tutorial_session()
-	if screen == "game" or screen == "result": autosave()
-	screen = "menu"
-	paused = true
-	elapsed = 0.0
-	_reset_screen("Pandemic Horizon", "Un monde connecté. Des choix qui changent la trajectoire.")
-	var center = HBoxContainer.new()
-	center.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	body.add_child(center)
-	var presentation = VBoxContainer.new()
-	presentation.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	center.add_child(presentation)
-	var spacer = Control.new()
-	spacer.custom_minimum_size.y = 0
-	presentation.add_child(spacer)
-	var identity = HBoxContainer.new()
-	presentation.add_child(identity)
-	var emblem = load("res://scripts/ui/agent_emblem.gd").new()
-	emblem.custom_minimum_size = Vector2(72,72)
-	emblem.tooltip_text = "NACRE · Emblème abstrait de réseau, sans représentation biologique réelle."
-	identity.add_child(emblem)
-	identity.add_child(_label("NACRE\nChaque région compte.",26))
-	var description = _label("Agent fictif dans 24 régions reliées.\nObjectif : toucher 90 % avant le remède.",18)
-	presentation.add_child(description)
-	menu_scenario_detail = _label("", 16, MUTED)
-	menu_scenario_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	presentation.add_child(menu_scenario_detail)
-	menu_difficulty_detail = _label("", 16, AMBER)
-	presentation.add_child(menu_difficulty_detail)
-	objective_choice = CheckButton.new()
-	objective_choice.text = "Objectif facultatif : Premiers relais"
-	objective_choice.custom_minimum_size.y = 44
-	objective_choice.button_pressed = not objective_id.is_empty()
-	objective_choice.toggled.connect(func(enabled): objective_id = World.Objectives.for_scenario(scenario_id).get("id","") if enabled else "")
-	var optional_choices = HBoxContainer.new()
-	presentation.add_child(optional_choices)
-	objective_choice.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	optional_choices.add_child(objective_choice)
-	decision_choice = CheckButton.new()
-	decision_choice.text = "Décision logistique (J28)"
-	decision_choice.custom_minimum_size.y = 44
-	decision_choice.button_pressed = decision_enabled
-	decision_choice.tooltip_text = "Événement facultatif Dégel : options, coûts et effets présentés au jour 28."
-	decision_choice.toggled.connect(func(enabled): decision_enabled = enabled)
-	optional_choices.add_child(decision_choice)
-	menu_objective_detail = _label("", 16, MUTED)
-	menu_objective_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	presentation.add_child(menu_objective_detail)
-	var profile_choices = HBoxContainer.new()
-	presentation.add_child(profile_choices)
-	var learning = HBoxContainer.new()
-	presentation.add_child(learning)
-	_button("Tutoriel guidé", start_tutorial, learning)
-	_button("Aide [F1]", open_help, learning)
-	advanced_choice = CheckButton.new()
-	advanced_choice.text = "Catalogue enrichi"
-	advanced_choice.custom_minimum_size.y = 44
-	advanced_choice.button_pressed = advanced_mode
-	advanced_choice.tooltip_text = "Profil distinct : 18 évolutions de base, 21 dans Dégel, événements supplémentaires. Les parties classiques gardent leurs règles."
-	advanced_choice.toggled.connect(func(enabled):
-		advanced_mode = enabled
-		_update_menu_choices(_menu_catalog()))
-	profile_choices.add_child(advanced_choice)
-	crises_choice = CheckButton.new()
-	crises_choice.text = "Aléas et résilience (+3)"
-	crises_choice.custom_minimum_size.y = 44
-	crises_choice.button_pressed = crises_mode
-	crises_choice.tooltip_text = "Douze aléas tirés par graine, huit types favorables/défavorables à la diffusion et trois compétences de protection. Active le catalogue enrichi."
-	crises_choice.toggled.connect(func(enabled):
-		crises_mode = enabled
-		_update_menu_choices(_menu_catalog()))
-	profile_choices.add_child(crises_choice)
-	reactive_choice = CheckButton.new()
-	reactive_choice.text = "Crises réactives"
-	reactive_choice.custom_minimum_size.y = 44
-	reactive_choice.button_pressed = reactive_mode
-	reactive_choice.tooltip_text = "Ciblage des foyers actifs, réponse à la première panne aérienne et Double relais obligatoire dans Réseaux fragiles. Profil de sauvegarde distinct."
-	reactive_choice.toggled.connect(func(enabled):
-		reactive_mode = enabled
-		_update_menu_choices(_menu_catalog()))
-	profile_choices.add_child(reactive_choice)
-	learning.add_child(_label("Graine",16,MUTED))
-	var seed_input = SpinBox.new()
-	seed_input.name = "seed_input"
-	seed_input.min_value = 0
-	seed_input.max_value = 999999999
-	seed_input.step = 1
-	seed_input.value = simulation_seed
-	seed_input.custom_minimum_size = Vector2(140,44)
-	seed_input.tooltip_text = "Même graine et mêmes choix : même tirage des aléas. Recommencer conserve cette graine."
-	seed_input.value_changed.connect(func(value): simulation_seed = int(value))
-	learning.add_child(seed_input)
-	_button("Autre",func(): seed_input.value = abs((str(Time.get_unix_time_from_system())+str(Time.get_ticks_usec())).hash()) % 1000000000,learning)
-	var actions = VBoxContainer.new()
-	actions.custom_minimum_size.x = 320
-	center.add_child(actions)
-	var data = JSON.parse_string(FileAccess.get_file_as_string(World.DATA_PATH))
-	var error = World.validate_data(data)
-	var catalog: Variant = _menu_catalog()
-	if error.is_empty():
-		error = World.Scenarios.validate(catalog, data, World.Content.load_files())
-	if not error.is_empty():
-		actions.add_child(_label(error))
-		_button("Quitter", func(): get_tree().quit(), actions)
-		return
-	actions.add_child(_label("Scénario", 18))
-	scenario_choice = OptionButton.new()
-	scenario_choice.custom_minimum_size.y = 44
-	for i in range(catalog.scenarios.size()):
-		scenario_choice.add_item(catalog.scenarios[i].name)
-		scenario_choice.set_item_metadata(i, catalog.scenarios[i].id)
-		if catalog.scenarios[i].id == scenario_id: scenario_choice.select(i)
-	scenario_choice.item_selected.connect(func(index):
-		scenario_id = scenario_choice.get_item_metadata(index)
-		_update_menu_choices(catalog)
-	)
-	actions.add_child(scenario_choice)
-	actions.add_child(_label("Difficulté", 18))
-	difficulty_choice = OptionButton.new()
-	difficulty_choice.custom_minimum_size.y = 44
-	for i in range(catalog.difficulties.size()):
-		difficulty_choice.add_item(catalog.difficulties[i].name)
-		difficulty_choice.set_item_metadata(i, catalog.difficulties[i].id)
-		if catalog.difficulties[i].id == difficulty_id: difficulty_choice.select(i)
-	difficulty_choice.item_selected.connect(func(index):
-		difficulty_id = difficulty_choice.get_item_metadata(index)
-		_update_menu_choices(catalog)
-	)
-	actions.add_child(difficulty_choice)
-	actions.add_child(_label("Région de départ", 18))
-	var choices = OptionButton.new()
-	choices.custom_minimum_size.y = 44
-	start_choice = choices
-	for i in range(data.regions.size()):
-		choices.add_item(data.regions[i].name)
-		choices.set_item_metadata(i, data.regions[i].id)
-		if data.regions[i].id == start_id:
-			choices.select(i)
-	choices.item_selected.connect(func(index): start_id = choices.get_item_metadata(index))
-	actions.add_child(choices)
-	_update_menu_choices(catalog)
-	var launch = _button("Nouvelle partie", start_game, actions)
-	if not world.regions.is_empty() and world.outcome.is_empty():
-		_button("Reprendre la partie", show_game, actions)
-	_button("Paramètres", show_settings, actions)
-	_button("Sauvegardes", open_saves, actions)
-	_button("Quitter", request_quit, actions)
-	var footer = _label("Simulation abstraite · Les chiffres sont des paramètres de jeu fictifs.\n" + (save_notice if not save_notice.is_empty() else "Sauvegardes locales disponibles depuis le menu ou la partie."), 16, MUTED)
-	footer.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body.add_child(footer)
-	launch.grab_focus()
+	load("res://scripts/ui/menu_view.gd").build(self)
 
 func _menu_catalog() -> Dictionary:
-	return World.Crises.catalog(World.Scenarios.load_catalog())
+	return load("res://scripts/ui/menu_view.gd").catalog(self)
 
 func _update_menu_choices(catalog: Dictionary) -> void:
-	if reactive_mode: crises_mode = true
-	if scenario_id == "fragile2042": crises_mode = true
-	if crises_mode: advanced_mode = true
-	crises_choice.set_pressed_no_signal(crises_mode)
-	crises_choice.disabled = scenario_id == "fragile2042" or reactive_mode
-	advanced_choice.set_pressed_no_signal(advanced_mode)
-	advanced_choice.disabled = crises_mode
-	decision_choice.visible = scenario_id == "degel2042"
-	if scenario_id != "degel2042": decision_enabled = false
-	decision_choice.set_pressed_no_signal(decision_enabled)
-	var optional = World.Objectives.for_scenario(scenario_id)
-	objective_choice.disabled = optional.is_empty()
-	objective_choice.text = "Objectif facultatif : " + optional.get("name","indisponible")
-	if objective_id != optional.get("id",""):
-		objective_id = ""
-	objective_choice.set_pressed_no_signal(not objective_id.is_empty())
-	menu_objective_detail.text = World.Objectives.description(optional)
-	if reactive_mode:
-		menu_objective_detail.text = "Crises réactives : choix à la première panne aérienne."
-		if scenario_id == "fragile2042": menu_objective_detail.text += "\nObligatoire : Centrale → Méridien et Savane, 6 000 unités chacun avant J60 inclus."
-	for item in catalog.scenarios:
-		if item.id == scenario_id:
-			start_choice.disabled = item.forced_start != ""
-			if item.forced_start != "": start_id = item.forced_start
-			menu_scenario_detail.text = item.description
-			menu_scenario_detail.text += "\n" + ("Profil enrichi : %d évolutions · %d événements programmés." % [21 if scenario_id == "degel2042" else 18,12 if scenario_id == "degel2042" else 14] if advanced_mode else "Profil classique : %d évolutions · règles historiques conservées." % [9 if scenario_id == "degel2042" else 6])
-			if crises_mode: menu_scenario_detail.text = item.description + "\nProfil aléas : %d compétences · 12 aléas + %d événements fixes.\nConséquences favorables ou défavorables à la diffusion." % [24 if scenario_id == "degel2042" else 21,12 if scenario_id == "degel2042" else 14]
-	for i in range(start_choice.item_count):
-		if start_choice.get_item_metadata(i) == start_id: start_choice.select(i)
-	for item in catalog.difficulties:
-		if item.id == difficulty_id:
-			menu_difficulty_detail.text = "%s · Recherche ×%.2f · Seuil de détection ×%.2f\nScore ×%.2f · Objectif : 90 %% avant le remède" % [item.name, item.cure_multiplier, item.detection_multiplier, item.score_multiplier]
+	load("res://scripts/ui/menu_view.gd").update_choices(self,catalog)
 
 func show_settings() -> void:
-	screen = "settings"
-	paused = true
-	_reset_screen("Paramètres", "Préférences de confort conservées sur ce PC, sans modifier la partie.")
-	var fullscreen = CheckButton.new()
-	fullscreen.text = "Plein écran"
-	fullscreen.button_pressed = DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN
-	fullscreen.custom_minimum_size.y = 48
-	fullscreen.toggled.connect(func(enabled):
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN if enabled else DisplayServer.WINDOW_MODE_WINDOWED)
-		_save_preferences()
-	)
-	body.add_child(fullscreen)
-	for item in [["Réduire les mouvements",reduced_motion,"motion"],["Agrandir le texte de lecture (aide, actualités et bilan)",reading_large,"reading"],["Activer les sons de retour",sounds_enabled,"sound"]]:
-		var toggle = CheckButton.new()
-		toggle.name = item[2]
-		toggle.text = item[0]
-		toggle.button_pressed = item[1]
-		toggle.custom_minimum_size.y = 44
-		toggle.toggled.connect(func(active):
-			match item[2]:
-				"motion": reduced_motion = active
-				"reading": reading_large = active
-				"sound": sounds_enabled = active
-			_save_preferences()
-			if item[2] == "sound" and active: feedback.play_cue("purchase")
-		)
-		body.add_child(toggle)
-	var volume_row = HBoxContainer.new()
-	volume_row.name = "audio_volume"
-	body.add_child(volume_row)
-	var volume_label = _label("Volume : %d %%" % roundi(sound_volume*100),18)
-	volume_label.custom_minimum_size.x = 160
-	volume_row.add_child(volume_label)
-	var volume = HSlider.new()
-	volume.name = "volume"
-	volume.min_value = 0
-	volume.max_value = 1
-	volume.step = 0.05
-	volume.value = sound_volume
-	volume.custom_minimum_size = Vector2(300,44)
-	volume.tooltip_text = "Volume des sons facultatifs ; zéro coupe le son."
-	volume.value_changed.connect(func(level):
-		sound_volume = level
-		volume_label.text = "Volume : %d %%" % roundi(level*100)
-		_save_preferences()
-	)
-	volume_row.add_child(volume)
-	body.add_child(_label("Espace : pause · 1 / 2 / 4 : vitesse · F1 : aide · F3 : monde\nÉchap : retour · Tab / Maj + Tab : parcourir · Entrée : activer",18))
-	status_label = _label("Les mouvements réduits figent les véhicules ; la simulation continue.\nLes sons sont facultatifs : chaque action conserve son retour visuel.", 18, MUTED)
-	body.add_child(status_label)
-	_button("Retour au menu", show_menu, body)
-	fullscreen.grab_focus()
+	load("res://scripts/ui/settings_view.gd").build(self)
 
 func start_game() -> void:
 	reset_map_camera = true
@@ -978,13 +747,13 @@ func show_game() -> void:
 	map_column.add_child(effects_label)
 	var sidebar = VBoxContainer.new()
 	sidebar.custom_minimum_size.x = 500
-	sidebar.add_theme_constant_override("separation",4)
+	sidebar.add_theme_constant_override("separation",2)
 	content.add_child(sidebar)
 	region_details = _label("",14)
 	sidebar.add_child(region_details)
 	transport_details = _label("",13,MUTED)
 	sidebar.add_child(transport_details)
-	sidebar.add_child(_label("Évolutions · liens de la sélection" if world.expanded_content else "Évolutions · arbre complet",20))
+	load("res://scripts/ui/family_symbol.gd").legend(self,sidebar)
 	specialization_details = _label("",13,AMBER)
 	specialization_details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	sidebar.add_child(specialization_details)
@@ -993,20 +762,21 @@ func show_game() -> void:
 	grid.world = world
 	grid.columns = 6 if world.expanded_content else 3
 	grid.add_theme_constant_override("h_separation",8)
-	grid.add_theme_constant_override("v_separation",10 if world.expanded_content else 14)
+	grid.add_theme_constant_override("v_separation",4 if world.expanded_content else 6)
 	if world.expanded_content:
 		var graph_margin = MarginContainer.new()
-		graph_margin.add_theme_constant_override("margin_top",8)
+		graph_margin.add_theme_constant_override("margin_top",4)
 		sidebar.add_child(graph_margin)
 		graph_margin.add_child(grid)
 	else: sidebar.add_child(grid)
-	for id in world.evolutions:
+	for id in Skills.ordered(world):
 		var group = VBoxContainer.new()
 		group.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		group.add_theme_constant_override("separation",3)
+		group.add_theme_constant_override("separation",2)
 		grid.add_child(group)
 		var button = load("res://scripts/ui/evolution_node.gd").new()
 		button.evolution_id = id
+		button.family_id = Skills.family(id).get("id","")
 		button.custom_minimum_size.y = 44
 		button.pressed.connect(func():
 			select_evolution(id)
@@ -1029,7 +799,7 @@ func show_game() -> void:
 		group.add_child(reason)
 		reason.visible = not world.expanded_content
 		evolution_reasons[id] = reason
-	evolution_detail = _label("",13,MUTED)
+	evolution_detail = _label("",12,MUTED)
 	evolution_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	sidebar.add_child(evolution_detail)
 	evolution_purchase = _button("",func(): buy_evolution(selected_evolution),sidebar)
@@ -1099,6 +869,7 @@ func build_inline_decision(parent: Control) -> void:
 		return
 	if world.decision.is_empty(): return
 	decision_notice = _label("",13,AMBER)
+	decision_notice.visible = false
 	var title = World.Decisions.summary(world)
 	if world.decision_profile == "0.11": title += " · Tarif historique 6 pts"
 	parent.add_child(_label(title,13,AMBER))
@@ -1117,7 +888,9 @@ func build_inline_decision(parent: Control) -> void:
 					feedback.play_cue("purchase")
 					autosave()
 					show_game()
-				else: decision_notice.text = error
+				else:
+					decision_notice.text = error
+					decision_notice.show()
 			,column)
 			button.add_theme_font_size_override("font_size",13)
 			decision_buttons[id] = button
@@ -1167,7 +940,7 @@ func _refresh() -> void:
 		var reason = world.purchase_reason(id)
 		if tutorial != null and not acquired and (tutorial.stage != 2 or id != "transmission"):
 			reason = "Hors exercice" + (" · " + reason if not reason.is_empty() else "")
-		evolution_buttons[id].tooltip_text = evolution.name + " · " + evolution.effect + " " + reason
+		evolution_buttons[id].tooltip_text = Skills.family(id).get("name","") + " · " + evolution.name + "\n" + Skills.comparison(world,id) + " · Coefficients hors climat/aléas\n" + evolution.effect + " " + reason
 		var short_reason = "Prérequis manquant" if reason.begins_with("Prérequis") else ("Incompatible" if "Incompatible" in reason else reason)
 		if reason.begins_with("Hors exercice"): short_reason = "Prérequis (exercice)" if "Prérequis" in reason else "Hors exercice"
 		evolution_reasons[id].text = "Acquise" if acquired else ("Disponible" if reason.is_empty() else short_reason)
@@ -1176,7 +949,7 @@ func _refresh() -> void:
 	var chosen = world.evolutions[selected_evolution]
 	var full_reason = "Acquise" if selected_evolution in world.purchased else world.purchase_reason(selected_evolution)
 	if tutorial != null and (tutorial.stage != 2 or selected_evolution != "transmission"): full_reason = "Hors exercice · " + full_reason
-	evolution_detail.text = "%s\n%s" % [chosen.effect,"Disponible" if full_reason.is_empty() else full_reason]
+	evolution_detail.text = Skills.details(world,selected_evolution,full_reason)
 	evolution_purchase.text = "Évoluer : %s · %d pts" % [chosen.name,chosen.cost]
 	evolution_purchase.disabled = not world.purchase_reason(selected_evolution).is_empty() or (tutorial != null and (tutorial.stage != 2 or selected_evolution != "transmission"))
 	evolution_tree.queue_redraw()
@@ -1274,48 +1047,8 @@ func close_overview() -> void:
 	if overview_return == "result" or not world.outcome.is_empty(): show_result()
 	else: show_game()
 func show_overview() -> void:
-	screen = "overview"
-	paused = true
-	elapsed = 0.0
-	_reset_screen("Monde · Actualités et bilan","%s · %s · Jour %d · %s" % [world.scenario.name,world.difficulty.name,world.day,world.outcome_text()])
-	var totals = world.totals()
-	body.add_child(_label("Sains : %d · Actifs : %d · Retirés : %d · Touchés : %.1f %% · Remède : %.1f %%" % [totals.healthy,totals.active,totals.removed,world.coverage()*100,world.cure],16))
-	if not world.objective.is_empty():
-		var objective_line = _label("Objectif facultatif · "+world.Objectives.summary(world),13,MUTED)
-		objective_line.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		body.add_child(objective_line)
-	history_chart = load("res://scripts/ui/history_chart.gd").new()
-	history_chart.world = world
-	history_chart.custom_minimum_size.y = 190
-	body.add_child(history_chart)
-	var columns = HBoxContainer.new()
-	columns.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	columns.add_theme_constant_override("separation",16)
-	body.add_child(columns)
-	var purchase_lines: Array[String] = []
-	for purchase in world.purchase_history: purchase_lines.append("J%d · %s · %d pts" % [purchase.day,world.evolutions[purchase.id].name,purchase.cost])
-	if purchase_lines.is_empty(): purchase_lines.append("Aucun achat daté enregistré.")
-	if world.purchase_history.size() < world.purchased.size(): purchase_lines.append("Dates antérieures absentes de cette sauvegarde.")
-	var effects: Array[String] = Incidents.active_lines(world)
-	if effects.is_empty(): effects.append("Aucun effet temporaire.")
-	if not world.decision.is_empty() and world.Decisions.summary(world) not in effects: effects.append(world.Decisions.summary(world))
-	for section in [{"title":"Achats datés","text":"\n".join(purchase_lines)},{"title":"Effets en cours","text":"\n".join(effects)},{"title":"Actualités · plus récentes en haut","text":"\n".join(reversed_news())}]:
-		var column = VBoxContainer.new()
-		column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		columns.add_child(column)
-		column.add_child(_label(section.title,16,ACCENT))
-		var content = RichTextLabel.new()
-		content.custom_minimum_size.y = 130
-		content.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		content.focus_mode = Control.FOCUS_ALL
-		content.add_theme_font_size_override("normal_font_size",18 if reading_large else 14)
-		content.text = section.text
-		column.add_child(content)
-	var controls = HBoxContainer.new()
-	body.add_child(controls)
-	var back = _button("Retour [F3]",close_overview,controls)
-	_button("Aide [F1]",open_help,controls)
-	back.grab_focus()
+	load("res://scripts/ui/overview_view.gd").build(self)
+
 func reversed_news() -> Array[String]:
 	var news = world.journal.duplicate()
 	news.reverse()

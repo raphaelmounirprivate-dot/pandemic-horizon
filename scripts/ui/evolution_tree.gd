@@ -7,8 +7,9 @@ func _ready() -> void:
 	sort_children.connect(func(): call_deferred("queue_redraw"))
 func _draw() -> void:
 	if world == null: return
+	var lineage = load("res://scripts/ui/skill_presenter.gd").lineage(world,selected_id)
 	for id in nodes:
-		if nodes.size() > 9 and id != selected_id: continue
+		if nodes.size() > 9 and id not in lineage: continue
 		var target = nodes[id]
 		for required in world.evolutions[id].requires:
 			if not nodes.has(required): continue

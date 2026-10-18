@@ -46,3 +46,5 @@ Créer `26-<lot>.md` pour la prochaine livraison. Y noter périmètre, fichiers 
 - [Point 25 — Aléas et résilience](25-aleas-resilience.md) : scénario, compétences, incidents tirés par graine et format 6.
 
 - [27 — Crises réactives et Double relais](27-crises-reactives.md)
+
+- [28 — Familles et validation après audit](28-familles-validation.md)

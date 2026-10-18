@@ -51,3 +51,15 @@ Pour démarrer une tâche, changer son statut explicitement et créer sa fiche a
 ## Extension 0.20 — implémentée
 
 ALE-01 : option et graine reproductible ; ALE-02 : huit types d’incidents, cumul et expiration ; ALE-03 : trois compétences à prérequis et scénario Réseaux fragiles ; ALE-04 : format 6 et compatibilité des anciens profils ; ALE-05 : mesures et captures. Voir le [point 25](../suivi/25-aleas-resilience.md). ALE-06 : compréhension/équilibrage avec des joueurs, à réaliser.
+
+## Audit du 18 octobre — état révisé
+
+| ID | Tâche | État | Preuve / suite |
+| --- | --- | --- | --- |
+| AUD-01 | Clôture 0.21 et provenance | Terminé | 9018202, archive et checkpoint ; CI export/paquet validée en 0.22 |
+| AUD-02 | Ciblage réactif régional | Terminé techniquement | 0.22, rapport apparié 48/76 → 0/76 |
+| AUD-03 | Réponses à une crise | Implémenté, intérêt à vérifier | Détour/subir/occasion ; 270 simulations ; sessions attendues |
+| AUD-04 | Familles, ascendance et coefficients | Implémenté en 0.23 | Point 28 ; compréhension à observer |
+| AUD-05 | Double relais obligatoire | Implémenté et mesuré | 0.22 ; autres stratégies à explorer |
+| AUD-06 | Humains / DPI / autre PC | À réaliser | Protocole et fiches prêts, aucun résultat humain |
+| AUD-07 | Découpage progressif | Partiel | Trois vues extraites ; suite : compétences et sauvegardes |

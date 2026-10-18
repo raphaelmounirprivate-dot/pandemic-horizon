@@ -1,6 +1,6 @@
 ---
 name: Pandemic Horizon
-description: Monde en crise, commandes intégrées, confort et crises réactives facultatives du prototype Godot 0.22
+description: Monde en crise, commandes intégrées et familles de compétences de la candidate Godot 0.23
 colors:
   ink: "#e1eee9"
   muted: "#a7c4c9"
@@ -43,12 +43,14 @@ spacing:
   outer: "24px"
   game-outer: "16px"
   vertical: "8px"
-  game-vertical: "6px"
-  sidebar: "4px"
+  game-vertical: "4px"
+  sidebar: "2px"
   horizontal: "16px"
   upgrade-grid: "8px"
-  upgrade-group: "3px"
-  upgrade-row: "14px"
+  upgrade-group: "2px"
+  upgrade-row: "6px"
+  upgrade-row-enriched: "4px"
+  upgrade-graph-top: "4px"
 components:
   button:
     backgroundColor: "{colors.button}"
@@ -110,6 +112,10 @@ Les titres des écrans utilisent 30 px, celui du jeu 22 px, les indicateurs et l
 
 ## Layout
 
+La 0.23 conserve le monde visuel, les couleurs, les angles et les cibles de 44 px. La grille enrichie a six colonnes séparées de 8 px horizontalement et de 4 px verticalement, avec une marge supérieure de 4 px. La séparation verticale principale vaut 4 px ; la colonne droite et les groupes de nœuds espacent leurs éléments de 2 px. La fiche complète utilise le 12 px existant. Le classique garde trois colonnes et 6 px entre rangées. Jusqu’à 24 nœuds restent simultanément visibles sans défilement. Les notices logistiques et réactives vides sont masquées jusqu’à une erreur. Ces valeurs courantes remplacent les espacements historiques décrits ci-dessous.
+
+Les 27 captures finales `.impeccable/review/skills-{classic,enriched,exclusive,resilience,menu,settings,overview,classic-goal,pending}-{1280,1920,2395}.png` couvrent 1280 × 720, 1920 × 1080 et 2395 × 1060. Après les deux premières corrections, des contrôles ont révélé deux débordements dans des états supplémentaires : neuf compétences classiques avec objectif au J45 et 24 compétences avec objectif et décision au J28, Liaisons de secours sélectionnée. La revue indépendante a rouvert les 27 captures, confirmé les corrections et conclu à la livraison sur ce périmètre de débordement et d’états revus. Les 2 972 contrôles ciblés passent ; la suite finale compte 6 061 contrôles réussis sans échec, complétés par cinq contrôles PowerShell d’identité. Les tests réactifs comparent le futur original au futur restauré sur 45 trajectoires, aux bornes de choix et d’expiration et tous les dix jours ; le décompte historique quotidien de la 0.22 reste une preuve séparée. Validation humaine, DPI Windows et second PC restent à réaliser.
+
 Les douze captures 0.22 `.impeccable/review/tactics-{menu,pending,active,fragile}-{1280,1920,2395}.png` ont été vues aux dimensions 1280 × 720, 1920 × 1080 et 2395 × 1060. La revue indépendante de finition conclut à la livraison sans correction requise sur le périmètre interface/code ; 15 978 contrôles réactifs et 3 444 contrôles de non-régression passent. Ces preuves ne constituent pas une validation avec des joueurs, de l'écoute physique, du DPI Windows, d'un second PC ou d'une publication de binaire. Cette extension native conserve le monde, les jetons et les compositions existants : aucun raster ni nouvelle composition de référence ; le détecteur web ne s'applique pas.
 
 Les 24 captures 0.21 `.impeccable/review/incidents-{none,pending,storm,earthquake,communications,favorable,focused,overview}-{1280,1920,2395}.png` couvrent absence d’incident, choix en attente, tempête, séisme, communications mondiales, effet favorable, localisation et Monde, aux dimensions 1280 × 720, 1920 × 1080 et 2395 × 1060. La revue conclut à la livraison sans correction requise ; 3 444 contrôles passent, dont 129 ciblés. Ces preuves ne valident pas les essais humains, l’écoute physique, le DPI Windows ou un second PC. Palette, typographie, angles et grille des achats sont conservés.
@@ -148,6 +154,12 @@ Les boutons généraux ont un rayon de 6 px, un focus transparent bordé de turq
 Le fond local Natural Earth `assets/maps/world-land.geojson` dessine continents et contours vectoriels. Les routes sont courbes ; une fermeture ajoute des segments et une croix ambre au milieu. Aucun raster n’est livré par cette réalisation.
 
 ## Components
+
+**Familles et inspection (0.23).** `skill_presenter.gd` lit `data/skill-families.json` : Diffusion, Discrétion et Résilience couvrent les 24 compétences une seule fois au total. L’ordre de présentation est distinct de l’ordre des achats. `family_symbol.gd` dessine réseau, bouclier et anneau avec croix dans la légende et dans les nœuds, avec le neutre existant ; la légende emploie des icônes de 20 × 20 px et du texte de 16 px. En enrichi, `evolution_tree.gd` trace l’ascendance transitive de la sélection dans le corridor existant, au lieu des seuls liens directs ; le classique garde l’arbre complet. Liens acquis turquoise, autres liens neutres et sélection bordée turquoise conservent leur sens.
+
+La fiche de 12 px expose nom complet et famille, effet rédigé, comparaison avant/après et état précis : disponible, refus motivé ou acquise. « Hors climat/aléas » qualifie ces coefficients issus des seuls achats ; l’infobulle porte la même qualification. Les valeurs restent identiques après acquisition. L’effet rédigé reste nécessaire pour comprendre les restrictions que les coefficients seuls n’expliquent pas. Le bouton d’achat séparé garde son texte de 13 px et sa cible de 44 px. Aucun coût, prérequis, format de sauvegarde ou comportement de simulation n’est modifié par ces métadonnées.
+
+**Construction des écrans (0.23).** `menu_view.gd`, `settings_view.gd` et `overview_view.gd` construisent menu, paramètres et Monde. `main.gd`, de 1 089 lignes, conserve ses points d’entrée, rappels et orchestration. Ce découpage réemploie le thème natif et les commandes existantes ; il ne crée ni nouveau composant HTML ni nouvelle identité graphique. Cette extension est guidée par le code, sans nouveau raster ou composition de référence approuvée.
 
 **Crises réactives (0.22).** La case « Crises réactives », facultative et décochée par défaut, implique catalogue enrichi et aléas. Son infobulle annonce le ciblage des foyers actifs, la réponse à la première panne aérienne et Double relais obligatoire dans Réseaux fragiles. Les profils précédents restent disponibles. Le ciblage au déclenchement utilise uniquement les régions ayant actifs et sains ; les repères existants lisent la cible réelle résolue, sauvegardée dans le profil `tactics-0.22`, format 7.
 

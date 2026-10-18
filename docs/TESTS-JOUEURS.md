@@ -1,4 +1,4 @@
-# Essais joueurs — candidat Windows 0.20
+# Essais joueurs — candidat Windows 0.23
 
 Statut : **à réaliser**. Ce formulaire ne représente aucun essai humain accompli. Les tests automatiques et captures sont consignés séparément dans les points 19 à 24.
 
@@ -40,3 +40,13 @@ La validation du cycle et l'étiquette 1.0 restent conditionnées à ces essais.
 - [ ] Sauvegarder en pleine crise, fermer puis reprendre ; comparer les jours suivants et les préférences du menu.
 
 Rapport automatique de référence : EQUILIBRAGE-0.20-ALEAS.md. Ces cases restent à cocher uniquement après observation physique réelle.
+
+## Session ciblée après l'audit — non réalisée
+
+Utiliser le [protocole 0.23](tests-joueurs/README.md) et une [fiche par session](tests-joueurs/fiche-session.md). Le registre CSV reste vide tant qu'aucune observation n'a été faite.
+
+- [ ] Expliquer les trois familles, un prérequis et la contrepartie d'un achat à partir de la fiche complète.
+- [ ] Distinguer coefficients hors climat/aléas et effets réellement cumulés.
+- [ ] Comparer détour, subir et occasion sur la même graine ; relever coût, délai, durée et achat reporté.
+- [ ] Expliquer pourquoi Double relais est obligatoire dans Réseaux fragiles réactif et Relais arctiques reste facultatif dans Dégel.
+- [ ] Identifier le binaire par BUILD/VERSION/SHA-256 ; vérifier un autre PC et les échelles Windows.

@@ -27,6 +27,11 @@ func run(tree: SceneTree, check: Callable) -> void:
 						check.call(result == reason,"Réponse : éligibilité et achat concordants")
 						check.call(world.points == before-(int(World.Tactics.option(choice).cost) if reason.is_empty() else 0),"Débit exact, refus sans mutation")
 					world.step()
+					# Sample boundaries across all 45 legal trajectories. Replaying the
+					# original against the restored world verifies the future, rather
+					# than comparing two identical restores to each other.
+					var response_day = int(world.tactics.response.get("day",-100))
+					if world.day % 10 != 0 and not World.Tactics.pending(world) and world.day not in [response_day,response_day+1,response_day+6,response_day+7] and world.outcome.is_empty(): continue
 					var encoded = store.encode(world)
 					check.call(encoded.format == 7,"Format 7 distinct")
 					var loaded = store.decode(JSON.parse_string(JSON.stringify(encoded)))
@@ -34,9 +39,8 @@ func run(tree: SceneTree, check: Callable) -> void:
 					if not loaded.error.is_empty(): break
 					check.call(stable(store,world) == stable(store,loaded.world),"Cibles et réponse conservées")
 					loaded.world.step()
-					var twin = store.decode(encoded).world
-					twin.step()
-					check.call(stable(store,loaded.world) == stable(store,twin),"Reprise déterministe avec effets")
+					world.step()
+					check.call(stable(store,loaded.world) == stable(store,world),"Reprise identique à la partie originale avec effets")
 					if not world.outcome.is_empty(): break
 				for mutation in ["target","cost","goal","format"]:
 					var corrupt = store.encode(world)
