@@ -11,6 +11,8 @@ Ce dossier organise le développement à venir à partir des captures fournies p
 3. [Liste des tâches](03-backlog.md) : identifiants stables et état de chaque tâche.
 4. [Validation et modèle de fiche](04-validation.md) : vérifier un lot et préparer le suivant.
 5. [Analyse du 18 octobre 2026](05-audit-2026-10-18.md) : état local/publié, mesures des aléas et améliorations classées par priorité.
+6. [Analyse du 19 octobre 2026](06-analyse-2026-10-19.md) : lecture extérieure du dépôt, risques P0 à P2.
+7. [Décision à prendre : formats de sauvegarde](07-decision-formats-sauvegarde.md) : options avant la 1.0, recommandation, non tranché.
 
 Le [plan général](../plan-developpement.md) conserve les objectifs de la version 1.0. Ce dossier détaille la suite immédiate et les pistes ultérieures. Les [points de suivi](../suivi/00-index.md) enregistrent ce qui a réellement été décidé, développé, testé et publié. Le [point 18](../suivi/18-feuille-de-route.md) consigne la création de cette organisation.
 
