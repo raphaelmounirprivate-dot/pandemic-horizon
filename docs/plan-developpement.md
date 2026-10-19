@@ -6,7 +6,7 @@ La [feuille de route de la suite](roadmap/README.md) détaille les inspirations 
 
 Lot A réalisé en 0.14 : exploration de la carte et commandes fixes, voir le [point 19](suivi/19-exploration-carte.md). Les nouveaux véhicules et le contenu supplémentaire restent à développer.
 
-Dépôt : [raphaelmounirprivate-dot/plague-inc-evolved](https://github.com/raphaelmounirprivate-dot/plague-inc-evolved).
+Dépôt : [raphaelmounirprivate-dot/pandemic-horizon](https://github.com/raphaelmounirprivate-dot/pandemic-horizon).
 
 **État actuel :** prototype 0.17 de 24 régions, Standard et Dégel 2042, trois difficultés, phases et évolutions climatiques ; export Windows testé localement. Voir le [point de contrôle 17](suivi/17-monde-et-interface.md) pour les validations et les limites. Diversité du contenu et validation humaine de l'équilibrage restent à réaliser. Ce document conserve la feuille de route complète de la version 1.0 ; ses jalons décrivent les objectifs, pas une liste de fonctionnalités toutes livrées.
 

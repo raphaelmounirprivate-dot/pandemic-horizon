@@ -1,4 +1,4 @@
-# CLAUDE.md — Pandemic Horizon (`plague-inc-evolved`)
+# CLAUDE.md — Pandemic Horizon (dépôt `pandemic-horizon`)
 
 Contexte de travail pour Claude Code (et tout agent de code) sur ce dépôt. À lire en premier, avant toute modification.
 

@@ -1,6 +1,6 @@
 # Pandemic Horizon
 
-Projet de jeu de stratégie original pour PC Windows, inspiré du genre de la simulation de pandémie. Le dépôt porte le nom de travail `plague-inc-evolved` choisi pour le projet ; le jeu sera intitulé **Pandemic Horizon**.
+Projet de jeu de stratégie original pour PC Windows, inspiré du genre de la simulation de pandémie. Le jeu s'intitule **Pandemic Horizon** ; le dépôt GitHub est `pandemic-horizon` (ancien nom de travail `plague-inc-evolved`, renommé le 19 octobre 2026, l'ancienne adresse redirige).
 
 ## État du projet
 
