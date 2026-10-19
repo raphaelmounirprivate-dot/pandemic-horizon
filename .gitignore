@@ -1,15 +1,17 @@
-__pycache__/
-*.py[cod]
-.venv/
+# Godot
+.godot/
+# Local tools, exports, review captures (never committed)
+.tools/
 build/
 dist/
-*.spec
-*.log
+.impeccable/
+# Player data and logs
 saves/
+*.log
+*.tmp
+# Secrets
 .env
 .env.*
 !.env.example
-.godot/
-.tools/
-.impeccable/
-*.tmp
+# Claude Code: personal settings stay local (.claude/skills/ is versioned)
+.claude/settings.local.json
