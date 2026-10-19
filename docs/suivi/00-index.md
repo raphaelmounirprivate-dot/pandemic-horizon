@@ -25,26 +25,26 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 - [Point 20 — Transports visibles](20-transports-visibles.md) : prototype 0.15, véhicules, filtres, terrain et comparaison de rendu ; sauvegarde distincte du lot B.
 - [Point 21 — Évolutions intégrées](21-evolutions-integrees.md) : prototype 0.16, relations, fiche et achat explicite ; sauvegarde distincte du lot C.
 - [Point 22 — Actualités et historique](22-actualites-historique.md) : prototype 0.17, courbes, achats datés, annonces et reprise des anciennes parties sans passé inventé.
-- [Feuille de route de la suite](../roadmap/README.md) : liste vivante des développements, dépendances et critères de fin.
-- [Règles effectives](../REGLES.md) : paramètres du code actuel.
-- [Développement](../DEVELOPPEMENT.md) : préparation, tests et export.
-- [Guide joueur](../GUIDE-JOUEUR.md) : parcours et limites.
+- [Point 23 — Contenu enrichi](23-contenu-enrichi.md) : prototype 0.18, agent NACRE, fiches de scénarios, profil enrichi facultatif et sauvegarde format 5.
+- [Point 24 — Confort et distribution](24-confort-distribution.md) : prototype 0.19, mouvements réduits, lecture agrandie, sons, candidat Windows ; essais humains restant à faire.
+- [Point 25 — Aléas et résilience](25-aleas-resilience.md) : prototype 0.20, incidents tirés par graine, compétences de protection, Réseaux fragiles et format 6.
+- [Point 26 — Repères des incidents](26-reperes-incidents.md) : prototype 0.21, aléas locaux situés sur la carte, F4/Local ; règles et formats inchangés.
+- [Point 27 — Crises réactives et Double relais](27-crises-reactives.md) : prototype 0.22, ciblage au déclenchement, réponses à la panne, Double relais obligatoire et format 7.
+- [Point 28 — Familles et validation après audit](28-familles-validation.md) : candidat 0.23, familles de compétences, fiches comparées, vues extraites, livraison et réserve AVG.
 
-## Priorités après la carte étendue
+## Documents liés
 
-1. Compléter l'essai physique souris/clavier, plein écran et lecture du journal et des choix intégrés ; organiser un essai sur un autre PC Windows. Le parcours synthétique Godot est testé.
-2. Éprouver le tutoriel et l'aide contextuelle auprès de joueurs débutants. Les fonctionnalités de J5 sont implémentées : sauvegardes en 0.5, tutoriel facultatif et aide F1 en 0.6 ; la compréhension et le confort réels restent à valider.
-3. Éprouver le soutien à 3 points et la compréhension du tarif historique 6, puis examiner sa valeur pendant les fenêtres de routes ouvertes. Le lot 16 gagne cinq victoires sans perdre de Relais face au prix 6, à autres paramètres identiques. Cela ne démontre pas un choix optimal dans toutes les parties. Conserver les références 0.7 à 0.11 ; conserver les coefficients 0.12 pendant les essais de la nouvelle présentation 0.13.
-4. J6/J7 : finition et release distribuable.
+- [Historique des versions](../../CHANGELOG.md) : résumé de chaque version.
+- [Feuille de route](../roadmap/README.md) : backlog, audits et décisions ouvertes.
+- [Règles effectives](../REGLES.md) · [Développement](../DEVELOPPEMENT.md) · [Architecture](../ARCHITECTURE.md) · [Guide joueur](../GUIDE-JOUEUR.md).
 
-Créer `26-<lot>.md` pour la prochaine livraison. Y noter périmètre, fichiers principaux, tests exécutés, limites et prochaine action. Mettre à jour cet index à chaque lot livré. Prochaine étape : essais physiques, auditifs et joueurs sur le candidat 0.20 ; consigner les défauts et recontrôler les corrections.
+## État et priorités au 19 octobre 2026
 
-- [Point 23 — Contenu enrichi](23-contenu-enrichi.md) : NACRE, profils, mesures et sauvegarde de cette étape.
+Candidat 0.23 (point 28), plus des changements techniques sans effet sur les règles ni les sauvegardes (section « Non publié » du [CHANGELOG](../../CHANGELOG.md)). Implémenté et testé automatiquement ; **aucun essai humain, aucun essai sur un second PC, aucune release publiée.**
 
-- [Point 24 — Confort et distribution](24-confort-distribution.md) : paramètres, sons, candidat Windows et essais humains restant à faire.
+1. Trois sessions joueurs exploratoires ([protocole](../tests-joueurs/README.md)) ; le registre `resultats.csv` est encore vide.
+2. Recontrôle de la livraison avec AVG actif et signalement du faux positif ([ANTIVIRUS.md](../ANTIVIRUS.md)).
+3. Après les sessions : intérêt des réponses de crise (sans effet sur les taux de victoire en 270 simulations), létalité, lisibilité des objectifs.
+4. Avant la 1.0 : [décision sur les formats de sauvegarde](../roadmap/07-decision-formats-sauvegarde.md).
 
-- [Point 25 — Aléas et résilience](25-aleas-resilience.md) : scénario, compétences, incidents tirés par graine et format 6.
-
-- [27 — Crises réactives et Double relais](27-crises-reactives.md)
-
-- [28 — Familles et validation après audit](28-familles-validation.md)
+Pour chaque lot livré : créer `29-<lot>.md` (périmètre, fichiers principaux, tests exécutés, limites, prochaine action), puis mettre à jour cet index, le backlog et le CHANGELOG.
