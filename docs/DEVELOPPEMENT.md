@@ -41,6 +41,28 @@ Le smoke test vérifie aussi une écriture/lecture et vingt journées de reprise
 
 En 0.6, il exécute également les six exercices, une sauvegarde/lecture d'entraînement et l'aide, puis vérifie la restitution de la partie initiale. Les fichiers du tutoriel de cet essai utilisent `user://smoke-training`, ceux des tests `user://tests-training` et ceux des captures `user://capture-training`.
 
+## Conservation de build/
+
+`build/` est hors Git ; rien n'y est supprimé automatiquement. Au 19 octobre 2026 : 4,6 Go, dont 42 dossiers d'export d'environ 105 Mo chacun. Règle proposée, **suppression à faire par l'auteur** :
+
+| À garder | Pourquoi |
+| --- | --- |
+| `releases/`, `checkpoints/` | Archives ZIP identifiées et bundles Git des versions livrées (0.15 à 0.23) |
+| `qa/` | Sorties d'équilibrage et captures récentes, régénérables mais utiles |
+| Les deux derniers `windows-<version>/` | Comparaison immédiate avec la version précédente |
+| `windows-0.6.0/` | Seul moyen de lire une partie 0.6 (aucun ZIP pour cette version) |
+
+| Supprimable | Remarque |
+| --- | --- |
+| `Essai Windows * été/` | Copies jetables créées par `verify-export.ps1` (chemin accentué) |
+| `windows-<version>/` sans ZIP dans `releases/` (0.3 à 0.18) | Perte définitive de ces binaires ; les sources restent dans Git. Les zipper d'abord si on veut les garder |
+| `windows-<version>/` ayant un ZIP dans `releases/` (0.19 à 0.21) | Le ZIP contient le même exécutable |
+
+```powershell
+# À relire avant exécution ; supprime uniquement les copies d'essai.
+Get-ChildItem build -Directory -Filter 'Essai Windows*' | Remove-Item -Recurse -Confirm
+```
+
 ## Tests
 
 - `tests/run_tests.gd` vérifie données invalides, conservation de population, bornes, replay, ordre des connexions, effets des achats, fins simultanées, redémarrage et contrôleur d'interface.
