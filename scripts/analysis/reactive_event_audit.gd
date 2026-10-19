@@ -10,7 +10,7 @@ func run() -> void:
 		for difficulty in ["normal","hard"]:
 			for seed_value in [7,42,2042,777,9001]:
 				var world = World.new()
-				var error = world.start("centrale" if scenario == "fragile2042" else "boreale",seed_value,null,null,scenario,difficulty,null,null,"",false,true,null,true,null,reactive)
+				var error = world.start_with({"start": "centrale" if scenario == "fragile2042" else "boreale", "seed": seed_value, "scenario": scenario, "difficulty": difficulty, "expanded": true, "crises": true, "reactive": reactive})
 				if not error.is_empty():
 					printerr(error)
 					quit(1)

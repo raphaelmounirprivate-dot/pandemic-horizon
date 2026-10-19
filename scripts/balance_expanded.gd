@@ -17,7 +17,7 @@ func run() -> void:
 						if profile == "classic" and policy in ["network","growth"]: continue
 						var world = World.new()
 						var objective = "arctic_relays" if scenario == "degel2042" else "first_relays"
-						var error = world.start("boreale",seed_value,null,null,scenario,difficulty,null,null,objective,false,profile == "enriched")
+						var error = world.start_with({"start": "boreale", "seed": seed_value, "scenario": scenario, "difficulty": difficulty, "objective": objective, "expanded": profile == "enriched"})
 						if not error.is_empty():
 							printerr(error)
 							quit(1)

@@ -18,7 +18,7 @@ static func sample(world: RefCounted) -> Dictionary:
 static func play(difficulty: String, seed_value: int, policy: String, arm: String, funding: String, limit: int = 500, reserve_floor: int = 6) -> Dictionary:
 	if arm not in ARMS or funding not in FUNDING or not Arctic.policies().has(policy) or difficulty not in ["easy","normal","hard"] or limit < 1 or limit > 500 or reserve_floor < 0 or reserve_floor > 100: return {"error":"Paramètres de comparaison invalides."}
 	var world = World.new()
-	var error = world.start("boreale",seed_value,null,null,"degel2042",difficulty,null,null,Arctic.ID,arm != "disabled")
+	var error = world.start_with({"start": "boreale", "seed": seed_value, "scenario": "degel2042", "difficulty": difficulty, "objective": Arctic.ID, "decision": arm != "disabled"})
 	if not error.is_empty(): return {"error":error}
 	var purchases: Array = []
 	var attempts: Array = []
@@ -57,7 +57,7 @@ static func play(difficulty: String, seed_value: int, policy: String, arm: Strin
 
 static func validate_trace(row: Dictionary) -> String:
 	var world = World.new()
-	world.start("boreale",row.seed,null,null,"degel2042",row.difficulty,null,null,Arctic.ID,row.arm != "disabled")
+	world.start_with({"start": "boreale", "seed": int(row.seed), "scenario": "degel2042", "difficulty": row.difficulty, "objective": Arctic.ID, "decision": row.arm != "disabled"})
 	var order = Arctic.policies()[row.policy]
 	var purchases: Array = []
 	var attempts: Array = []

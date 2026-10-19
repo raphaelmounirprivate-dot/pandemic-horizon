@@ -95,6 +95,28 @@ static func validate_data(data: Variant) -> String:
 		edges.append(pair)
 	return ""
 
+# Named options for start_with(); values are the defaults of start(). "start" is required.
+const START_OPTIONS = {"start": "", "seed": 2042, "regions_source": null, "gameplay_source": null, "scenario": "standard", "difficulty": "normal", "catalog_source": null, "transport_source": null, "objective": "", "decision": false, "expanded": false, "expanded_source": null, "crises": false, "crises_source": null, "reactive": false}
+
+static func validate_start_options(options: Variant) -> String:
+	if not options is Dictionary: return "Les options de partie doivent être un dictionnaire."
+	if not options.get("start") is String or options.start.is_empty(): return "Option de partie obligatoire : start."
+	var keys = options.keys()
+	keys.sort()
+	for key in keys:
+		if not key is String or not START_OPTIONS.has(key): return "Option de partie inconnue : %s." % str(key)
+		# Source overrides accept any value; their own validators run inside start().
+		if START_OPTIONS[key] != null and typeof(options[key]) != typeof(START_OPTIONS[key]): return "Option de partie invalide : %s." % key
+	return ""
+
+## Readable entry point: start_with({"start": "centrale", "scenario": "fragile2042", "crises": true}).
+func start_with(options: Dictionary) -> String:
+	var error = validate_start_options(options)
+	if not error.is_empty(): return error
+	var o = START_OPTIONS.duplicate()
+	o.merge(options, true)
+	return start(o.start, o.seed, o.regions_source, o.gameplay_source, o.scenario, o.difficulty, o.catalog_source, o.transport_source, o.objective, o.decision, o.expanded, o.expanded_source, o.crises, o.crises_source, o.reactive)
+
 func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null, transport_source: Variant = null, objective_id: String = "", decision_enabled: bool = false, expanded_enabled: bool = false, expanded_source: Variant = null, crises_active: bool = false, crises_source: Variant = null, reactive: bool = false) -> String:
 	if reactive:
 		if not Tactics.validate().is_empty(): return Tactics.validate()

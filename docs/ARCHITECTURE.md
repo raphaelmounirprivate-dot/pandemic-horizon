@@ -22,7 +22,8 @@ API utilisée partout (UI, tests, outils d'analyse) :
 
 | Méthode | Rôle |
 | --- | --- |
-| `start(start_id, seed, …, scenario_id, difficulty_id, …, objective_id, decision_enabled, expanded_enabled, …, crises_active, …, reactive)` | Nouvelle partie. Les paramètres `*_source` permettent d'injecter des catalogues de test. Retourne `""` ou un message d'erreur. |
+| `start_with({"start": …, "seed": …, "scenario": …, "difficulty": …, "objective": …, "decision": …, "expanded": …, "crises": …, "reactive": …})` | Nouvelle partie, **forme à utiliser dans le nouveau code**. Clés et valeurs par défaut dans `START_OPTIONS` ; seule `start` est obligatoire. Clé inconnue ou type incorrect refusés avant toute mutation. Retourne `""` ou un message d'erreur. |
+| `start(start_id, seed, …, reactive)` | Ancienne signature à 15 paramètres positionnels, conservée pour les tests historiques ; `start_with()` y délègue. Les paramètres `*_source` permettent d'injecter des catalogues de test. |
 | `step()` | Avance d'une journée : propagation par connexions, transports, climat, événements, détection, remède, points, résolution. |
 | `purchase(id)` / `purchase_reason(id)` | Achat d'une évolution / motif de refus (prérequis, exclusion, points). Refus = aucune mutation. |
 | `totals()`, `coverage()`, `score()`, `outcome`, `outcome_text()` | Indicateurs et issue. |

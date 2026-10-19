@@ -23,7 +23,7 @@ static func policies(include_polar: bool = true) -> Dictionary:
 
 static func play(start: String, seed_value: int, scenario: String, difficulty: String, order: Array, limit: int = 500, objective_id: String = "") -> Dictionary:
 	var world = World.new()
-	var error = world.start(start, seed_value, null, null, scenario, difficulty, null, null, objective_id)
+	var error = world.start_with({"start": start, "seed": seed_value, "scenario": scenario, "difficulty": difficulty, "objective": objective_id})
 	if not error.is_empty(): return {"error":error}
 	# Reject impossible policies instead of silently waiting forever on bad IDs/order.
 	var seen: Array = []

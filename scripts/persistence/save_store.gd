@@ -103,7 +103,7 @@ func decode(data: Variant) -> Dictionary:
 	if not _integer(data.get("speed"), 1, 4) or int(data.speed) not in [1, 2, 4]: return invalid
 	if not _strings(data.get("purchased"), 100) or not _strings(data.get("journal"), 10000) or not _strings(data.get("activated"), 200): return invalid
 	var world = World.new()
-	if not world.start(data.start, data.seed.to_int(), null, null, data.scenario, data.difficulty,null,null,"",false,enriched or crises,null,crises,null,reactive).is_empty(): return invalid
+	if not world.start_with({"start": data.start, "seed": data.seed.to_int(), "scenario": data.scenario, "difficulty": data.difficulty, "expanded": enriched or crises, "crises": crises, "reactive": reactive}).is_empty(): return invalid
 	if not data.get("regions") is Array or data.regions.size() != world.regions.size(): return invalid
 	var ids: Array = []
 	for i in range(world.regions.size()):

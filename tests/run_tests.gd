@@ -239,5 +239,8 @@ func run() -> void:
 	await load("res://tests/test_tactics.gd").new().run(self,check)
 	await load("res://tests/test_skill_families.gd").new().run(self,check)
 	await load("res://tests/test_incident_view.gd").new().run(self,check)
+	var before_start_options = checks
+	load("res://tests/test_start_options.gd").new().run(check)
+	check(checks - before_start_options >= 40,"Suite options de partie nommées entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

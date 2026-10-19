@@ -16,7 +16,7 @@ func run() -> void:
 					for policy in POLICIES:
 						if not enabled and policy != "mobilite": continue
 						var world = World.new()
-						var error = world.start("centrale" if scenario == "fragile2042" else "boreale",seed_value,null,null,scenario,difficulty,null,null,"",false,true,null,enabled)
+						var error = world.start_with({"start": "centrale" if scenario == "fragile2042" else "boreale", "seed": seed_value, "scenario": scenario, "difficulty": difficulty, "expanded": true, "crises": enabled})
 						if not error.is_empty():
 							printerr(error)
 							quit(1)

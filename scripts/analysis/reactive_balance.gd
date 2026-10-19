@@ -9,7 +9,7 @@ func run() -> void:
 				for policy in ["mobility","growth","wait"]:
 					for choice in ["endure","detour","opportunity"]:
 						var world = World.new()
-						var error = world.start("centrale" if scenario == "fragile2042" else "boreale",seed_value,null,null,scenario,difficulty,null,null,"",false,true,null,true,null,true)
+						var error = world.start_with({"start": "centrale" if scenario == "fragile2042" else "boreale", "seed": seed_value, "scenario": scenario, "difficulty": difficulty, "expanded": true, "crises": true, "reactive": true})
 						if not error.is_empty():
 							printerr(error)
 							quit(1)

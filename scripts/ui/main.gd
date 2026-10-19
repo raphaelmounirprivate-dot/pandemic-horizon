@@ -159,7 +159,7 @@ func start_tutorial() -> void:
 		"save_notice": save_notice, "saves_return": saves_return, "screen": screen,
 		"start_id": start_id, "scenario_id": scenario_id, "difficulty_id": difficulty_id, "objective_id":objective_id,"decision_enabled":decision_enabled}
 	world = World.new()
-	var error = world.start("boreale")
+	var error = world.start_with({"start": "boreale"})
 	if not error.is_empty():
 		world = tutorial_session.world
 		tutorial_session.clear()
@@ -495,7 +495,7 @@ func _smoke_test() -> void:
 		get_tree().quit(1)
 		return
 	var optional_world = World.new()
-	if not optional_world.start("boreale", 2042, null, null, "standard", "normal", null, null, "first_relays").is_empty():
+	if not optional_world.start_with({"start": "boreale", "objective": "first_relays"}).is_empty():
 		get_tree().quit(1)
 		return
 	for i in range(60):
@@ -508,12 +508,12 @@ func _smoke_test() -> void:
 	if optional_world.objective.status != "completed" or optional_world.objective.resolved_day != 49 or not optional_loaded.error.is_empty() or optional_loaded.world.objective != optional_world.objective:
 		get_tree().quit(1)
 		return
-	optional_world.start("boreale", 2042, null, null, "standard", "normal", null, null, "first_relays")
+	optional_world.start_with({"start": "boreale", "objective": "first_relays"})
 	for i in range(60): optional_world.step()
 	if optional_world.objective.status != "failed" or optional_world.objective.resolved_day != 50:
 		get_tree().quit(1)
 		return
-	optional_world.start("boreale",2042,null,null,"degel2042","normal",null,null,"arctic_relays")
+	optional_world.start_with({"start": "boreale", "scenario": "degel2042", "objective": "arctic_relays"})
 	for i in range(55):
 		for id in ["transmission","mobility","discretion"]:
 			if id not in optional_world.purchased:
@@ -524,7 +524,7 @@ func _smoke_test() -> void:
 	if optional_world.objective.status != "completed" or not optional_loaded.error.is_empty() or optional_loaded.world.objective != optional_world.objective:
 		get_tree().quit(1)
 		return
-	optional_world.start("boreale",2042,null,null,"degel2042","normal",null,null,"",true)
+	optional_world.start_with({"start": "boreale", "scenario": "degel2042", "decision": true})
 	for i in range(28): optional_world.step()
 	if not World.Decisions.choose(optional_world,"support").is_empty():
 		get_tree().quit(1)
@@ -537,7 +537,7 @@ func _smoke_test() -> void:
 	if optional_loaded.world.decision.status != "expired":
 		get_tree().quit(1)
 		return
-	optional_world.start("boreale",2042,null,null,"degel2042","normal",null,null,"",true)
+	optional_world.start_with({"start": "boreale", "scenario": "degel2042", "decision": true})
 	optional_world.decision_profile = "0.11"
 	optional_world.decision_rules = World.Decisions.legacy_definition()
 	for i in range(28): optional_world.step()
@@ -548,7 +548,7 @@ func _smoke_test() -> void:
 	if not optional_loaded.error.is_empty() or optional_loaded.world.decision_profile != "0.11" or World.Decisions.option("support",optional_loaded.world).cost != 6:
 		get_tree().quit(1)
 		return
-	if not optional_world.start("boreale",2042,null,null,"degel2042","normal",null,null,"arctic_relays",true,true).is_empty():
+	if not optional_world.start_with({"start": "boreale", "scenario": "degel2042", "objective": "arctic_relays", "decision": true, "expanded": true}).is_empty():
 		get_tree().quit(1)
 		return
 	optional_loaded = smoke_store.decode(smoke_store.encode(optional_world))
@@ -570,7 +570,7 @@ func _smoke_test() -> void:
 	if help_text.get_theme_font_size("normal_font_size") != 24:
 		get_tree().quit(1)
 		return
-	if not optional_world.start("centrale",777,null,null,"fragile2042","normal",null,null,"",false,true,null,true).is_empty():
+	if not optional_world.start_with({"start": "centrale", "seed": 777, "scenario": "fragile2042", "expanded": true, "crises": true}).is_empty():
 		get_tree().quit(1)
 		return
 	for day in range(40): optional_world.step()
@@ -583,7 +583,7 @@ func _smoke_test() -> void:
 	if incident_button == null or not "mondiaux" in map_legend.text or not Incidents.entries(world).all(func(e): return e.start_day <= world.day):
 		get_tree().quit(1)
 		return
-	if not optional_world.start("centrale",2042,null,null,"fragile2042","normal",null,null,"",false,true,null,true,null,true).is_empty():
+	if not optional_world.start_with({"start": "centrale", "scenario": "fragile2042", "expanded": true, "crises": true, "reactive": true}).is_empty():
 		get_tree().quit(1)
 		return
 	for day in range(55):
@@ -684,7 +684,7 @@ func show_settings() -> void:
 
 func start_game() -> void:
 	reset_map_camera = true
-	var error = world.start(start_id, simulation_seed, null, null, scenario_id, difficulty_id, null, null, objective_id,decision_enabled,advanced_mode,null,crises_mode,null,reactive_mode)
+	var error = world.start_with({"start": start_id, "seed": simulation_seed, "scenario": scenario_id, "difficulty": difficulty_id, "objective": objective_id, "decision": decision_enabled, "expanded": advanced_mode, "crises": crises_mode, "reactive": reactive_mode})
 	if not error.is_empty():
 		show_menu()
 		body.add_child(_label("Impossible de démarrer : " + error))
