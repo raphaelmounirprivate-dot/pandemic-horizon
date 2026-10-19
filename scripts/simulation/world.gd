@@ -13,10 +13,10 @@ const History = preload("res://scripts/gameplay/history.gd")
 const Expanded = preload("res://scripts/gameplay/expanded_content.gd")
 const Crises = preload("res://scripts/gameplay/crises.gd")
 const Tactics = preload("res://scripts/gameplay/tactics.gd")
-var tactics_enabled = false
+var tactics_enabled: bool = false
 var tactics: Dictionary = {}
-var crises_enabled = false
-var expanded_content = false
+var crises_enabled: bool = false
+var expanded_content: bool = false
 var history: Array = []
 var purchase_history: Array = []
 var decision: Dictionary = {}
@@ -33,7 +33,7 @@ var cure: float = 0.0
 var outcome: String = ""
 var purchased: Array[String] = []
 var journal: Array[String] = []
-var rng = RandomNumberGenerator.new()
+var rng := RandomNumberGenerator.new()
 var evolutions: Dictionary = {}
 var event_definitions: Array = []
 var detection_rules: Dictionary = {}
@@ -56,22 +56,22 @@ static func validate_data(data: Variant) -> String:
 		return "Les régions sont absentes."
 	var ids: Array = []
 	var positions: Array = []
-	for region in data.regions:
+	for region: Variant in data.regions:
 		if not region is Dictionary:
 			return "Région invalide."
 		if not region.get("id") is String or region.id.is_empty() or region.id in ids:
 			return "Identifiant de région absent ou dupliqué."
 		if not region.get("name") is String or region.name.is_empty():
 			return "Nom de région absent."
-		var population = region.get("population")
+		var population: Variant = region.get("population")
 		if not (population is int or population is float):
 			return "Population invalide."
 		if not is_finite(float(population)) or population < 200 or population > 1000000000 or population != floor(population):
 			return "Population hors limites."
-		var position = region.get("position")
+		var position: Variant = region.get("position")
 		if not position is Array or position.size() != 2:
 			return "Position de région invalide."
-		for coordinate in position:
+		for coordinate: Variant in position:
 			if not (coordinate is float or coordinate is int):
 				return "Coordonnée invalide."
 			if not is_finite(float(coordinate)) or coordinate < 0.0 or coordinate > 1.0:
@@ -83,12 +83,12 @@ static func validate_data(data: Variant) -> String:
 	if not data.get("connections") is Array:
 		return "Connexions absentes."
 	var edges: Array = []
-	for edge in data.connections:
+	for edge: Variant in data.connections:
 		if not edge is Array or edge.size() != 2:
 			return "Connexion invalide."
 		if edge[0] not in ids or edge[1] not in ids or edge[0] == edge[1]:
 			return "Connexion vers une région inconnue ou vers elle-même."
-		var pair = [edge[0], edge[1]]
+		var pair: Array = [edge[0], edge[1]]
 		pair.sort()
 		if pair in edges:
 			return "Connexion dupliquée."
@@ -101,9 +101,9 @@ const START_OPTIONS = {"start": "", "seed": 2042, "regions_source": null, "gamep
 static func validate_start_options(options: Variant) -> String:
 	if not options is Dictionary: return "Les options de partie doivent être un dictionnaire."
 	if not options.get("start") is String or options.start.is_empty(): return "Option de partie obligatoire : start."
-	var keys = options.keys()
+	var keys: Array = options.keys()
 	keys.sort()
-	for key in keys:
+	for key: Variant in keys:
 		if not key is String or not START_OPTIONS.has(key): return "Option de partie inconnue : %s." % str(key)
 		# Source overrides accept any value; their own validators run inside start().
 		if START_OPTIONS[key] != null and typeof(options[key]) != typeof(START_OPTIONS[key]): return "Option de partie invalide : %s." % key
@@ -111,9 +111,9 @@ static func validate_start_options(options: Variant) -> String:
 
 ## Readable entry point: start_with({"start": "centrale", "scenario": "fragile2042", "crises": true}).
 func start_with(options: Dictionary) -> String:
-	var error = validate_start_options(options)
+	var error := validate_start_options(options)
 	if not error.is_empty(): return error
-	var o = START_OPTIONS.duplicate()
+	var o := START_OPTIONS.duplicate()
 	o.merge(options, true)
 	return start(o.start, o.seed, o.regions_source, o.gameplay_source, o.scenario, o.difficulty, o.catalog_source, o.transport_source, o.objective, o.decision, o.expanded, o.expanded_source, o.crises, o.crises_source, o.reactive)
 
@@ -124,21 +124,21 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	if scenario_id == "fragile2042" and not crises_active: return "Réseaux fragiles exige l'option Aléas et résilience."
 	if crises_active: expanded_enabled = true
 	if decision_enabled:
-		var item = Decisions.definition()
+		var item := Decisions.definition()
 		if item.is_empty() or item.scenario != scenario_id: return "Décision indisponible pour ce scénario."
 	if not objective_id.is_empty():
-		var item = Objectives.definition(objective_id)
+		var item := Objectives.definition(objective_id)
 		if item.is_empty() or item.scenario != scenario_id: return "Objectif facultatif indisponible pour ce scénario."
 	var data: Variant = source
 	if data == null:
 		if not FileAccess.file_exists(DATA_PATH):
 			return "Fichier des régions introuvable."
 		data = JSON.parse_string(FileAccess.get_file_as_string(DATA_PATH))
-	var error = validate_data(data)
+	var error := validate_data(data)
 	if not error.is_empty():
 		return error
-	var selected = false
-	for region in data.regions:
+	var selected := false
+	for region: Dictionary in data.regions:
 		selected = selected or region.id == start_id
 	if not selected:
 		return "Région de départ inconnue."
@@ -153,15 +153,15 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 		return error
 	var chosen_scenario: Dictionary = {}
 	var chosen_difficulty: Dictionary = {}
-	for item in catalog.scenarios:
+	for item: Dictionary in catalog.scenarios:
 		if item.id == scenario_id: chosen_scenario = item
-	for item in catalog.difficulties:
+	for item: Dictionary in catalog.difficulties:
 		if item.id == difficulty_id: chosen_difficulty = item
 	if chosen_scenario.is_empty() or chosen_difficulty.is_empty():
 		return "Scénario ou difficulté inconnu."
 	if decision_enabled:
-		var valid_phase = false
-		for candidate in chosen_scenario.phases:
+		var valid_phase := false
+		for candidate: Dictionary in chosen_scenario.phases:
 			if candidate.id == Decisions.definition().phase and candidate.start_day == Decisions.definition().start_day: valid_phase = true
 		if not valid_phase: return "Phase de décision incompatible."
 	if not objective_id.is_empty():
@@ -173,20 +173,20 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	if transports == null: transports = Transports.load_file() if source == null else Transports.neutral(data, catalog)
 	error = Transports.validate(transports, data, catalog)
 	if not error.is_empty(): return error
-	var effective_gameplay = Scenarios.gameplay_for(gameplay,chosen_scenario)
+	var effective_gameplay := Scenarios.gameplay_for(gameplay,chosen_scenario)
 	if expanded_enabled:
-		var enriched = Expanded.build(effective_gameplay,expanded_source)
+		var enriched := Expanded.build(effective_gameplay,expanded_source)
 		if not enriched.error.is_empty(): return enriched.error
 		effective_gameplay = enriched.content
 		error = Content.validate(effective_gameplay,data.regions,Scenarios.connections_for(data,chosen_scenario))
 		if not error.is_empty(): return error
 	if crises_active:
-		var incidents = Crises.build(effective_gameplay,data.regions,Scenarios.connections_for(data,chosen_scenario),transports,seed_value,scenario_id,crises_source)
+		var incidents := Crises.build(effective_gameplay,data.regions,Scenarios.connections_for(data,chosen_scenario),transports,seed_value,scenario_id,crises_source)
 		if not incidents.error.is_empty(): return incidents.error
 		effective_gameplay = incidents.content
 	transport_profiles = transports.profiles.duplicate(true)
 	transport_modes.clear()
-	for route in transports.routes: transport_modes[Transports.key(route.edge)] = route.mode
+	for route: Dictionary in transports.routes: transport_modes[Transports.key(route.edge)] = route.mode
 	scenario = chosen_scenario.duplicate(true)
 	difficulty = chosen_difficulty.duplicate(true)
 	phase = scenario.phases[0].duplicate(true)
@@ -198,7 +198,7 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	regions = data.regions.duplicate(true)
 	connections = Scenarios.connections_for(data, scenario)
 	evolutions.clear()
-	for item in gameplay.evolutions.evolutions:
+	for item: Dictionary in gameplay.evolutions.evolutions:
 		evolutions[item.id] = item.duplicate(true)
 	event_definitions = gameplay.events.events.duplicate(true)
 	detection_rules = gameplay.events.detection.duplicate(true)
@@ -218,7 +218,7 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	decision_profile = "0.12" if decision_enabled else ""
 	latest_flows.clear()
 	rng.seed = seed_value
-	for region in regions:
+	for region: Dictionary in regions:
 		region["active"] = 200 if region.id == start_id else 0
 		region["removed"] = 0
 		region["healthy"] = int(region.population) - region.active
@@ -233,21 +233,21 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 	return ""
 
 func region_name(id: String) -> String:
-	for region in regions:
+	for region: Dictionary in regions:
 		if region.id == id:
 			return region.name
 	return id
 
 func totals() -> Dictionary:
-	var result = {"population": 0, "healthy": 0, "active": 0, "removed": 0, "touched": 0}
-	for region in regions:
-		for key in ["population", "healthy", "active", "removed"]:
+	var result := {"population": 0, "healthy": 0, "active": 0, "removed": 0, "touched": 0}
+	for region: Dictionary in regions:
+		for key: String in ["population", "healthy", "active", "removed"]:
 			result[key] += int(region[key])
 	result.touched = result.active + result.removed
 	return result
 
 func coverage() -> float:
-	var total = totals()
+	var total := totals()
 	return 0.0 if total.population == 0 else float(total.touched) / total.population
 
 func score() -> int:
@@ -262,9 +262,9 @@ func purchase_reason(id: String) -> String:
 		return "Évolution inconnue."
 	if id in purchased:
 		return "Évolution déjà acquise."
-	for excluded in evolutions[id].get("excludes", []):
+	for excluded: String in evolutions[id].get("excludes", []):
 		if excluded in purchased: return "Incompatible : " + evolutions[excluded].name
-	for prerequisite in evolutions[id].requires:
+	for prerequisite: String in evolutions[id].requires:
 		if prerequisite not in purchased:
 			return "Prérequis : " + evolutions[prerequisite].name
 	if points < evolutions[id].cost:
@@ -272,7 +272,7 @@ func purchase_reason(id: String) -> String:
 	return ""
 
 func purchase(id: String) -> String:
-	var reason = purchase_reason(id)
+	var reason := purchase_reason(id)
 	if not reason.is_empty():
 		return reason
 	points -= int(evolutions[id].cost)
@@ -283,9 +283,9 @@ func purchase(id: String) -> String:
 	return ""
 
 func upgrade_modifier(key: String, base: float = 1.0) -> float:
-	var result = base
+	var result := base
 	for id in purchased:
-		var effects = evolutions[id].modifiers
+		var effects: Dictionary = evolutions[id].modifiers
 		if effects.has(key):
 			if key == "growth_bonus":
 				result += effects[key]
@@ -294,8 +294,8 @@ func upgrade_modifier(key: String, base: float = 1.0) -> float:
 	return result
 
 func detected_count() -> int:
-	var count = 0
-	for region in regions:
+	var count := 0
+	for region: Dictionary in regions:
 		if region.detected:
 			count += 1
 	return count
@@ -305,16 +305,16 @@ func route_is_open(edge: Array) -> bool:
 		return false
 	if edge not in connections and [edge[1], edge[0]] not in connections:
 		return false
-	for route in scenario.get("seasonal_routes", []):
+	for route: Dictionary in scenario.get("seasonal_routes", []):
 		if (route.edge == edge or route.edge == [edge[1], edge[0]]) and day < route.open_day:
 			return false
-	for effect in active_events:
+	for effect: Dictionary in active_events:
 		if effect.kind == "route_closure" and (effect.target == edge or effect.target == [edge[1], edge[0]]):
 			return false
 	return true
 
 func route_is_seasonal(edge: Array) -> bool:
-	for route in scenario.get("seasonal_routes", []):
+	for route: Dictionary in scenario.get("seasonal_routes", []):
 		if route.edge == edge or route.edge == [edge[1], edge[0]]:
 			return true
 	return false
@@ -324,24 +324,24 @@ func route_mode(edge: Array) -> String:
 	return transport_modes.get(Transports.key(edge), "")
 
 func transport_factor(edge: Array) -> float:
-	var mode = route_mode(edge)
+	var mode := route_mode(edge)
 	return transport_base_factor(edge) * upgrade_modifier(mode + "_multiplier")
 
 func transport_base_factor(edge: Array) -> float:
-	var mode = route_mode(edge)
+	var mode := route_mode(edge)
 	if mode.is_empty() or not route_is_open(edge): return 0.0
 	return float(transport_profiles[mode]) * event_modifier("transport_multiplier", mode)
 
 func specialization_id() -> String:
-	for id in SPECIALIZATIONS:
+	for id: String in SPECIALIZATIONS:
 		if id in purchased: return id
 	return ""
 
 func transport_summary(region_id: String) -> String:
-	var counts = {"land": [0, 0], "air": [0, 0], "sea": [0, 0]}
-	for edge in connections:
+	var counts := {"land": [0, 0], "air": [0, 0], "sea": [0, 0]}
+	for edge: Array in connections:
 		if region_id not in edge: continue
-		var mode = route_mode(edge)
+		var mode := route_mode(edge)
 		if not counts.has(mode): continue
 		counts[mode][1] += 1
 		if route_is_open(edge): counts[mode][0] += 1
@@ -349,16 +349,16 @@ func transport_summary(region_id: String) -> String:
 
 func transport_lines(region_id: String) -> Array[String]:
 	var lines: Array[String] = []
-	for edge in connections:
+	for edge: Array in connections:
 		if region_id not in edge: continue
-		var other = edge[1] if edge[0] == region_id else edge[0]
-		var mode = route_mode(edge)
+		var other: String = edge[1] if edge[0] == region_id else edge[0]
+		var mode := route_mode(edge)
 		lines.append("%s ↔ %s · %s · %s" % [region_name(region_id), region_name(other), Transports.NAMES.get(mode, "Inconnu"), "ouverte ×%.2f" % transport_factor(edge) if route_is_open(edge) else "fermée"])
 	return lines
 
 func climate_factor(region_id: String) -> float:
-	var cold = region_id in scenario.get("cold_regions", [])
-	var factor = float(phase.get("cold_factor" if cold else "warm_factor", 1.0))
+	var cold: bool = region_id in scenario.get("cold_regions", [])
+	var factor := float(phase.get("cold_factor" if cold else "warm_factor", 1.0))
 	if factor < 1.0:
 		factor = 1.0 - (1.0 - factor) * upgrade_modifier("climate_penalty_multiplier")
 	if cold:
@@ -366,23 +366,23 @@ func climate_factor(region_id: String) -> float:
 	return factor
 
 func _update_scenario() -> void:
-	for candidate in scenario.phases:
+	for candidate: Dictionary in scenario.phases:
 		if day == int(candidate.start_day) and candidate.id != phase.id:
 			phase = candidate.duplicate(true)
 			journal.append("Jour %d · Phase %s · Température fictive %.0f °C · Remède ×%.2f." % [day, phase.name, phase.temperature, phase.cure_multiplier])
-	for route in scenario.seasonal_routes:
+	for route: Dictionary in scenario.seasonal_routes:
 		if day == int(route.open_day):
 			journal.append("Jour %d · Saison ouverte : %s ↔ %s ; les fermetures temporaires restent prioritaires." % [day, region_name(route.edge[0]), region_name(route.edge[1])])
 
 func event_modifier(kind: String, target: String = "global") -> float:
-	var factor = 1.0
-	for effect in active_events:
+	var factor := 1.0
+	for effect: Dictionary in active_events:
 		if effect.kind == kind and effect.target == target:
 			factor *= effect_factor(effect)
 	return factor * Decisions.modifier(self,kind,target) * Tactics.modifier(self,kind,target)
 
 func effect_factor(effect: Dictionary) -> float:
-	var factor = float(effect.factor)
+	var factor := float(effect.factor)
 	if effect.get("source") != "crisis": return factor
 	if effect.kind == "transport_multiplier" and factor < 1: return 1-(1-factor)*upgrade_modifier("incident_transport_penalty")
 	if effect.kind == "growth_multiplier" and factor < 1: return 1-(1-factor)*upgrade_modifier("incident_growth_penalty")
@@ -400,7 +400,7 @@ func effect_description(effect: Dictionary) -> String:
 func _add_event(definition: Dictionary) -> bool:
 	if definition.id in activated_events:
 		return false
-	var effect = Tactics.resolve_target(self,definition)
+	var effect := Tactics.resolve_target(self,definition)
 	effect["start_day"] = day
 	effect["end_day"] = day + int(definition.duration)
 	activated_events.append(effect.id)
@@ -412,7 +412,7 @@ func _add_event(definition: Dictionary) -> bool:
 func activate_event(id: String) -> String:
 	if regions.is_empty() or not outcome.is_empty():
 		return "Aucune partie active."
-	for definition in event_definitions:
+	for definition: Dictionary in event_definitions:
 		if definition.id == id:
 			return "" if _add_event(definition) else "Événement déjà déclenché."
 	return "Événement inconnu."
@@ -420,30 +420,30 @@ func activate_event(id: String) -> String:
 func _update_events_and_detection() -> void:
 	# End is exclusive: duration 8 at day 18 affects days 18 through 25.
 	var closed_before: Array = []
-	for edge in connections:
+	for edge: Array in connections:
 		if not route_is_open(edge):
 			closed_before.append(edge)
 	for i in range(active_events.size() - 1, -1, -1):
-		var effect = active_events[i]
+		var effect: Dictionary = active_events[i]
 		if day >= effect.end_day:
 			active_events.remove_at(i)
 			journal.append("Jour %d · Fin : %s." % [day, effect.name])
-	for definition in event_definitions:
+	for definition: Dictionary in event_definitions:
 		if day == int(definition.start_day):
 			_add_event(definition)
-	for region in regions:
+	for region: Dictionary in regions:
 		if not region.detected and region.active >= detection_rules.min_active and float(region.active) / region.population >= detection_rules.active_ratio * difficulty.detection_multiplier:
 			region.detected = true
 			journal.append("Jour %d · Détection dans la région %s ; recherche mondiale renforcée." % [day, region.name])
 			_add_event({"id": "reaction_" + region.id, "name": "Réaction de " + region.name, "kind": "growth_multiplier", "target": region.id, "factor": detection_rules.reaction_factor, "duration": detection_rules.reaction_duration})
 	# Announce final daily route state, after all expirations AND activations.
-	for edge in closed_before:
+	for edge: Array in closed_before:
 		if route_is_open(edge):
 			journal.append("Jour %d · Route rétablie : %s ↔ %s." % [day, region_name(edge[0]), region_name(edge[1])])
 
 func active_event_lines() -> Array[String]:
 	var lines: Array[String] = []
-	for effect in active_events:
+	for effect: Dictionary in active_events:
 		lines.append("%s · %s · %d j restants" % [effect.name, effect_description(effect), effect.end_day - day])
 	if decision.get("status") in ["pending","active"]: lines.append(Decisions.summary(self))
 	if tactics_enabled and not tactics.response.is_empty(): lines.append(Tactics.summary(self))
@@ -459,39 +459,39 @@ func step() -> void:
 	_update_events_and_detection()
 	Tactics.update(self)
 	var incoming: Dictionary = {}
-	var snapshot = regions.duplicate(true)
+	var snapshot := regions.duplicate(true)
 	var by_id: Dictionary = {}
-	for region in snapshot:
+	for region: Dictionary in snapshot:
 		incoming[region.id] = 0
 		by_id[region.id] = region
 	# Every connection reads the same snapshot. Traversal order cannot cascade.
-	for edge in connections:
+	for edge: Array in connections:
 		if not route_is_open(edge):
 			continue
-		for direction in [[edge[0], edge[1]], [edge[1], edge[0]]]:
-			var source = by_id[direction[0]]
+		for direction: Array in [[edge[0], edge[1]], [edge[1], edge[0]]]:
+			var source: Dictionary = by_id[direction[0]]
 			if source.active >= 1000:
-				var seasonal = upgrade_modifier("seasonal_multiplier") if route_is_seasonal(edge) else 1.0
+				var seasonal: float = upgrade_modifier("seasonal_multiplier") if route_is_seasonal(edge) else 1.0
 				# Preserve the 0.7 operation order; apply the new specialization last.
-				var units = maxi(1, int(source.active * 0.001 * upgrade_modifier("exchange_multiplier") * seasonal * transport_base_factor(edge) * upgrade_modifier(route_mode(edge) + "_multiplier")))
+				var units := maxi(1, int(source.active * 0.001 * upgrade_modifier("exchange_multiplier") * seasonal * transport_base_factor(edge) * upgrade_modifier(route_mode(edge) + "_multiplier")))
 				incoming[direction[1]] += units
 				latest_flows.append({"from":direction[0],"to":direction[1],"units":units,"mode":route_mode(edge),"day":day})
 				Objectives.record_exchange(self,direction[0],direction[1],units)
 				Tactics.record_exchange(self,direction[0],direction[1],units)
 	for index in range(regions.size()):
-		var before = snapshot[index]
-		var region = regions[index]
-		var rate = upgrade_modifier("growth_bonus", 0.22) * event_modifier("growth_multiplier", region.id) * climate_factor(region.id)
-		var growth = int(before.active * rate * rng.randf_range(0.92, 1.08))
-		var new_cases = mini(int(before.healthy), growth + int(incoming[region.id]))
-		var recovered = mini(int(before.active), maxi(1, int(before.active * 0.025))) if before.active > 0 else 0
+		var before: Dictionary = snapshot[index]
+		var region: Dictionary = regions[index]
+		var rate := upgrade_modifier("growth_bonus", 0.22) * event_modifier("growth_multiplier", region.id) * climate_factor(region.id)
+		var growth := int(before.active * rate * rng.randf_range(0.92, 1.08))
+		var new_cases := mini(int(before.healthy), growth + int(incoming[region.id]))
+		var recovered: int = mini(int(before.active), maxi(1, int(before.active * 0.025))) if before.active > 0 else 0
 		region.healthy -= new_cases
 		region.active += new_cases - recovered
 		region.removed += recovered
 		if before.active == 0 and new_cases > 0:
 			journal.append("Jour %d · Premiers cas dans la région %s." % [day, region.name])
 	if detected_count() > 0:
-		var gain = cure_rules.base_gain + coverage() * cure_rules.coverage_gain + detected_count() * cure_rules.per_detected_gain
+		var gain: float = cure_rules.base_gain + coverage() * cure_rules.coverage_gain + detected_count() * cure_rules.per_detected_gain
 		cure = minf(100.0, cure + gain * upgrade_modifier("cure_multiplier") * event_modifier("cure_multiplier") * difficulty.cure_multiplier * phase.cure_multiplier)
 	if day % 5 == 0:
 		points += 3

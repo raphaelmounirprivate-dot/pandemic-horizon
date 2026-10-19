@@ -6,6 +6,18 @@ config/name="Pandemic Horizon"
 config/version="0.23.0"
 run/main_scene="res://scenes/main.tscn"
 
+[debug]
+
+gdscript/warnings/untyped_declaration=2
+gdscript/warnings/directory_rules={
+"res://addons": 0,
+"res://scripts/analysis": 0,
+"res://scripts/gameplay": 0,
+"res://scripts/persistence": 0,
+"res://scripts/ui": 0,
+"res://tests": 0
+}
+
 [display]
 window/size/viewport_width=1280
 window/size/viewport_height=720

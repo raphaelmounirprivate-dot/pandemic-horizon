@@ -93,3 +93,16 @@ Raccourcis (`main.gd::_input`) : F1 aide, F2 décision ou réponse de crise en a
 | `.github/workflows/test.yml` | CI Windows : setup, import, tests, provenance, export, paquet, artefact. |
 
 L'export (`export_presets.cfg`) exclut `docs/`, `tests/`, `build/`, les `.ps1` et `scripts/analysis/*` par motif. Tous les outils d'équilibrage, lanceurs `balance*.gd` compris, vivent dans `scripts/analysis/` ; `tests/test_export_filter.gd` échoue si un `.gd` est posé à la racine de `scripts/`.
+
+## Typage GDScript progressif
+
+`project.godot` traite l'avertissement `untyped_declaration` comme une **erreur** : toute variable, boucle `for` ou paramètre sans type statique fait échouer le chargement du script, donc `dev.ps1 Test`. Les dossiers pas encore migrés sont exclus nommément par `debug/gdscript/warnings/directory_rules` ; **un nouveau dossier est strict par défaut**.
+
+| Étape | Périmètre | État |
+| --- | --- | --- |
+| 1 | `scripts/simulation/` (`world.gd`) — `untyped_declaration` | Fait |
+| 2 | `scripts/persistence/`, puis `scripts/gameplay/` | À faire |
+| 3 | `scripts/ui/`, `tests/`, `scripts/analysis/` | À faire |
+| 4 | Règles `unsafe_property_access`, `unsafe_method_access`, `unsafe_call_argument`, `unsafe_cast`, dossier par dossier | À faire ; ~5 700 occurrences mesurées le 19 octobre 2026, surtout des accès à des `Dictionary` issus du JSON |
+
+Migrer un dossier : retirer sa ligne de `directory_rules`, puis lancer `Godot --headless --path . --check-only --script res://<fichier>.gd` sur chaque script et corriger. Utiliser `:=` quand la valeur a un type connu, un type explicite pour les éléments validés (`for region: Dictionary in regions`) et `Variant` pour les données pas encore validées (ex. `validate_data`), afin qu'une entrée invalide produise toujours un message plutôt qu'une erreur d'exécution. Ne pas modifier les opérations : un type ne doit jamais introduire de conversion qui change un calcul (déterminisme). Finir par la régression complète.
