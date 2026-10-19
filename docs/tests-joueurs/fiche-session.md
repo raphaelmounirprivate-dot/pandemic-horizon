@@ -7,6 +7,7 @@ Statut : non réalisé. Copier ce fichier avant une session.
 - Version / commit BUILD.json / SHA-256 EXE vérifié :
 - Windows / GPU / résolution / échelle / autre PC sans Godot :
 - Graine / difficulté / scénario / options :
+- Antivirus / alerte (nom exact, fichier, moment, action, décision du testeur) — vide si aucune alerte :
 
 | Tâche | Action réellement observée | Temps ou hésitation mesuré | Résultat / erreur | Gravité |
 | --- | --- | --- | --- | --- |
