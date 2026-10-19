@@ -64,9 +64,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Play        
 5. Clore avec la skill `point-de-suivi` : point NN, index, backlog, README, notes de version.
 6. Avant un push : `git diff --check`, revue des fichiers inclus, commit explicite. Push et CI sont des statuts distincts.
 
-## Skills du projet (`.claude/skills/`, source dans `docs/agents/skills/`)
+## Skills du projet (`.claude/skills/`, source unique, versionnée)
 
-Installation ou mise à jour : voir `docs/agents/README.md` (copie vers `.claude/skills/`).
+Claude Code les charge directement depuis `.claude/skills/`. Modifier les skills à cet endroit uniquement ; `docs/agents/README.md` ne fait que les présenter.
 
 - `godot-tests` — lancer, lire et étendre la suite de tests et les captures.
 - `contenu-et-regles` — modifier les JSON de règles sans casser les sauvegardes.

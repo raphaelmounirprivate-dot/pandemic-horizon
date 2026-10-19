@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Instructions pour les agents de code (Codex, Cline, Junie, Gemini, Copilot…). Le contexte complet est dans **[CLAUDE.md](CLAUDE.md)** : le lire avant toute modification. Les procédures détaillées sont dans `docs/agents/skills/*/SKILL.md` (Markdown lisible par tout agent).
+Instructions pour les agents de code (Codex, Cline, Junie, Gemini, Copilot…). Le contexte complet est dans **[CLAUDE.md](CLAUDE.md)** : le lire avant toute modification. Les procédures détaillées sont dans `.claude/skills/*/SKILL.md` (Markdown lisible par tout agent).
 
 Rappel des règles non négociables :
 

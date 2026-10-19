@@ -1,18 +1,11 @@
-# Skills Claude Code du projet
+# Skills des agents de code
 
-Copie de travail des skills du projet. Claude Code les charge depuis `.claude/skills/` ; les installer une fois depuis la racine du dépôt :
-
-```powershell
-New-Item -ItemType Directory -Force .claude/skills | Out-Null
-Copy-Item -Recurse -Force docs/agents/skills/* .claude/skills/
-```
+Les skills du projet sont versionnées dans **[`.claude/skills/`](../../.claude/skills/)**, source unique. Claude Code les charge directement ; les autres agents (Codex, Cline…) peuvent lire les mêmes fichiers `SKILL.md`. Il n'y a plus de copie à synchroniser : modifier une skill à cet endroit uniquement.
 
 | Skill | Usage |
 | --- | --- |
-| `godot-tests` | Lancer, lire et étendre `dev.ps1 Test` et les captures. |
-| `contenu-et-regles` | Modifier `data/*.json` sans casser les sauvegardes. |
-| `equilibrage` | Mesures appariées et rapports `EQUILIBRAGE-*.md`. |
-| `point-de-suivi` | Clore un lot : point NN, index, backlog, README. |
-| `livraison-windows` | Export identifié, vérification, ZIP, checkpoint, CI. |
-
-Après une modification d'une skill ici, relancer la commande de copie. Les autres agents (Codex, Cline…) peuvent lire ces fichiers directement.
+| [`godot-tests`](../../.claude/skills/godot-tests/SKILL.md) | Lancer, lire et étendre `dev.ps1 Test` et les captures. |
+| [`contenu-et-regles`](../../.claude/skills/contenu-et-regles/SKILL.md) | Modifier `data/*.json` sans casser les sauvegardes. |
+| [`equilibrage`](../../.claude/skills/equilibrage/SKILL.md) | Mesures appariées et rapports `EQUILIBRAGE-*.md`. |
+| [`point-de-suivi`](../../.claude/skills/point-de-suivi/SKILL.md) | Clore un lot : point NN, index, backlog, README. |
+| [`livraison-windows`](../../.claude/skills/livraison-windows/SKILL.md) | Export identifié, vérification, ZIP, checkpoint, CI. |
