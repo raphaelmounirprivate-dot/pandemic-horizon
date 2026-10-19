@@ -63,3 +63,25 @@ ALE-01 : option et graine reproductible ; ALE-02 : huit types d’incidents, cum
 | AUD-05 | Double relais obligatoire | Implémenté et mesuré | 0.22 ; autres stratégies à explorer |
 | AUD-06 | Humains / DPI / autre PC | À réaliser | Protocole et fiches prêts, aucun résultat humain |
 | AUD-07 | Découpage progressif | Partiel | Trois vues extraites ; suite : compétences et sauvegardes |
+
+## Analyse du 19 octobre — état
+
+Voir l'[analyse](06-analyse-2026-10-19.md) et le [point 29](../suivi/29-dette-technique-ci.md).
+
+| ID | Tâche | État | Preuve / suite |
+| --- | --- | --- | --- |
+| ANA-01 | Trois sessions joueurs | À réaliser | `resultats.csv` vide ; aucune fiche remplie |
+| ANA-02 | Faux positif AVG | Partiel | Procédure testeur et `docs/ANTIVIRUS.md` ; signalement à l'éditeur et recontrôle AVG actif à faire par l'auteur |
+| ANA-03 | Effet réel des réponses de crise | Différé | Décision de l'auteur : après les sessions ; éviterait un format 8 avant ANA-08 |
+| ANA-04 | Renommer le dépôt | Terminé | `pandemic-horizon`, remote et liens mis à jour |
+| ANA-05 | `World.start_with(options)` | Terminé | `test_start_options.gd` ; `start()` conservée |
+| ANA-06 | Découper `main.gd` | Partiel | 810 lignes (saves_view, runtime_smoke) ; suite : panneau de compétences (AUD-07) |
+| ANA-07 | Export sûr pour les outils | Terminé | `scripts/analysis/*` par motif ; `test_export_filter.gd` |
+| ANA-08 | Avenir des formats de sauvegarde | À décider | [Note de décision](07-decision-formats-sauvegarde.md) |
+| ANA-09 | Typage GDScript | Partiel | `untyped_declaration` en erreur dans `scripts/simulation/` ; autres dossiers et `unsafe_*` à faire |
+| ANA-10 | Source unique des skills | Terminé | `.claude/skills/` |
+| ANA-11 à 14 | CI : chemins, concurrence, cache, rétention | Terminé | CI réussies au point 29 ; une seule exécution en attente par groupe |
+| ANA-15 | `gdlint` en CI | Terminé | `gdlintrc` ; règles de style héritées assouplies |
+| ANA-16/17 | README/CHANGELOG/index ; rangement de `docs/` | Terminé | `docs/equilibrage/`, `docs/versions/` |
+| ANA-18 | `.gitignore` | Terminé | Lignes Python retirées, `.claude/settings.local.json` ignoré |
+| ANA-19 | Conservation de `build/` | Règle proposée | Suppression laissée à l'auteur (`DEVELOPPEMENT.md`) |

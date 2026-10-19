@@ -11,6 +11,8 @@ Code, interface, textes et ressources sont originaux ; le jeu est autonome et ne
 - Scénarios Standard, Dégel 2042 et Réseaux fragiles ; trois difficultés ; profils facultatifs enrichi, aléas et crises réactives.
 - Sauvegardes locales, tutoriel, aide F1, accessibilité (clavier, mouvements réduits, lecture agrandie, sons facultatifs).
 
+Dernier lot : [point 29](docs/suivi/29-dette-technique-ci.md), dette technique et CI, sans changement de règles.
+
 Prochaine étape : [trois sessions exploratoires avec des joueurs](docs/tests-joueurs/README.md), puis corrections fondées sur les observations. Historique : [CHANGELOG.md](CHANGELOG.md).
 
 ## Lancer et développer
