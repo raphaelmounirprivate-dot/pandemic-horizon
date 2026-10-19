@@ -26,11 +26,11 @@ $baseArgs = @('--headless', '--path', $projectRoot)
 switch ($Action) {
     'Import' { Invoke-Godot ($baseArgs + @('--editor', '--import', '--quit')) }
     'Test' { Invoke-Godot ($baseArgs + @('--script', 'res://tests/run_tests.gd', '--', '--no-autosave')) }
-    'Balance' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/balance.gd')) }
-    'BalanceObjectives' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/balance_objectives.gd')) }
-    'BalanceArctic' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/balance_arctic.gd')) }
-    'BalanceDecisions' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/balance_decisions.gd')) }
-    'BalanceParameters' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/balance_parameters.gd')) }
+    'Balance' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/balance.gd')) }
+    'BalanceObjectives' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/balance_objectives.gd')) }
+    'BalanceArctic' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/balance_arctic.gd')) }
+    'BalanceDecisions' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/balance_decisions.gd')) }
+    'BalanceParameters' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/balance_parameters.gd')) }
     'Play' { & $engine --path $projectRoot }
     'Export' {
         $gitArgs = @('-c', "safe.directory=$($projectRoot.Replace('\','/'))", '-C', $projectRoot)

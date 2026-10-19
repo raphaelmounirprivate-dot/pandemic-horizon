@@ -242,5 +242,8 @@ func run() -> void:
 	var before_start_options = checks
 	load("res://tests/test_start_options.gd").new().run(check)
 	check(checks - before_start_options >= 40,"Suite options de partie nommées entièrement exécutée")
+	var before_export_filter = checks
+	load("res://tests/test_export_filter.gd").new().run(check)
+	check(checks - before_export_filter >= 6,"Suite filtre d'export entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

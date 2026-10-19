@@ -92,4 +92,4 @@ Raccourcis (`main.gd::_input`) : F1 aide, F2 décision ou réponse de crise en a
 | `scripts/checkpoint.ps1` | Bundle Git + sources dans `build/checkpoints/<version>-<sha>`. |
 | `.github/workflows/test.yml` | CI Windows : setup, import, tests, provenance, export, paquet, artefact. |
 
-L'export (`export_presets.cfg`) exclut `docs/`, `tests/`, `build/`, les `.ps1`, `scripts/analysis/*` et **chaque** `scripts/balance*.gd` listé nommément : un nouvel outil `balance_*.gd` doit y être ajouté.
+L'export (`export_presets.cfg`) exclut `docs/`, `tests/`, `build/`, les `.ps1` et `scripts/analysis/*` par motif. Tous les outils d'équilibrage, lanceurs `balance*.gd` compris, vivent dans `scripts/analysis/` ; `tests/test_export_filter.gd` échoue si un `.gd` est posé à la racine de `scripts/`.

@@ -143,7 +143,7 @@ Le script de paquet vérifie les ressources de l’exécutable, sa copie en chem
 
 ## Extension 0.20
 
-Aléas : tests/test_crises.gd ; captures : tests/capture_crises.gd ; mesures : scripts/balance_crises.gd (140 parties). Aucun JSON historique modifié : crises.json séparé, format 6, profils 4/5 inchangés. Le script package-windows.ps1 choisit désormais les notes correspondant à la version du projet. Export séparé build/windows-0.20.0/ ; sauvegarde et archive identifiées par commit après vérification.
+Aléas : tests/test_crises.gd ; captures : tests/capture_crises.gd ; mesures : scripts/analysis/balance_crises.gd (anciennement scripts/balance_crises.gd) (140 parties). Aucun JSON historique modifié : crises.json séparé, format 6, profils 4/5 inchangés. Le script package-windows.ps1 choisit désormais les notes correspondant à la version du projet. Export séparé build/windows-0.20.0/ ; sauvegarde et archive identifiées par commit après vérification.
 
 ## Provenance vérifiée (0.21)
 

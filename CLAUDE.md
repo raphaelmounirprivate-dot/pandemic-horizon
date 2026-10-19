@@ -39,7 +39,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Play        
 | `scripts/ui/main.gd` | Contrôleur d'interface (~810 lignes, découpage progressif en cours). Vues extraites dans `scripts/ui/*_view.gd`. |
 | `data/*.json` | Toutes les règles chiffrées. |
 | `tests/run_tests.gd` | Point d'entrée unique ; enchaîne toutes les suites `tests/test_*.gd`. |
-| `scripts/analysis/`, `scripts/balance*.gd` | Outils d'équilibrage, **exclus de l'export**. |
+| `scripts/analysis/` (dont les lanceurs `balance*.gd`) | Outils d'équilibrage, **exclus de l'export**. |
 | `docs/` | Règles, guide joueur, suivi, roadmap, rapports d'équilibrage. |
 
 ## Invariants à ne jamais casser
