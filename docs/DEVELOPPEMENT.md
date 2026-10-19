@@ -58,6 +58,8 @@ En 0.6, il exécute également les six exercices, une sauvegarde/lecture d'entra
 | `windows-<version>/` sans ZIP dans `releases/` (0.3 à 0.18) | Perte définitive de ces binaires ; les sources restent dans Git. Les zipper d'abord si on veut les garder |
 | `windows-<version>/` ayant un ZIP dans `releases/` (0.19 à 0.21) | Le ZIP contient le même exécutable |
 
+**Ménage du 19 octobre 2026, à la demande de l'auteur : 4,59 → 1,35 Go.** Supprimés : 22 copies `Essai Windows * été/` et les exports 0.19 à 0.21, après contrôle que leur ZIP contient un exécutable de même SHA-256. Exports 0.3 à 0.18 (hors 0.6) zippés dans `build/releases/archives-anciennes/` (≈ 36 Mo chacun, fichier `.sha256` de l'exe à côté), exe extrait vérifié par SHA-256 avant suppression du dossier. Conservés : `windows-0.6.0`, `windows-0.22.0`, `windows-0.23.0`, `releases/`, `checkpoints/`, `qa/`.
+
 ```powershell
 # À relire avant exécution ; supprime uniquement les copies d'essai.
 Get-ChildItem build -Directory -Filter 'Essai Windows*' | Remove-Item -Recurse -Confirm
