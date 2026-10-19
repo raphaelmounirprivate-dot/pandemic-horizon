@@ -61,7 +61,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 	var inputs = load("res://tests/input_journey.gd").new()
 	for dimensions in [Vector2i(1280,720),Vector2i(1920,1080),Vector2i(2395,1060)]:
 		tree.root.size = dimensions
-		scene.show_menu()
+		scene.show_new_game(2)
 		await tree.process_frame
 		await tree.process_frame
 		if not scene.advanced_mode: await inputs.click(tree,scene.advanced_choice)

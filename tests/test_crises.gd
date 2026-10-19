@@ -110,7 +110,7 @@ func ui(tree,check):
 		tree.root.size = resolution
 		scene.crises_mode = false
 		scene.scenario_id = "standard"
-		scene.show_menu()
+		scene.show_new_game(2)
 		await tree.process_frame
 		await tree.process_frame
 		await inputs.click(tree,scene.crises_choice)
@@ -119,7 +119,7 @@ func ui(tree,check):
 			scene.scenario_id = scenario
 			scene.objective_id = "arctic_relays" if scenario == "degel2042" else ""
 			scene.decision_enabled = scenario == "degel2042"
-			scene.show_menu()
+			scene.show_new_game(2)
 			await tree.process_frame
 			await tree.process_frame
 			check.call(Rect2(Vector2.ZERO,Vector2(resolution)).encloses(scene.crises_choice.get_global_rect()),"Option dans la fenêtre : "+scenario)
@@ -142,7 +142,7 @@ func ui(tree,check):
 		scene.simulation_seed = 777
 		scene.restart_game()
 		check.call(scene.simulation_seed == 2042 and scene.world.crises_enabled,"Recommencer conserve graine et aléas")
-	scene.show_menu()
+	scene.show_new_game(2)
 	await tree.process_frame
 	var seed_input = scene.find_child("seed_input",true,false)
 	seed_input.get_line_edit().grab_focus()

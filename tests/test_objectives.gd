@@ -149,7 +149,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 	scene.set_process(false)
 	for dimensions in [Vector2i(1280,720), Vector2i(1920,1080)]:
 		tree.root.size = dimensions
-		scene.show_menu()
+		scene.show_new_game(2)
 		await tree.process_frame
 		await tree.process_frame
 		check.call(not scene.objective_choice.button_pressed and scene.objective_id == "", "Objectif décoché par défaut")
@@ -179,7 +179,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 		scene.restart_game()
 		check.call(scene.world.objective.status == "pending" and scene.world.day == 0, "Rejouer conserve le choix et réinitialise le suivi")
 		scene.scenario_id = "degel2042"
-		scene.show_menu()
+		scene.show_new_game(2)
 		check.call(not scene.objective_choice.disabled and not scene.objective_choice.button_pressed and scene.objective_id == "" and scene.objective_choice.text.contains("Relais arctiques"), "Dégel remplace le choix Standard et le décoche")
 		scene.scenario_id = "standard"
 	scene.queue_free()

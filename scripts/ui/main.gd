@@ -44,9 +44,14 @@ var decision_area: VBoxContainer
 var decision_signature = ""
 var map_camera: Dictionary = {}
 var reset_map_camera = false
-var scenario_choice: OptionButton
-var difficulty_choice: OptionButton
-var start_choice: OptionButton
+var setup_step = 1
+var scenario_cards: Dictionary = {}
+var difficulty_cards: Dictionary = {}
+var start_locked = false
+var start_map: Control
+var start_detail: Label
+var setup_next: Button
+var setup_summary: Label
 var menu_scenario_detail: Label
 var menu_difficulty_detail: Label
 var selected: int = 0
@@ -161,6 +166,7 @@ func _return_to(target: String) -> void:
 		"result": show_result()
 		"saves": show_saves()
 		"settings": show_settings()
+		"setup": show_new_game(setup_step)
 		"overview": show_overview()
 		_: show_menu()
 
@@ -407,6 +413,51 @@ func _menu_catalog() -> Dictionary:
 
 func _update_menu_choices(catalog: Dictionary) -> void:
 	MenuView.update_choices(self,catalog)
+
+## "Nouvelle partie" in three steps; every choice is applied immediately.
+func show_new_game(step: int = 1) -> void:
+	MenuView.build_setup(self,step)
+
+func choose_scenario(id: String) -> void:
+	scenario_id = id
+	show_new_game(1)
+	if scenario_cards.has(id): scenario_cards[id].grab_focus()
+
+func choose_difficulty(id: String) -> void:
+	difficulty_id = id
+	MenuView.update_choices(self,_menu_catalog())
+	if difficulty_cards.has(id): difficulty_cards[id].grab_focus()
+
+func choose_start(id: String) -> void:
+	if start_locked: return
+	start_id = id
+	if is_instance_valid(start_map):
+		for i in range(start_map.world.regions.size()):
+			if start_map.world.regions[i].id == id: start_map.selected = i
+	MenuView.refresh_start(self)
+
+func setup_back() -> void:
+	if setup_step <= 1: show_menu()
+	else: show_new_game(setup_step-1)
+
+func setup_forward() -> void:
+	if setup_step >= MenuView.STEPS.size(): start_game()
+	else: show_new_game(setup_step+1)
+
+func world_scenario_name() -> String:
+	for item in _menu_catalog().scenarios:
+		if item.id == scenario_id: return item.name
+	return scenario_id
+
+func difficulty_name() -> String:
+	for item in _menu_catalog().difficulties:
+		if item.id == difficulty_id: return item.name
+	return difficulty_id
+
+func region_label(id: String) -> String:
+	for region in JSON.parse_string(FileAccess.get_file_as_string(World.DATA_PATH)).regions:
+		if region.id == id: return region.name
+	return id
 
 func show_settings() -> void:
 	load("res://scripts/ui/settings_view.gd").build(self)
@@ -770,6 +821,7 @@ func _input(event: InputEvent) -> void:
 	if event.keycode == KEY_ESCAPE:
 		if screen == "help": close_help()
 		elif screen == "evolution": close_evolution()
+		elif screen == "setup": setup_back()
 		elif screen == "overview": close_overview()
 		elif screen == "saves": close_saves()
 		elif screen == "decision": show_game()

@@ -249,5 +249,8 @@ func run() -> void:
 	var before_evolution_screen = checks
 	await load("res://tests/test_evolution_screen.gd").new().run(self,check)
 	check(checks - before_evolution_screen >= 80,"Suite écran Évolution entièrement exécutée")
+	var before_menu_flow = checks
+	await load("res://tests/test_menu_flow.gd").new().run(self,check)
+	check(checks - before_menu_flow >= 80,"Suite menu en étapes entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

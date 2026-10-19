@@ -172,7 +172,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 		tree.root.size = dimensions
 		scene.scenario_id = "degel2042"
 		scene.decision_enabled = false
-		scene.show_menu()
+		scene.show_new_game(2)
 		await tree.process_frame
 		await tree.process_frame
 		check.call(not scene.decision_choice.button_pressed,"Décision désactivée par défaut au menu")
@@ -225,7 +225,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 		await inputs.key(tree,KEY_ENTER)
 		check.call(scene.screen == "game" and scene.world.decision.choice == "limit","Choix gratuit au clavier")
 		scene.scenario_id = "standard"
-		scene.show_menu()
+		scene.show_new_game(2)
 		check.call(not scene.decision_enabled and not scene.decision_choice.visible,"Standard retire l'activation Dégel")
 	scene.queue_free()
 	files.clean(scene.save_store)

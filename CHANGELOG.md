@@ -14,6 +14,7 @@ Aucun changement de règles, de coefficients ni de format de sauvegarde ; la ver
 - Typage statique obligatoire dans `scripts/simulation/` ; règles par dossier pour la suite.
 - CI : pas d'exécution pour la documentation seule, exécutions dépassées annulées hors `main`, Godot en cache, artefacts conservés 14 jours, job `gdlint`.
 - **Interface : écran Évolution dédié** (touche E) avec un onglet par famille, un arbre de gauche à droite à liens visibles, des nœuds au nom complet et à l'état écrit, une fiche en sections ; la carte récupère la place de l'ancienne grille. Aucune règle modifiée.
+- **Interface : écran titre et « Nouvelle partie » en trois étapes** (scénario, difficulté et options, départ choisi sur la carte), cartes de choix à état écrit, plus aucune liste déroulante dans le menu. Aucune règle modifiée.
 - Réponses aux crises : effet sur les issues reporté après les sessions joueurs ; [note de décision](docs/roadmap/07-decision-formats-sauvegarde.md) sur l'avenir des formats de sauvegarde.
 
 ## 0.23 — compétences lisibles et vues séparées

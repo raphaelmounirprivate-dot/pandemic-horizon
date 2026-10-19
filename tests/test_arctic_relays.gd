@@ -148,7 +148,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 	for dimensions in [Vector2i(1280,720),Vector2i(1920,1080)]:
 		tree.root.size = dimensions
 		scene.scenario_id = "degel2042"
-		scene.show_menu()
+		scene.show_new_game(2)
 		await tree.process_frame
 		await tree.process_frame
 		check.call(not scene.objective_choice.disabled and not scene.objective_choice.button_pressed and "J39–54" in scene.menu_objective_detail.text,"Choix Dégel et fenêtres visibles, désactivé par défaut")
@@ -170,7 +170,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 		scene.restart_game()
 		check.call(scene.world.day == 0 and scene.world.objective.routes.orient == 0,"Rejouer réinitialise les compteurs")
 		scene.scenario_id = "standard"
-		scene.show_menu()
+		scene.show_new_game(2)
 		check.call(scene.objective_id == "" and "Premiers relais" in scene.objective_choice.text,"Changement de scénario requiert une nouvelle activation")
 	scene.queue_free()
 	await tree.process_frame

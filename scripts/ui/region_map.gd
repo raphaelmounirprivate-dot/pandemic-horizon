@@ -32,6 +32,7 @@ var filter_button: Button
 var terrain_mesh: ArrayMesh
 var projected_coasts: Array[PackedVector2Array] = []
 var terrain_view: Array = []
+var show_status_banner = true # Hidden on the start-region picker, where no game runs yet.
 func setup(model: PandemicWorld) -> void:
 	world = model
 	custom_minimum_size = Vector2(640,220)
@@ -357,4 +358,6 @@ func _draw() -> void:
 		var direction = (curve(a,b,minf(1,t+.02))-p).normalized()
 		transport_icon(flow.mode,p,direction.angle(),1.0,RED)
 	draw_incidents()
-	draw_string(ThemeDB.fallback_font,Vector2(14,18),"MONDE EN CRISE · %d FOYERS ACTIFS" % world.regions.filter(func(r): return r.active > 0).size(),HORIZONTAL_ALIGNMENT_LEFT,-1,12,RED)
+	if show_status_banner:
+		var hubs = world.regions.filter(func(r): return r.active > 0).size()
+		draw_string(ThemeDB.fallback_font,Vector2(14,18),"MONDE EN CRISE · %d FOYER%s ACTIF%s" % [hubs,"S" if hubs > 1 else "","S" if hubs > 1 else ""],HORIZONTAL_ALIGNMENT_LEFT,-1,12,RED)

@@ -38,6 +38,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 	tree.root.add_child(ui)
 	ui.set_process(false)
 	ui.autosave_enabled = false
+	ui.show_new_game(2)
 	ui.reactive_choice.button_pressed = true
 	check.call(ui.reactive_mode and ui.crises_mode and ui.advanced_mode,"Menu extrait conserve les dépendances d'options")
 	ui.start_game()

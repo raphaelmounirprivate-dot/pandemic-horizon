@@ -223,3 +223,13 @@ La fiche de 12 px expose nom complet et famille, effet rédigé, comparaison ava
 - Pied : « Retour à la carte [Échap] » (320 px) et rappel des touches 15 px `muted`.
 
 Captures : `tests/capture_evolution_screen.gd` (7 états × 3 résolutions, `.impeccable/review/evolution-*.png`).
+
+**Écran titre et Nouvelle partie (après 0.23, décision du 19 octobre 2026).** Plus aucune liste déroulante dans le menu.
+
+- Écran titre : à gauche, emblème NACRE 96 px à côté de « NACRE / Chaque région compte. » (30 px) et d'un texte d'accroche 18 px `muted` ; à droite, colonne de 420 px de boutons de 56 px (22 px) : Reprendre la partie (si une partie existe, alors ciblé), Nouvelle partie, Tutoriel guidé, Sauvegardes, Paramètres, Aide, Quitter.
+- Nouvelle partie : titre « Nouvelle partie · Étape n / 3 · … », résumé des choix en sous-titre, trois pastilles d'étape cliquables (260 px, même style que les onglets d'Évolution : fond clair et soulignement `accent` 4 px pour l'étape en cours), contenu, puis « Retour » (260 px) et « Suivant : … » / « Lancer la partie » (360 px, ciblé).
+- Cartes de choix (`choice_card.gd`) : titre 24 px, texte 15 px `muted`, état écrit « Choisi » (`accent`) ou « Choisir », contour `accent` 3 px pour la carte choisie ; scénarios 150 px de haut minimum, difficultés 140 px.
+- Étape 2 : deux colonnes « RÈGLES DE LA PARTIE » et « OBJECTIFS ET TIRAGE » (titres 15 px `muted`), interrupteurs de 44 px, graine et « Autre graine ».
+- Étape 3 : carte du monde sans bandeau de crise, panneau de 380 px : départ, population, liaisons, raison d'un départ imposé, résumé.
+
+Captures : `tests/capture_menu.gd` (7 états × 3 résolutions, `.impeccable/review/menu-*.png`).

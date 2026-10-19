@@ -2,7 +2,7 @@
 
 Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.23.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
-1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
+1. À l'écran titre, choisir « Nouvelle partie », puis suivre les trois étapes : scénario (cartes Standard, Dégel 2042, Réseaux fragiles), difficulté et options, région de départ cliquée sur la carte du monde. Dégel impose Boréale, Réseaux fragiles impose Centrale. « Lancer la partie » démarre ; Retour ou Échap reviennent d'une étape.
 2. Lire les objectifs. La partie commence en pause.
 3. Cliquer sur une région pour consulter sa population et ses cas actifs.
 4. Reprendre avec Espace. Ouvrir l'écran Évolution (touche E ou bouton « Évolution » à droite de la carte), choisir une famille, sélectionner une compétence pour lire sa fiche, puis activer Évoluer lorsque les points et prérequis le permettent. Mobilité exige d'abord Diffusion. Les effets et raisons d'indisponibilité sont affichés avant achat.
