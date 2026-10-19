@@ -36,7 +36,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Play        
 | `scripts/simulation/world.gd` (`PandemicWorld`) | État et règles du monde. **Aucune dépendance aux scènes/UI.** Déterministe par graine. |
 | `scripts/gameplay/*.gd` | Validation et logique des catalogues : contenu, scénarios, transports, objectifs, décisions, historique, contenu enrichi, crises, tactiques. |
 | `scripts/persistence/save_store.gd` | Sauvegardes JSON (formats 1→7), empreintes de contenu, secours `.bak`. |
-| `scripts/ui/main.gd` | Contrôleur d'interface (~1 090 lignes, découpage progressif en cours). Vues extraites dans `scripts/ui/*_view.gd`. |
+| `scripts/ui/main.gd` | Contrôleur d'interface (~810 lignes, découpage progressif en cours). Vues extraites dans `scripts/ui/*_view.gd`. |
 | `data/*.json` | Toutes les règles chiffrées. |
 | `tests/run_tests.gd` | Point d'entrée unique ; enchaîne toutes les suites `tests/test_*.gd`. |
 | `scripts/analysis/`, `scripts/balance*.gd` | Outils d'équilibrage, **exclus de l'export**. |

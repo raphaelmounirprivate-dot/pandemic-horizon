@@ -63,8 +63,9 @@ Les régions et connexions (`regions.json`, 24 régions fictives) sont validées
 
 | Fichier | Rôle |
 | --- | --- |
-| `main.gd` | Contrôleur : écrans, temps, achats, sauvegardes, raccourcis, smoke test de l'export. ~1 090 lignes. |
-| `menu_view.gd`, `settings_view.gd`, `overview_view.gd` | Vues extraites en 0.23 (accèdent encore aux champs du contrôleur). |
+| `main.gd` | Contrôleur : écrans, temps, achats, sauvegardes, raccourcis. ~810 lignes. |
+| `menu_view.gd`, `settings_view.gd`, `overview_view.gd`, `saves_view.gd` | Vues extraites (0.23, puis écran des sauvegardes) ; accèdent encore aux champs du contrôleur. |
+| `runtime_smoke.gd` | Smoke test de l'export (`--smoke-test`), piloté par `main.gd` ; embarqué dans l'exe, vérifié par `verify-export.ps1`. |
 | `region_map.gd` | Carte vectorielle (Natural Earth, `assets/maps/*.geojson`), zoom/déplacement, flux animés. |
 | `evolution_tree.gd`, `evolution_node.gd`, `skill_presenter.gd`, `family_symbol.gd` | Arbre de compétences, fiches avant/après. |
 | `incident_view.gd`, `crisis_response_view.gd` | Aléas et réponses aux crises. |
