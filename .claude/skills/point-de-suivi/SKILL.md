@@ -33,7 +33,7 @@ Prochaine étape : <une action>.
 3. **`docs/suivi/00-index.md`** : ajouter la ligne `- [Point NN — Titre](NN-….md) : résumé.` au même format que les points 01–25 ; actualiser la phrase « Prochaine étape » et le prochain numéro attendu.
 4. **`docs/roadmap/03-backlog.md`** : changer le statut des identifiants concernés (proposé → prêt → en cours → à vérifier → terminé ; « différé »), avec preuve et lien vers le point.
 5. **`README.md`** : paragraphe « État du projet » (version, résumé, nombre de contrôles, lien vers le point) et « Prochaine étape ».
-6. **Notes de version** si la version change : `docs/NOTES-VERSION-<majeur.mineur>.md` (le script de paquet l'embarque automatiquement d'après `config/version`).
+6. **Notes de version** si la version change : `docs/versions/NOTES-VERSION-<majeur.mineur>.md` (le script de paquet l'embarque automatiquement d'après `config/version`).
 7. **`docs/roadmap/05-audit-…md`** ou nouveau document d'audit si l'état d'une demande de l'audit change.
 8. Si les règles changent : `docs/REGLES.md`, `PRODUCT.md`, `docs/GUIDE-JOUEUR.md`, `docs/COMPATIBILITE.md`, aide en jeu (`scripts/ui/help.gd`).
 9. **Vérifier** les liens relatifs ajoutés (le fichier cible existe), puis `git diff --check`. Une mise à jour purement documentaire ne nécessite pas de réexporter le jeu.

@@ -17,7 +17,7 @@ Le lot 08 comparait une spécialisation achetée avant Discrétion aux anciennes
 
 Commande : `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Balance`, Godot 4.7.2. Trois graines (7, 42, 2042), trois difficultés, 24 départs Standard et Boréale pour Dégel. **2 259 parties, 212 480 pas, 2 037 victoires, 222 défaites par remède**. Les trois nouveaux ordres ajoutent 675 parties aux 1 584 précédentes. Chaque départ/difficulté conserve une victoire observée parmi les politiques testées.
 
-**675 paires**, 18 groupes scénario/difficulté/spécialisation et 225 groupes détaillés par départ. Le [rapport complet](../EQUILIBRAGE-0.8-ORDRES.md) est une copie du Markdown généré dans `build/qa/balance-comparison.md`. Le CSV détaillé reste local dans `build/qa/balance.csv` et se régénère avec la même commande.
+**675 paires**, 18 groupes scénario/difficulté/spécialisation et 225 groupes détaillés par départ. Le [rapport complet](../equilibrage/EQUILIBRAGE-0.8-ORDRES.md) est une copie du Markdown généré dans `build/qa/balance-comparison.md`. Le CSV détaillé reste local dans `build/qa/balance.csv` et se régénère avec la même commande.
 
 En Standard difficile, sur 72 parties par ordre et par spécialisation :
 

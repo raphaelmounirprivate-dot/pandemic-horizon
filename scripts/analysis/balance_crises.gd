@@ -51,6 +51,6 @@ func run() -> void:
 		var purchases: Array[String] = []
 		for item in row.purchases: purchases.append("J%d %s (%d pts)" % [item.day,item.id,item.cost])
 		report += "- %s / aléas %s / %s : %s.\n" % [row.scenario,row.crises,row.policy,", ".join(purchases)]
-	FileAccess.open("res://docs/EQUILIBRAGE-0.20-ALEAS.md",FileAccess.WRITE).store_string(report)
+	FileAccess.open("res://docs/equilibrage/EQUILIBRAGE-0.20-ALEAS.md",FileAccess.WRITE).store_string(report)
 	print("CRISES_BALANCE: %d parties, rapport produit." % rows.size())
 	quit()

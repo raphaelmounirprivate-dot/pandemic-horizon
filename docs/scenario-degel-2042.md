@@ -1,6 +1,6 @@
 # Scénario proposé : Dégel 2042
 
-**Statut : implémenté dans le prototype 0.4 sur 24 régions, à éprouver auprès de joueurs.** Voir les [règles effectives](REGLES.md), le [rapport d'équilibrage](EQUILIBRAGE-0.4.md) et le [point de contrôle 04](suivi/04-j4-carte24.md). Les sauvegardes restent absentes ; leur critère ci-dessous est réservé au jalon J5.
+**Statut : implémenté dans le prototype 0.4 sur 24 régions, à éprouver auprès de joueurs.** Voir les [règles effectives](REGLES.md), le [rapport d'équilibrage](equilibrage/EQUILIBRAGE-0.4.md) et le [point de contrôle 04](suivi/04-j4-carte24.md). Les sauvegardes restent absentes ; leur critère ci-dessous est réservé au jalon J5.
 
 ## Situation initiale
 

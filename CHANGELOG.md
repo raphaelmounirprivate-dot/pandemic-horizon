@@ -1,6 +1,6 @@
 # Historique des versions
 
-Du plus récent au plus ancien. Toutes les versions sont des **candidats de prototype** : implémentées et testées automatiquement, jamais essayées par des joueurs externes, sans release binaire GitHub. Le détail de chaque lot est dans les [points de suivi](docs/suivi/00-index.md) ; les notes jointes aux archives sont dans `docs/NOTES-VERSION-*.md`.
+Du plus récent au plus ancien. Toutes les versions sont des **candidats de prototype** : implémentées et testées automatiquement, jamais essayées par des joueurs externes, sans release binaire GitHub. Le détail de chaque lot est dans les [points de suivi](docs/suivi/00-index.md) ; les notes jointes aux archives sont dans `docs/versions/NOTES-VERSION-*.md`.
 
 ## Non publié — après la 0.23 (19 octobre 2026)
 
@@ -17,27 +17,27 @@ Aucun changement de règles, de coefficients ni de format de sauvegarde ; la ver
 
 ## 0.23 — compétences lisibles et vues séparées
 
-Familles Diffusion, Discrétion et Résilience ; légende commune ; ascendance complète dans le profil enrichi ; fiche avec coefficients avant/après et raison de refus. Menu, paramètres et bilan extraits de `main.gd`. Kit de sessions joueurs et matrice de compatibilité joints au ZIP. 6 061 contrôles réussis. [Point 28](docs/suivi/28-familles-validation.md) · [notes](docs/NOTES-VERSION-0.23.md).
+Familles Diffusion, Discrétion et Résilience ; légende commune ; ascendance complète dans le profil enrichi ; fiche avec coefficients avant/après et raison de refus. Menu, paramètres et bilan extraits de `main.gd`. Kit de sessions joueurs et matrice de compatibilité joints au ZIP. 6 061 contrôles réussis. [Point 28](docs/suivi/28-familles-validation.md) · [notes](docs/versions/NOTES-VERSION-0.23.md).
 
 ## 0.22 — crises réactives et Double relais
 
-Profil facultatif `tactics-0.22`, sauvegarde 7. Les aléas régionaux ciblent au déclenchement un foyer actif avec des sains (48/76 incidents sans occasion de croissance avant, 0/76 après, en protocole apparié). Trois réponses à la première panne aérienne : détour, subir, occasion. Réseaux fragiles impose Double relais avant J60. [Point 27](docs/suivi/27-crises-reactives.md) · [notes](docs/NOTES-VERSION-0.22.md) · [rapport](docs/EQUILIBRAGE-0.22-REACTIF.md).
+Profil facultatif `tactics-0.22`, sauvegarde 7. Les aléas régionaux ciblent au déclenchement un foyer actif avec des sains (48/76 incidents sans occasion de croissance avant, 0/76 après, en protocole apparié). Trois réponses à la première panne aérienne : détour, subir, occasion. Réseaux fragiles impose Double relais avant J60. [Point 27](docs/suivi/27-crises-reactives.md) · [notes](docs/versions/NOTES-VERSION-0.22.md) · [rapport](docs/equilibrage/EQUILIBRAGE-0.22-REACTIF.md).
 
 ## 0.21 — repères des incidents
 
-Pictogrammes des aléas locaux sur la carte, survol et parcours F4/Local ; effets mondiaux signalés comme mondiaux sans localisation inventée. Règles et formats 4/5/6 inchangés. Clôturée au commit `9018202`. [Point 26](docs/suivi/26-reperes-incidents.md) · [notes](docs/NOTES-VERSION-0.21.md).
+Pictogrammes des aléas locaux sur la carte, survol et parcours F4/Local ; effets mondiaux signalés comme mondiaux sans localisation inventée. Règles et formats 4/5/6 inchangés. Clôturée au commit `9018202`. [Point 26](docs/suivi/26-reperes-incidents.md) · [notes](docs/versions/NOTES-VERSION-0.21.md).
 
 ## 0.20 — aléas et résilience
 
-Option **Aléas et résilience** : 12 incidents tirés par graine parmi huit types, trois compétences de protection et le scénario **Réseaux fragiles**. Format 6 ; les anciennes parties conservent leurs règles. [Point 25](docs/suivi/25-aleas-resilience.md) · [140 parties comparées](docs/EQUILIBRAGE-0.20-ALEAS.md) · [notes](docs/NOTES-VERSION-0.20.md).
+Option **Aléas et résilience** : 12 incidents tirés par graine parmi huit types, trois compétences de protection et le scénario **Réseaux fragiles**. Format 6 ; les anciennes parties conservent leurs règles. [Point 25](docs/suivi/25-aleas-resilience.md) · [140 parties comparées](docs/equilibrage/EQUILIBRAGE-0.20-ALEAS.md) · [notes](docs/versions/NOTES-VERSION-0.20.md).
 
 ## 0.19 — confort et distribution
 
-Mouvements réduits, lecture agrandie et sons facultatifs avec volume. Candidat Windows et archive vérifiés. [Point 24](docs/suivi/24-confort-distribution.md) · [notes](docs/NOTES-VERSION-0.19.md).
+Mouvements réduits, lecture agrandie et sons facultatifs avec volume. Candidat Windows et archive vérifiés. [Point 24](docs/suivi/24-confort-distribution.md) · [notes](docs/versions/NOTES-VERSION-0.19.md).
 
 ## 0.18 — contenu enrichi
 
-Agent NACRE, fiches de scénarios et profil enrichi facultatif de 18/21 évolutions avec huit événements supplémentaires. Les parties classiques conservent leurs règles. [Point 23](docs/suivi/23-contenu-enrichi.md) · [240 comparaisons](docs/EQUILIBRAGE-0.18-ENRICHI.md).
+Agent NACRE, fiches de scénarios et profil enrichi facultatif de 18/21 évolutions avec huit événements supplémentaires. Les parties classiques conservent leurs règles. [Point 23](docs/suivi/23-contenu-enrichi.md) · [240 comparaisons](docs/equilibrage/EQUILIBRAGE-0.18-ENRICHI.md).
 
 ## 0.17 — actualités et historique
 
@@ -61,16 +61,16 @@ Carte du monde nocturne : foyers et couverture en rouge, échanges animés dans 
 
 ## 0.12 — paramètres logistiques
 
-Soutien des ports réduit à **3 points** pour les nouvelles parties ; à conditions identiques, cinq victoires de plus sans perte de Relais face au tarif 6 sur 135 cas appariés. Les sauvegardes 0.11 gardent leur tarif de 6 points ; format 4. [Point 16](docs/suivi/16-parametres-logistiques.md) · [1 620 parties](docs/EQUILIBRAGE-0.12-PARAMETRES.md).
+Soutien des ports réduit à **3 points** pour les nouvelles parties ; à conditions identiques, cinq victoires de plus sans perte de Relais face au tarif 6 sur 135 cas appariés. Les sauvegardes 0.11 gardent leur tarif de 6 points ; format 4. [Point 16](docs/suivi/16-parametres-logistiques.md) · [1 620 parties](docs/equilibrage/EQUILIBRAGE-0.12-PARAMETRES.md).
 
 ## 0.11 — décision logistique
 
-Décision facultative au jour 28 de Dégel : soutien des ports, limitation gratuite des échanges ou maintien neutre ; effets pendant douze jours ; F2 jusqu'au J30. Format 3. [Point 14](docs/suivi/14-decision-logistique.md). Analyse de 1 080 parties : [point 15](docs/suivi/15-analyse-decisions.md) · [rapport](docs/EQUILIBRAGE-0.11-DECISIONS.md).
+Décision facultative au jour 28 de Dégel : soutien des ports, limitation gratuite des échanges ou maintien neutre ; effets pendant douze jours ; F2 jusqu'au J30. Format 3. [Point 14](docs/suivi/14-decision-logistique.md). Analyse de 1 080 parties : [point 15](docs/suivi/15-analyse-decisions.md) · [rapport](docs/equilibrage/EQUILIBRAGE-0.11-DECISIONS.md).
 
 ## 0.10 — relais arctiques
 
-Objectif facultatif « Relais arctiques » dans Dégel (1 000 unités sur chacune des deux routes saisonnières de Boréale avant la fin du J54) ; « Premiers relais » reste en Standard. Parties 0.7 à 0.9 compatibles ; les parties 0.6 exigent leur ancien exécutable. [Point 12](docs/suivi/12-relais-arctiques.md) · stratégies climatiques : [point 13](docs/suivi/13-strategies-climatiques.md), [rapport](docs/EQUILIBRAGE-0.10-CLIMATIQUE.md).
+Objectif facultatif « Relais arctiques » dans Dégel (1 000 unités sur chacune des deux routes saisonnières de Boréale avant la fin du J54) ; « Premiers relais » reste en Standard. Parties 0.7 à 0.9 compatibles ; les parties 0.6 exigent leur ancien exécutable. [Point 12](docs/suivi/12-relais-arctiques.md) · stratégies climatiques : [point 13](docs/suivi/13-strategies-climatiques.md), [rapport](docs/equilibrage/EQUILIBRAGE-0.10-CLIMATIQUE.md).
 
 ## 0.2 à 0.9 — fondations
 
-Prototype, réactions et événements, Dégel 2042 et difficultés, carte de 24 régions, sauvegardes, tutoriel et aide, transports, spécialisations, ordres d'achat et objectif facultatif : [points 01 à 11](docs/suivi/00-index.md). Rapports : [0.4](docs/EQUILIBRAGE-0.4.md), [0.8 ordres d'achat](docs/EQUILIBRAGE-0.8-ORDRES.md), [0.9 objectifs](docs/EQUILIBRAGE-0.9-OBJECTIFS.md).
+Prototype, réactions et événements, Dégel 2042 et difficultés, carte de 24 régions, sauvegardes, tutoriel et aide, transports, spécialisations, ordres d'achat et objectif facultatif : [points 01 à 11](docs/suivi/00-index.md). Rapports : [0.4](docs/equilibrage/EQUILIBRAGE-0.4.md), [0.8 ordres d'achat](docs/equilibrage/EQUILIBRAGE-0.8-ORDRES.md), [0.9 objectifs](docs/equilibrage/EQUILIBRAGE-0.9-OBJECTIFS.md).

@@ -9,7 +9,7 @@ on:
       - 'docs/GUIDE-JOUEUR.md'
       - 'docs/TESTS-JOUEURS.md'
       - 'docs/COMPATIBILITE.md'
-      - 'docs/NOTES-VERSION-*.md'
+      - 'docs/versions/**'
       - 'docs/tests-joueurs/**'
   pull_request:
     paths:
@@ -20,7 +20,7 @@ on:
       - 'docs/GUIDE-JOUEUR.md'
       - 'docs/TESTS-JOUEURS.md'
       - 'docs/COMPATIBILITE.md'
-      - 'docs/NOTES-VERSION-*.md'
+      - 'docs/versions/**'
       - 'docs/tests-joueurs/**'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

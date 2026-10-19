@@ -25,7 +25,7 @@ Date : 16 octobre 2026. Suite du [point 06](06-j5-tutoriel-aide.md).
 
 ## Exploration d'équilibrage 0.7
 
-Commande : `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Balance`. Même méthode que le [rapport 0.4](../EQUILIBRAGE-0.4.md) : graines 7, 42 et 2042 ; 24 départs standards, Boréale imposée pour Dégel ; quatre politiques standards et cinq pour Dégel, achats avec points normalement gagnés. CSV généré dans `build/qa/balance.csv`.
+Commande : `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Balance`. Même méthode que le [rapport 0.4](../equilibrage/EQUILIBRAGE-0.4.md) : graines 7, 42 et 2042 ; 24 départs standards, Boréale imposée pour Dégel ; quatre politiques standards et cinq pour Dégel, achats avec points normalement gagnés. CSV généré dans `build/qa/balance.csv`.
 
 | Scénario | Difficulté | Parties | Victoires | Défaites | Jours |
 | --- | --- | --- | --- | --- | --- |

@@ -12,7 +12,7 @@ Le CSV conserve les achats et l'état facultatif de chaque partie, ainsi que son
 
 ## Résultats du 16 octobre 2026
 
-Godot 4.7.2, 24 départs Standard, trois difficultés, graines 7/42/2042 et dix politiques, deux modes : **4 320 parties, 2 160 paires, 407 830 pas, aucune dérive observée**. Le [rapport complet](../EQUILIBRAGE-0.9-OBJECTIFS.md) conserve les 30 groupes difficulté/politique et les 720 groupes difficulté/départ/politique, avec moteur et empreinte des données. Les fichiers détaillés `build/qa/balance-objectives.csv` et `.md` restent locaux et se régénèrent avec la commande.
+Godot 4.7.2, 24 départs Standard, trois difficultés, graines 7/42/2042 et dix politiques, deux modes : **4 320 parties, 2 160 paires, 407 830 pas, aucune dérive observée**. Le [rapport complet](../equilibrage/EQUILIBRAGE-0.9-OBJECTIFS.md) conserve les 30 groupes difficulté/politique et les 720 groupes difficulté/départ/politique, avec moteur et empreinte des données. Les fichiers détaillés `build/qa/balance-objectives.csv` et `.md` restent locaux et se régénèrent avec la commande.
 
 Les résultats ci-dessous portent sur les **2 160 parties avec objectif**, chacune ayant son témoin :
 

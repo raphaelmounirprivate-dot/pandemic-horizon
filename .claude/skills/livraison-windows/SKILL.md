@@ -18,7 +18,7 @@ Mettre la même version partout :
 
 - `project.godot` → `config/version="X.Y.Z"` (source de vérité des scripts) ;
 - `export_presets.cfg` → `export_path="build/windows-X.Y.Z/PandemicHorizon.exe"`, `application/file_version` et `application/product_version` = `"X.Y.Z.0"` ;
-- `docs/NOTES-VERSION-X.Y.md` présent (requis par `package-windows.ps1`) ;
+- `docs/versions/NOTES-VERSION-X.Y.md` présent (requis par `package-windows.ps1`) ;
 - README / point de suivi (skill `point-de-suivi`).
 
 ## 2. Valider puis committer

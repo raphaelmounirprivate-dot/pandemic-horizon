@@ -56,7 +56,7 @@ func run() -> void:
 		for purchase in row.purchases: events.append("J%d %s (%d pts)" % [purchase.day,purchase.id,purchase.cost])
 		report += "- %s / %s / %s : %s.\n" % [row.scenario,row.profile,row.policy,", ".join(events)]
 	report += "\nTraces complètes : `build/qa/expanded-balance.json` (hors Git), script reproductible `scripts/analysis/balance_expanded.gd`. Les défaites peuvent inclure une réussite facultative. Comparer les profils uniquement sur les mêmes scénarios, graines et politiques communes. Les politiques enrichies sont des alternatives, sans témoin classique de même liste d'achats.\n"
-	var output = FileAccess.open("res://docs/EQUILIBRAGE-0.18-ENRICHI.md",FileAccess.WRITE)
+	var output = FileAccess.open("res://docs/equilibrage/EQUILIBRAGE-0.18-ENRICHI.md",FileAccess.WRITE)
 	output.store_string(report)
 	print("EXPANDED_BALANCE: %d parties, rapport Markdown produit." % rows.size())
 	quit()

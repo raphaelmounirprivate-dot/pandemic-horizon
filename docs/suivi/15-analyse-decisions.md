@@ -27,7 +27,7 @@ Sans réserve, soutien appliqué au J28 dans 27 cas et au J30 dans 18 ; les 90 a
 
 La contrepartie est observable : dans la série avec réserve, 72 paires à deux réussites atteignent les Relais plus tôt avec soutien, 27 plus tard. Parmi les 99 paires à deux réussites, le décalage moyen est +0,36 jour ; les 18 Relais perdus restent exclus de cette moyenne, et sont affichés séparément. Le soutien fait perdre 14 victoires et 18 Relais, sans nouveau succès de résultat dans cette cohorte. En achats habituels, 18 des 99 paires à deux réussites accélèrent les Relais, 81 restent identiques ; six victoires et 18 Relais sont perdus.
 
-La limitation gratuite apporte deux victoires supplémentaires en achats habituels, aucune perte et aucune variation du nombre de Relais. Elle retarde les Relais d'un jour dans trois paires et ralentit légèrement la victoire dans les paires à deux victoires. Le [rapport généré](../EQUILIBRAGE-0.11-DECISIONS.md) donne tous les contrastes, le remède aux mêmes dates, les résultats par politique/difficulté et les dates d'achats. Le remède final moyen ne compare pas une durée identique : les parties se terminent à des jours différents.
+La limitation gratuite apporte deux victoires supplémentaires en achats habituels, aucune perte et aucune variation du nombre de Relais. Elle retarde les Relais d'un jour dans trois paires et ralentit légèrement la victoire dans les paires à deux victoires. Le [rapport généré](../equilibrage/EQUILIBRAGE-0.11-DECISIONS.md) donne tous les contrastes, le remède aux mêmes dates, les résultats par politique/difficulté et les dates d'achats. Le remède final moyen ne compare pas une durée identique : les parties se terminent à des jours différents.
 
 ## Décision d'équilibrage
 
@@ -40,7 +40,7 @@ Aucun nouveau coefficient n'a été testé ici : réduire le coût, déplacer la
 - `scripts/analysis/decision_comparison.gd` : simulations, contrôles, statistiques et rapport.
 - `scripts/balance_decisions.gd`, `dev.ps1 BalanceDecisions` : cohorte complète, CSV et Markdown sous `build/qa/`.
 - `tests/test_decision_comparison.gd` : budget, financement, neutralité et refus des incohérences.
-- `docs/EQUILIBRAGE-0.11-DECISIONS.md` : rapport conservé ; CSV brut local `build/qa/balance-decisions.csv`.
+- `docs/equilibrage/EQUILIBRAGE-0.11-DECISIONS.md` : rapport conservé ; CSV brut local `build/qa/balance-decisions.csv`.
 - `export_presets.cfg` : exclusion du nouvel outil de l'exécutable. Données, simulation distribuée, interface et format de sauvegarde inchangés.
 
 ## Vérifications

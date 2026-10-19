@@ -8,7 +8,7 @@ Date : 15 octobre 2026. Suite du [point 03](03-j4-degel-difficultes.md).
 - Carte schématique organisée en quatre rangées de six. Boutons de 112 × 44 px, noms en 14 px, barres de couverture et compteur de détection adaptés au nombre réel de régions.
 - Positions dupliquées rejetées par la validation. Test géométrique des limites et des superpositions aux tailles 1280 × 720 et 1920 × 1080 ; clic sur la dernière région et parcours Tab de toutes les régions.
 - Réponse du remède ajustée aux 24 régions : `0,6 + couverture × 0,6 + détections × 0,015`, avant les modificateurs existants. Croissance, coûts, gains de points, phases et coefficients de difficulté conservés.
-- Script reproductible `scripts/balance.gd`, commande `dev.ps1 Balance`, rapport CSV généré et [rapport d'équilibrage](../EQUILIBRAGE-0.4.md) versionné. Le script d'exploration est exclu de l'exécutable.
+- Script reproductible `scripts/balance.gd`, commande `dev.ps1 Balance`, rapport CSV généré et [rapport d'équilibrage](../equilibrage/EQUILIBRAGE-0.4.md) versionné. Le script d'exploration est exclu de l'exécutable.
 - Guide joueur et export versionnés en 0.4.0. Les anciennes versions restent disponibles dans leurs propres dossiers.
 
 ## Vérifications exécutées

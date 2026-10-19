@@ -27,7 +27,7 @@ foreach ($document in (Get-ChildItem -LiteralPath (Join-Path $projectRoot 'docs/
     Copy-Item -LiteralPath $document.FullName -Destination $destination -Force
     if ((Get-FileHash -LiteralPath $destination).Hash -ne $sourceHash) { throw "Player kit copy mismatch: $($document.Name)" }
 }
-Copy-Item -LiteralPath (Join-Path $projectRoot "docs/$notesName") -Destination $exportDirectory -Force
+Copy-Item -LiteralPath (Join-Path $projectRoot "docs/versions/$notesName") -Destination $exportDirectory -Force
 $licenceDirectory = Join-Path $exportDirectory 'licences'
 New-Item -ItemType Directory -Force $licenceDirectory | Out-Null
 foreach ($licence in (Get-ChildItem -LiteralPath (Join-Path $projectRoot 'docs/licences') -File)) {

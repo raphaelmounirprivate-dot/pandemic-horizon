@@ -24,6 +24,6 @@ Réseaux fragiles impose Centrale, incidents espacés d'environ six jours contre
 
 ## Mesures et livraison
 
-Le [rapport de 140 parties](../EQUILIBRAGE-0.20-ALEAS.md) compare cinq graines et deux difficultés. À politique mobilité identique, les aléas modifient légèrement les jours moyens dans cet échantillon, sans changer les cinq victoires par groupe. Les politiques de protection diffèrent aussi par l'ordre d'achat ; Réserves ne gagne qu'une partie Standard difficile sur cinq. Cela ne prouve ni un optimum ni un équilibrage humain. Coefficients conservés en attente d'essais joueurs.
+Le [rapport de 140 parties](../equilibrage/EQUILIBRAGE-0.20-ALEAS.md) compare cinq graines et deux difficultés. À politique mobilité identique, les aléas modifient légèrement les jours moyens dans cet échantillon, sans changer les cinq victoires par groupe. Les politiques de protection diffèrent aussi par l'ordre d'achat ; Réserves ne gagne qu'une partie Standard difficile sur cinq. Cela ne prouve ni un optimum ni un équilibrage humain. Coefficients conservés en attente d'essais joueurs.
 
 Livraison : commit, sauvegarde bundle/sources vérifiés et archive Windows identifiée après les vérifications finales. Les anciens exports restent conservés. Essais physiques, auditifs, DPI, second PC et compréhension humaine non réalisés ; protocole TESTS-JOUEURS.md complété pour ce lot.

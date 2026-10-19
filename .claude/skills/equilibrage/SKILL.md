@@ -33,7 +33,7 @@ Pour les lancements directs, reproduire l'isolation de `dev.ps1` (`APPDATA`/`LOC
 5. Enregistrer dans chaque observation : moteur, empreinte du contenu, paramètres.
 6. Ajouter `tests/test_<thème>_comparison.gd` (cohortes incohérentes refusées, calculs du rapport).
 
-## Rapport `docs/EQUILIBRAGE-<version>-<THÈME>.md`
+## Rapport `docs/equilibrage/EQUILIBRAGE-<version>-<THÈME>.md`
 
 - Question posée, protocole (scénarios, difficultés, graines, politiques, nombre de parties/paires), commande de reproduction et empreinte.
 - Résultats séparés : victoires propres à A, propres à B, doubles victoires, doubles défaites ; durées comparées **sur les doubles victoires seulement** ; dates d'achats réels.

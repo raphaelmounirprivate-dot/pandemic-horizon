@@ -18,7 +18,7 @@ Huit véritables références 0.11 produites avec les règles `8428f28`, avant t
 
 ## Résultats et décision
 
-La cohorte complète est validée, avec mêmes résultats après intégration de la 0.12. Le [rapport généré](../EQUILIBRAGE-0.12-PARAMETRES.md) contient résultats séparés, contrastes à un paramètre, remède daté et empreintes exactes.
+La cohorte complète est validée, avec mêmes résultats après intégration de la 0.12. Le [rapport généré](../equilibrage/EQUILIBRAGE-0.12-PARAMETRES.md) contient résultats séparés, contrastes à un paramètre, remède daté et empreintes exactes.
 
 | Modèle | Parties | Victoires | Relais réussis |
 | --- | ---: | ---: | ---: |
@@ -44,7 +44,7 @@ Le monde fige son catalogue de décision lors du démarrage ou du chargement. Le
 - `scripts/analysis/logistics_parameters.gd`, `scripts/balance_parameters.gd`, `dev.ps1 BalanceParameters` : modèles, contrôles et rapport.
 - `scripts/analysis/decision_comparison.gd` : seuil de réserve explicite, indépendant du coût candidat, avec comportement historique conservé par défaut.
 - `tests/test_logistics_parameters.gd`, huit références `tests/fixtures/*0.11*` : restauration du catalogue, budgets, erreurs, témoins, chronologie et persistance.
-- Sorties locales hors Git : `build/qa/balance-parameters.jsonl` et `.md`. Rapport conservé : `docs/EQUILIBRAGE-0.12-PARAMETRES.md`.
+- Sorties locales hors Git : `build/qa/balance-parameters.jsonl` et `.md`. Rapport conservé : `docs/equilibrage/EQUILIBRAGE-0.12-PARAMETRES.md`.
 - `data/decisions.json`, catalogue historique, `scripts/gameplay/decisions.gd`, monde, persistance, aide et écran : coût et profils par partie. Outils expérimentaux exclus du binaire.
 
 ## Vérifications

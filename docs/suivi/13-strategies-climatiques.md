@@ -35,7 +35,7 @@ Polaire historique achète Discrétion à J45 puis Mobilité saisonnière à J65
 
 Les cinq défaites nouvelles sont toutes en difficile : deux pour `polaire_diffusion` (graines 7 et 2042), trois pour `resilience_precoce`. Elles accompagnent toutes une réussite facultative. L'ordre d'achat change simultanément budget, dates et effets : ces observations ne prouvent pas l'effet causal isolé d'une évolution.
 
-Le [rapport complet](../EQUILIBRAGE-0.10-CLIMATIQUE.md) conserve 45 groupes difficulté/politique et 270 lignes de dates d'achat. Les fichiers `build/qa/balance-arctic.csv` et `.md` sont générés localement et restent hors Git. Les anciennes politiques du lot 12 conservent leurs résultats dans cet échantillon.
+Le [rapport complet](../equilibrage/EQUILIBRAGE-0.10-CLIMATIQUE.md) conserve 45 groupes difficulté/politique et 270 lignes de dates d'achat. Les fichiers `build/qa/balance-arctic.csv` et `.md` sont générés localement et restent hors Git. Les anciennes politiques du lot 12 conservent leurs résultats dans cet échantillon.
 
 ## Vérifications
 
