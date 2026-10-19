@@ -78,6 +78,8 @@ var evolution_back: Button
 var evolution_open_button: Button
 var evolution_summary: Label
 var evolution_return_paused = true
+var result_cards: Dictionary = {}
+var result_moments: Label
 var effects_label: RichTextLabel
 var save_store = SaveStore.new()
 var autosave_enabled = true
@@ -772,27 +774,7 @@ func advance_time(delta: float) -> void:
 	_refresh()
 
 func show_result() -> void:
-	screen = "result"
-	paused = true
-	_reset_screen("Objectif atteint" if world.outcome == "victory" else "Fin de partie", world.outcome_text())
-	body.add_child(_label("Jour %d\nPopulation touchée : %.1f %%\nRemède : %.1f %%\nScore : %d" % [world.day, world.coverage() * 100, world.cure, world.score()], 28))
-	body.add_child(_label("%s · %s · Score = max(0, couverture × 10 000 − jours × 10) ×%.2f." % [world.scenario.name, world.difficulty.name, world.difficulty.score_multiplier], 16, MUTED))
-	if not world.objective.is_empty():
-		var optional = _label("Objectif facultatif · " + World.Objectives.summary(world), 16, MUTED)
-		optional.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		body.add_child(optional)
-	if not world.decision.is_empty(): body.add_child(_label(World.Decisions.summary(world),16,MUTED))
-	var log = RichTextLabel.new()
-	log.add_theme_font_size_override("normal_font_size",20 if reading_large else 16)
-	log.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	log.text = "\n".join(world.journal)
-	body.add_child(log)
-	var restart = _button("Rejouer avec les mêmes choix", restart_game, body)
-	_button("Choisir une autre région", show_menu, body)
-	_button("Sauvegardes", open_saves, body)
-	_button("Monde et actualités [F3]",open_overview,body)
-	_button("Aide [F1]", open_help, body)
-	restart.grab_focus()
+	preload("res://scripts/ui/result_view.gd").build(self)
 
 func open_overview() -> void:
 	if world.regions.is_empty() or tutorial != null: return

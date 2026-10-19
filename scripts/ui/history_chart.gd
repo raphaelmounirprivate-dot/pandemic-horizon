@@ -1,5 +1,6 @@
 extends Control
 var world: RefCounted
+var target_line = false # Result screen: dashed 90 % objective line.
 func _draw() -> void:
 	if world == null: return
 	var area = Rect2(Vector2(48,22),size-Vector2(65,52))
@@ -8,6 +9,13 @@ func _draw() -> void:
 		var y = area.end.y-area.size.y*tick/4.0
 		draw_line(Vector2(area.position.x,y),Vector2(area.end.x,y),Color("254954"),1)
 		draw_string(font,Vector2(2,y+4),"%d %%" % (tick*25),HORIZONTAL_ALIGNMENT_LEFT,-1,12,Color("a7c4c9"))
+	if target_line:
+		var goal_y = area.end.y-area.size.y*0.9
+		var x = area.position.x
+		while x < area.end.x:
+			draw_line(Vector2(x,goal_y),Vector2(minf(x+8,area.end.x),goal_y),Color("e1eee9"),1)
+			x += 14
+		draw_string(font,Vector2(area.position.x+8,goal_y-6),"Objectif 90 %",HORIZONTAL_ALIGNMENT_LEFT,-1,12,Color("e1eee9"))
 	if world.history.is_empty():
 		draw_string(font,area.position+Vector2(12,35),"Historique antérieur absent de cette sauvegarde.",HORIZONTAL_ALIGNMENT_LEFT,-1,14,Color("a7c4c9"))
 		return

@@ -233,3 +233,12 @@ Captures : `tests/capture_evolution_screen.gd` (7 états × 3 résolutions, `.im
 - Étape 3 : carte du monde sans bandeau de crise, panneau de 380 px : départ, population, liaisons, raison d'un départ imposé, résumé.
 
 Captures : `tests/capture_menu.gd` (7 états × 3 résolutions, `.impeccable/review/menu-*.png`).
+
+**Bilan de fin illustré (après 0.23).** `result_view.gd` remplace le journal brut :
+
+- Titre « Victoire » ou « Défaite », sous-titre scénario · difficulté · graine, bandeau 20 px avec symbole dessiné de 36 px (cercle et coche `accent`, ou cercle et croix `crisis`) et phrase d'issue : l'issue ne repose jamais sur la couleur seule.
+- Quatre cartes (`stat_card.gd`, fond `button`, angles 6 px, 128 px de haut minimum) : légende 15 px `muted`, valeur 34 px, note 14 px. Couverture et remède ont une barre (`progress_meter.gd`, 12 px, piste `ocean`, remplissage `crisis` ou `accent`) ; la couverture porte un repère blanc à 90 %.
+- Courbe de la partie (`history_chart.gd`) avec ligne pointillée « Objectif 90 % » ; colonne « MOMENTS CLÉS » de 440 px (560 px au-delà de 1 600 px), 15 px (20 px en lecture agrandie), au plus 10 lignes tirées du journal.
+- Rangée de boutons : Rejouer (56 px, 20 px, ciblé), Nouvelle partie, Monde [F3], Sauvegardes, Menu, Aide.
+
+Captures : `tests/capture_result.gd` (5 fins × 3 résolutions, `.impeccable/review/result-*.png`).

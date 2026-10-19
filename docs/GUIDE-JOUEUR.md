@@ -202,6 +202,10 @@ Dans Réseaux fragiles réactif, Double relais est obligatoire : 6 000 unités d
 
 Les trois symboles de la légende identifient Diffusion (réseau), Discrétion (bouclier) et Résilience (anneau). Les compétences suivent cet ordre, avec les mêmes coûts, prérequis et exclusions. La sélection montre toute son ascendance, le nom complet, l'effet et les coefficients actuels → après achat. Ils sont calculés depuis vos compétences achetées, hors climat et événements temporaires ; une compétence acquise n'est pas comptée deux fois. Les effets cumulés restent décrits dans les événements et les transports. Seul le bouton Évoluer dépense des points.
 
+## Bilan de fin
+
+À la fin, l'écran annonce victoire ou défaite, puis montre le jour, la population touchée (avec le repère 90 %), le remède et le score, la courbe de la partie et ses moments clés. « Rejouer avec les mêmes choix » relance la même configuration ; le journal complet reste dans Monde [F3].
+
 ## Écran Évolution
 
 Touche E ou bouton « Évolution » à droite de la carte. La partie se met en pause ; Échap, E ou « Retour à la carte » la rend dans l'état d'avant (en cours ou en pause).
