@@ -21,7 +21,11 @@ Copy-Item -LiteralPath (Join-Path $projectRoot 'docs/COMPATIBILITE.md') -Destina
 $playerKit = Join-Path $exportDirectory 'tests-joueurs'
 New-Item -ItemType Directory -Force $playerKit | Out-Null
 foreach ($document in (Get-ChildItem -LiteralPath (Join-Path $projectRoot 'docs/tests-joueurs') -File)) {
-    Copy-Item -LiteralPath $document.FullName -Destination $playerKit -Force
+    $destination = Join-Path $playerKit $document.Name
+    $sourceHash = (Get-FileHash -LiteralPath $document.FullName).Hash
+    if ((Test-Path -LiteralPath $destination) -and (Get-FileHash -LiteralPath $destination).Hash -eq $sourceHash) { continue }
+    Copy-Item -LiteralPath $document.FullName -Destination $destination -Force
+    if ((Get-FileHash -LiteralPath $destination).Hash -ne $sourceHash) { throw "Player kit copy mismatch: $($document.Name)" }
 }
 Copy-Item -LiteralPath (Join-Path $projectRoot "docs/$notesName") -Destination $exportDirectory -Force
 $licenceDirectory = Join-Path $exportDirectory 'licences'
