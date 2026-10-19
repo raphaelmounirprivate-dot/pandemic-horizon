@@ -67,7 +67,8 @@ Les régions et connexions (`regions.json`, 24 régions fictives) sont validées
 | `menu_view.gd`, `settings_view.gd`, `overview_view.gd`, `saves_view.gd` | Vues extraites (0.23, puis écran des sauvegardes) ; accèdent encore aux champs du contrôleur. |
 | `runtime_smoke.gd` | Smoke test de l'export (`--smoke-test`), piloté par `main.gd` ; embarqué dans l'exe, vérifié par `verify-export.ps1`. |
 | `region_map.gd` | Carte vectorielle (Natural Earth, `assets/maps/*.geojson`), zoom/déplacement, flux animés. |
-| `evolution_tree.gd`, `evolution_node.gd`, `skill_presenter.gd`, `family_symbol.gd` | Arbre de compétences, fiches avant/après. |
+| `evolution_view.gd` | Écran Évolution (E) : onglets par famille, fiche, achat explicite, partie en pause. |
+| `skill_tree_view.gd`, `evolution_node.gd`, `skill_presenter.gd`, `family_symbol.gd` | Arbre d'une famille de gauche à droite (disposition pure `layout()`), nœud à état écrit, coefficients avant/après, symboles. |
 | `incident_view.gd`, `crisis_response_view.gd` | Aléas et réponses aux crises. |
 | `history_chart.gd`, `help.gd`, `tutorial.gd`, `audio_feedback.gd`, `agent_emblem.gd` | Courbes, aide F1, tutoriel, sons, emblème NACRE. |
 

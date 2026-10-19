@@ -30,8 +30,8 @@ func run() -> void:
 						return
 					scene.world = loaded.world
 				scene.show_game()
-				if state == "prerequisite": scene.select_evolution("retention")
-				if state == "available": scene.select_evolution("network")
+				if state == "prerequisite": scene.open_evolution("retention")
+				if state == "available": scene.open_evolution("network")
 			await process_frame
 			await process_frame
 			await RenderingServer.frame_post_draw

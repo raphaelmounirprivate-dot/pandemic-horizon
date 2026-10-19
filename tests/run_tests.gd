@@ -227,7 +227,7 @@ func run() -> void:
 	check(checks - before_parameters >= 100,"Suite paramètres et références 0.11 entièrement exécutée")
 	var before_presentation = checks
 	await load("res://tests/test_world_presentation.gd").new().run(self,check)
-	check(checks - before_presentation >= 50,"Suite carte mondiale et interface intégrée entièrement exécutée")
+	check(checks - before_presentation >= 40,"Suite carte mondiale et interface intégrée entièrement exécutée")
 	var before_camera = checks
 	await load("res://tests/test_map_camera.gd").new().run(self,check)
 	check(checks - before_camera >= 100,"Suite exploration de carte entièrement exécutée")
@@ -246,5 +246,8 @@ func run() -> void:
 	var before_export_filter = checks
 	load("res://tests/test_export_filter.gd").new().run(check)
 	check(checks - before_export_filter >= 6,"Suite filtre d'export entièrement exécutée")
+	var before_evolution_screen = checks
+	await load("res://tests/test_evolution_screen.gd").new().run(self,check)
+	check(checks - before_evolution_screen >= 80,"Suite écran Évolution entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

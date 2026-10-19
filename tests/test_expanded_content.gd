@@ -76,13 +76,18 @@ func run(tree: SceneTree, check: Callable) -> void:
 			await tree.process_frame
 			await tree.process_frame
 			var viewport = Rect2(Vector2.ZERO,Vector2(dimensions))
-			check.call(scene.world.expanded_content and scene.evolution_buttons.size() == (21 if scenario == "degel2042" else 18),"Tous les achats enrichis intégrés : "+scenario)
+			check.call(scene.world.expanded_content and scene.EvolutionView.families(scene).reduce(func(n,g): return n+g.skills.size(),0) == (21 if scenario == "degel2042" else 18),"Tous les achats enrichis intégrés : "+scenario)
 			for id in scene.world.evolutions:
+				scene.open_evolution(id)
+				await tree.process_frame
+				await tree.process_frame
 				await inputs.click(tree,scene.evolution_buttons[id])
 				await tree.process_frame
 				check.call(scene.selected_evolution == id and scene.world.purchased.is_empty(),"Sélection enrichie sans achat : "+id)
-				check.call(viewport.encloses(scene.evolution_buttons[id].get_global_rect()) and viewport.encloses(scene.evolution_purchase.get_global_rect()) and viewport.encloses(scene.pause_button.get_global_rect()),"Nœud, achat et commandes enrichis visibles : "+id)
+				check.call(viewport.encloses(scene.evolution_buttons[id].get_global_rect()) and viewport.encloses(scene.evolution_purchase.get_global_rect()) and viewport.encloses(scene.evolution_back.get_global_rect()),"Nœud, achat et retour enrichis visibles : "+id)
 				check.call(scene.world.evolutions[id].effect in scene.evolution_detail.text,"Effet enrichi complet avant achat : "+id)
+			scene.close_evolution()
+			await tree.process_frame
 			if scenario == "degel2042":
 				for button in scene.decision_buttons.values(): check.call(viewport.encloses(button.get_global_rect()),"Choix intégrés visibles avec21 évolutions")
 	scene.queue_free()

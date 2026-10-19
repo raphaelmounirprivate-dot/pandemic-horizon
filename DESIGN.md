@@ -213,3 +213,13 @@ La fiche de 12 px expose nom complet et famille, effet rédigé, comparaison ava
 - **Don't** ouvrir un écran séparé pour la décision logistique.
 - **Don't** inventer des échanges animés, des personnes localisées ou une correspondance sanitaire des régions fictives.
 - **Don't** présenter les captures comme une validation avec des joueurs ou comme une vidéo des déplacements.
+
+**Écran Évolution (après 0.23, décision du 19 octobre 2026).** Les compétences quittent le panneau latéral pour un écran dédié, ouvert par E ou par le bouton « Évolution [E] · N pts » (64 px de haut, 22 px) à droite de la carte ; le panneau latéral passe de 500 à 380 px et la carte récupère la largeur. L'écran garde la palette, les angles de 6 px et les marges de 24 px.
+
+- Onglets de famille : 220 × 52 px minimum, symbole vectoriel à 10 px du bord, texte 18 px « Famille · acquises/total ». L'onglet actif a le fond `button-hover` **et** un soulignement `accent` de 4 px.
+- Arbre (`skill_tree_view.gd`) : colonnes = profondeur du prérequis dans la famille, lignes = ordre des feuilles, parent centré sur ses enfants. Nœuds jusqu'à 250 × 64 px, jamais moins de 44 px de haut ; écart horizontal 40 px (24 px sous 1 100 px de large), vertical 10 px. Liens coudés : 1,5 px `muted`, 3 px `accent` quand le prérequis est acquis, point d'arrivée de 3 px.
+- Nœud (`evolution_node.gd`) : symbole de famille à 17 px du bord, nom complet 15 px, ligne « coût · état » 13 px (`accent` si acquise ou disponible, `amber` sinon) ; acquise = contour `accent` 1 px, sélection = contour `accent` 3 px, blocage = losange `amber`. L'état est toujours écrit.
+- Fiche : 360 px de large sous 1 600 px, 480 px au-delà ; titre 24 px, texte 15 px en sections EFFET / AVANT → APRÈS / PRÉREQUIS, règle de spécialisation 14 px `amber`, bouton Évoluer 56 px, 20 px.
+- Pied : « Retour à la carte [Échap] » (320 px) et rappel des touches 15 px `muted`.
+
+Captures : `tests/capture_evolution_screen.gd` (7 états × 3 résolutions, `.impeccable/review/evolution-*.png`).

@@ -130,3 +130,9 @@ Règles visibles, interface redimensionnable dès 1280 × 720, navigation au cla
 ## Public et décisions ouvertes
 
 Public supposé : joueurs de jeux de stratégie sur PC ; niveau d'expérience à confirmer. Direction visuelle sombre cartographique avec turquoise et ambre confirmée par l'utilisateur. Les essais avec des joueurs extérieurs restent à organiser ; les 240 parties déterministes constituent une première exploration de l'équilibrage, à confronter aux usages réels.
+
+## Écran Évolution (après 0.23)
+
+Décision de l'auteur du 19 octobre 2026 : les compétences ne sont plus intégrées à l'écran de jeu, mais rassemblées dans un écran « Évolution » ouvert par E ou par un bouton à droite de la carte, qui affiche les points et le nombre de compétences achetables. Les choix logistiques et les réponses de crise restent intégrés sous la carte.
+
+L'écran met la partie en pause et la rend dans son état précédent au retour (Échap, E ou bouton). Un onglet par famille présente un arbre de gauche à droite : chaque trait relie un prérequis à la compétence qu'il débloque. Chaque nœud écrit son nom complet, son coût et son état ; la fiche détaille effet, coefficients avant → après, prérequis et exclusions de spécialisation. Sélectionner ne dépense rien ; seul Évoluer achète. Le tutoriel ouvre cet écran à l'exercice 3. Règles, coûts, prérequis, exclusions et formats de sauvegarde sont inchangés.

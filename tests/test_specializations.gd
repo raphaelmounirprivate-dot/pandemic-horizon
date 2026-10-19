@@ -120,41 +120,41 @@ func run(tree: SceneTree, check: Callable) -> void:
 	scene._refresh()
 	await tree.process_frame
 	await tree.process_frame
-	scene.evolution_buttons.air_bridge.grab_focus()
+	tree.root.size = Vector2i(1280, 720)
+	scene.open_evolution("air_bridge")
 	await tree.process_frame
 	await tree.process_frame
-	await tree.process_frame
-	var group = scene.evolution_buttons.air_bridge.get_parent()
-	check.call(group.get_parent().get_parent().get_global_rect().encloses(group.get_global_rect()), "Bouton, contrepartie et état visibles ensemble au clavier")
+	var viewport = Rect2(Vector2.ZERO, Vector2(tree.root.size))
+	check.call(scene.evolution_buttons.air_bridge.has_focus() and viewport.encloses(scene.evolution_buttons.air_bridge.get_global_rect()) and viewport.encloses(scene.evolution_purchase.get_global_rect()), "Bouton, fiche et achat visibles ensemble au clavier")
+	check.call("exclut" in scene.specialization_details.text, "Fiche annonce l'exclusion avant achat")
 	var inputs = load("res://tests/input_journey.gd").new()
 	await inputs.key(tree, KEY_ENTER)
 	await inputs.key(tree, KEY_ENTER)
 	await tree.process_frame
-	check.call(group.get_parent().get_parent().get_global_rect().encloses(group.get_global_rect()), "Effet et état restent visibles après achat")
-	check.call(scene.world.specialization_id() == "air_bridge" and "Pont aérien" in scene.specialization_details.text, "Choix au clavier dans le panneau défilant")
+	check.call(viewport.encloses(scene.evolution_buttons.air_bridge.get_global_rect()), "Effet et état restent visibles après achat")
+	check.call(scene.world.specialization_id() == "air_bridge" and "Pont aérien" in scene.specialization_details.text, "Choix au clavier dans l'écran Évolution")
 	check.call("Incompatible" in scene.evolution_reasons.land_network.text and "Incompatible" in scene.evolution_reasons.sea_logistics.text, "Motifs d'exclusion visibles après achat")
 	check.call("×1,18" in scene.world.evolutions.air_bridge.effect, "Contrepartie annoncée avant achat")
+	scene.close_evolution()
 	for dimensions in [Vector2i(1280, 720), Vector2i(1920, 1080)]:
 		tree.root.size = dimensions
 		scene.scenario_id = "degel2042"
 		scene.start_game()
+		scene.open_evolution("transmission")
 		await tree.process_frame
 		await tree.process_frame
-		var ids = scene.evolution_buttons.keys() # Actual visible family order, not definition order.
-		scene.evolution_buttons[ids[0]].grab_focus()
-		await tree.process_frame
-		await tree.process_frame
+		var ids = scene.evolution_buttons.keys() # Visible order of the current family tab.
+		var area = Rect2(Vector2.ZERO, Vector2(dimensions))
 		for id in ids:
-			await tree.process_frame # Apply the deferred scroll after the layout frame.
+			await tree.process_frame
 			var button = scene.evolution_buttons[id]
-			var row = button.get_parent()
-			check.call(button.has_focus() and row.get_parent().get_parent().get_global_rect().encloses(row.get_global_rect()), "Tab : groupe complet visible à %d : %s" % [dimensions.x, id])
+			check.call(button.has_focus() and area.encloses(button.get_global_rect()), "Tab : nœud visible à %d : %s" % [dimensions.x, id])
 			await inputs.key(tree, KEY_TAB)
 		for index in range(ids.size() - 1, -1, -1):
 			await inputs.key(tree, KEY_TAB, true)
 			var button = scene.evolution_buttons[ids[index]]
-			var row = button.get_parent()
-			check.call(button.has_focus() and row.get_parent().get_parent().get_global_rect().encloses(row.get_global_rect()), "Maj Tab : groupe complet visible à %d : %s" % [dimensions.x, ids[index]])
+			check.call(button.has_focus() and area.encloses(button.get_global_rect()), "Maj Tab : nœud visible à %d : %s" % [dimensions.x, ids[index]])
+		scene.close_evolution()
 	# Holding a mouse press must not move the target before the release.
 	tree.root.size = Vector2i(1280, 720)
 	scene.scenario_id = "standard"
@@ -163,9 +163,9 @@ func run(tree: SceneTree, check: Callable) -> void:
 	scene.world.purchase("transmission")
 	scene.world.purchase("mobility")
 	scene._refresh()
+	scene.open_evolution("mobility")
 	for i in range(3): await tree.process_frame
 	var target = scene.evolution_buttons.air_bridge
-	var scroll = target.get_parent().get_parent().get_parent()
 	for i in range(2): await tree.process_frame
 	var original_rect = target.get_global_rect()
 	var center = original_rect.get_center()
@@ -181,6 +181,6 @@ func run(tree: SceneTree, check: Callable) -> void:
 	check.call(scene.world.specialization_id().is_empty() and scene.selected_evolution == "air_bridge", "Relâcher le clic sélectionne sans achat")
 	await inputs.click(tree,scene.evolution_purchase)
 	check.call(scene.world.specialization_id() == "air_bridge", "Le bouton explicite achète la spécialisation")
-	check.call(scroll.get_global_rect().encloses(target.get_parent().get_global_rect()), "Description révélée après relâchement du clic")
+	check.call(Rect2(Vector2.ZERO, Vector2(1280, 720)).encloses(target.get_global_rect()), "Nœud toujours visible après l'achat")
 	scene.queue_free()
 	await tree.process_frame

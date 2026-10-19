@@ -67,12 +67,19 @@ func run(tree: SceneTree, check: Callable) -> void:
 	await tree.process_frame
 	await tree.process_frame
 	check.call(scene.tutorial.stage == 2 and scene.world.day == 10 and scene.world.points == 14 and scene.paused, "Points gagnés par les règles normales avant l'achat")
+	scene.open_evolution()
+	await tree.process_frame
+	await tree.process_frame
+	check.call(scene.screen == "evolution" and scene.paused, "L'écran Évolution s'ouvre en pause pendant l'exercice")
 	check.call("Prérequis" in scene.evolution_reasons.mobility.text, "Prérequis de Mobilité visible dans l'exercice")
 	scene.buy_evolution("mobility")
 	check.call(scene.world.purchased.is_empty(), "L'exercice ne permet pas l'achat d'une autre évolution")
 	await io.click(tree, scene.evolution_buttons.transmission)
 	await io.click(tree, scene.evolution_purchase)
 	check.call(scene.tutorial.ready and scene.world.points == 2 and "transmission" in scene.world.purchased, "Achat réel de Diffusion validé")
+	check.call(scene.evolution_back.has_focus(), "Après l'achat, le retour à la carte est ciblé")
+	scene.close_evolution()
+	check.call(scene.screen == "game" and scene.tutorial_next.has_focus(), "Retour à la carte : Continuer ciblé")
 	scene.next_lesson()
 	check.call(scene.world.day == 23 and scene.world.detected_count() > 0, "Détection réelle atteinte dans l'exercice")
 	scene.select_region(0)
@@ -124,9 +131,14 @@ func run(tree: SceneTree, check: Callable) -> void:
 	check.call(scene.map_view.buttons[2].has_focus(), "Clavier : Centrale ciblée")
 	await io.key(tree, KEY_ENTER)
 	await io.key(tree, KEY_ENTER)
+	check.call(scene.evolution_open_button.has_focus(), "Clavier : Évolution ciblée")
+	await io.key(tree, KEY_ENTER)
+	await tree.process_frame
 	check.call(scene.evolution_buttons.transmission.has_focus(), "Clavier : Diffusion ciblée")
-	check.call("Hors exercice" in scene.evolution_reasons.discretion.text and "Hors exercice" in Help.text_for(0, scene.world, scene.selected, scene.tutorial.stage), "États pédagogiques explicites dans le jeu et l'aide")
+	check.call("exercice" in scene.evolution_reasons.mobility.text and "Hors exercice" in Help.text_for(0, scene.world, scene.selected, scene.tutorial.stage), "États pédagogiques explicites dans le jeu et l'aide")
 	await io.key(tree, KEY_ENTER) # Sélectionner puis focaliser le bouton d'achat explicite.
+	await io.key(tree, KEY_ENTER)
+	check.call(scene.evolution_back.has_focus(), "Clavier : retour à la carte ciblé après l'achat")
 	await io.key(tree, KEY_ENTER)
 	await io.key(tree, KEY_ENTER)
 	check.call(scene.map_view.buttons[0].has_focus(), "Clavier : Boréale ciblée")

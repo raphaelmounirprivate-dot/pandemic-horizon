@@ -25,7 +25,7 @@ func run() -> void:
 				scene.tutorial.ready = true
 				scene.next_lesson()
 			scene.show_game()
-			scene.select_evolution("mobility" if state == "prerequisite" else ("air_bridge" if state in ["available","excluded"] else "transmission"))
+			scene.open_evolution("mobility" if state == "prerequisite" else ("air_bridge" if state in ["available","excluded"] else "transmission"))
 			await process_frame
 			await process_frame
 			await RenderingServer.frame_post_draw

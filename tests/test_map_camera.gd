@@ -28,7 +28,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 		var before = Store.new().encode(scene.world)
 		before.erase("saved_at")
 		var controls = scene.pause_button.get_global_rect()
-		var purchase = scene.evolution_buttons.mobility.get_global_rect()
+		var purchase = scene.evolution_open_button.get_global_rect()
 		var choice = scene.decision_buttons.support.get_global_rect()
 		var tools_clear = true
 		for button in map.buttons: tools_clear = tools_clear and not button.get_rect().intersects(map.camera_tools.get_rect())
@@ -67,7 +67,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 		await tree.process_frame
 		await inputs.click(tree,map.buttons[2])
 		check.call(scene.selected == 2 and scene.region_details.text.begins_with("Centrale"),"Clic après zoom sélectionne la bonne région")
-		check.call(controls == scene.pause_button.get_global_rect() and purchase == scene.evolution_buttons.mobility.get_global_rect() and choice == scene.decision_buttons.support.get_global_rect(),"Caméra sans déplacement des commandes, achats ou choix")
+		check.call(controls == scene.pause_button.get_global_rect() and purchase == scene.evolution_open_button.get_global_rect() and choice == scene.decision_buttons.support.get_global_rect(),"Caméra sans déplacement des commandes, achats ou choix")
 		map.move_camera(Vector2(-99999,99999))
 		check.call(map.pan.x == map.size.x*(1-map.zoom) and map.pan.y == 0,"Déplacement borné au monde")
 		var state = map.camera_state()

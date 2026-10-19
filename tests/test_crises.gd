@@ -130,11 +130,15 @@ func ui(tree,check):
 			await tree.process_frame
 			await tree.process_frame
 			for id in ["backup_links","research_watch","regional_reserves"]:
+				scene.open_evolution(id)
+				await tree.process_frame
+				await tree.process_frame
 				await inputs.click(tree,scene.evolution_buttons[id])
 				await tree.process_frame
 				check.call(scene.selected_evolution == id and scene.world.purchased.is_empty(),"Compétence consultable sans achat")
 				check.call(Rect2(Vector2.ZERO,Vector2(resolution)).encloses(scene.evolution_purchase.get_global_rect()) and Rect2(Vector2.ZERO,Vector2(resolution)).encloses(scene.evolution_buttons[id].get_global_rect()),"Compétence et achat intégrés")
-				check.call(Rect2(Vector2.ZERO,Vector2(resolution)).encloses(scene.pause_button.get_global_rect()),"Commandes visibles avec24 compétences et choix en attente")
+				check.call(Rect2(Vector2.ZERO,Vector2(resolution)).encloses(scene.evolution_back.get_global_rect()),"Retour à la carte visible avec 24 compétences")
+			scene.close_evolution()
 		scene.simulation_seed = 777
 		scene.restart_game()
 		check.call(scene.simulation_seed == 2042 and scene.world.crises_enabled,"Recommencer conserve graine et aléas")

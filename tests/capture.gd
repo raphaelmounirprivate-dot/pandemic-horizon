@@ -30,7 +30,7 @@ func capture() -> void:
 					scene._refresh()
 					await process_frame
 					await process_frame
-					scene.evolution_buttons[id].grab_focus()
+					scene.open_evolution(id)
 				"legacy-save":
 					scene.save_store._write(scene.save_store._path("slot2"), FileAccess.get_file_as_string("res://tests/fixtures/save-0.7-standard.json"))
 					scene.show_saves()

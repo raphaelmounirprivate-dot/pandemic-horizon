@@ -31,7 +31,7 @@ func run() -> void:
 						return
 					scene.world = loaded.world
 				scene.show_game()
-				scene.select_evolution("backup_links")
+				scene.open_evolution("backup_links")
 				if state == "incident": scene.open_overview()
 			await process_frame
 			await process_frame

@@ -57,6 +57,9 @@ func run(tree: SceneTree, check: Callable) -> void:
 	await key(tree, KEY_SPACE)
 	scene.world.points = 100
 	scene._refresh()
+	await key(tree, KEY_E)
+	check.call(scene.screen == "evolution" and scene.paused, "E ouvre l'écran Évolution en pause")
+	await tree.process_frame
 	await click(tree, scene.evolution_buttons.mobility)
 	check.call(scene.world.purchased.is_empty() and "Prérequis" in scene.evolution_detail.text, "Sélection sans achat avec prérequis visible")
 	await click(tree, scene.evolution_buttons.transmission)
@@ -66,6 +69,8 @@ func run(tree: SceneTree, check: Callable) -> void:
 	await click(tree, scene.evolution_buttons.mobility)
 	await click(tree, scene.evolution_purchase)
 	check.call("mobility" in scene.world.purchased, "Achat prérequis débloqué à la souris")
+	await key(tree, KEY_ESCAPE)
+	check.call(scene.screen == "game" and scene.paused and scene.evolution_open_button.has_focus(), "Échap ramène de l'écran Évolution à la carte, en pause")
 	await key(tree, KEY_ESCAPE)
 	check.call(scene.screen == "menu" and scene.paused, "Échap conserve la partie en pause")
 	await key(tree, KEY_ENTER)
@@ -79,8 +84,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 	var complete = true
 	for button in scene.map_view.buttons:
 		complete = complete and button in reachable
-	for button in scene.evolution_buttons.values():
-		complete = complete and button in reachable
+	complete = complete and scene.evolution_open_button in reachable
 	for button in scene.map_view.camera_tools.get_children():
 		if not button.disabled: complete = complete and button in reachable
 	check.call(complete, "Tab atteint toutes les régions, évolutions et commandes de caméra actives")
@@ -92,7 +96,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 	check.call(scene.start_choice.disabled and scene.start_id == "boreale", "Menu impose le départ de Dégel")
 	check.call("1.30" in scene.menu_difficulty_detail.text and "Difficile" in scene.menu_difficulty_detail.text, "Menu explique la difficulté")
 	await key(tree, KEY_ENTER)
-	check.call(scene.world.scenario.id == "degel2042" and scene.world.difficulty.id == "hard" and scene.evolution_buttons.size() == 9, "Lancement applique scénario et difficulté")
+	check.call(scene.world.scenario.id == "degel2042" and scene.world.difficulty.id == "hard" and scene.world.evolutions.size() == 9, "Lancement applique scénario et difficulté")
 	scene.show_menu()
 	scene.scenario_choice.select(0)
 	scene.scenario_choice.item_selected.emit(0)

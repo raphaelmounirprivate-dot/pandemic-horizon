@@ -43,8 +43,9 @@ func run(tree: SceneTree, check: Callable) -> void:
 	ui.start_game()
 	await tree.process_frame
 	var funds = ui.world.points
-	ui.select_evolution("discretion")
+	ui.open_evolution("discretion")
 	check.call("Discrétion" in ui.evolution_detail.text and "×0.70" in ui.evolution_detail.text and ui.world.points == funds,"Fiche lisible et sélection gratuite")
+	ui.close_evolution()
 	ui.show_settings()
 	await tree.process_frame
 	var motion = ui.body.find_child("motion",true,false)

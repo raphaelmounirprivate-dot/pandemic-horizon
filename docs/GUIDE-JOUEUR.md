@@ -5,7 +5,7 @@ Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0
 1. Choisir Standard ou Dégel 2042, puis une difficulté et une région de départ. Dégel impose Boréale. Lancer « Nouvelle partie ».
 2. Lire les objectifs. La partie commence en pause.
 3. Cliquer sur une région pour consulter sa population et ses cas actifs.
-4. Reprendre avec Espace, sélectionner une évolution pour consulter sa fiche, puis activer le bouton Évoluer lorsque les points et prérequis le permettent. Mobilité exige d'abord Diffusion. Les effets et raisons d'indisponibilité sont affichés avant achat.
+4. Reprendre avec Espace. Ouvrir l'écran Évolution (touche E ou bouton « Évolution » à droite de la carte), choisir une famille, sélectionner une compétence pour lire sa fiche, puis activer Évoluer lorsque les points et prérequis le permettent. Mobilité exige d'abord Diffusion. Les effets et raisons d'indisponibilité sont affichés avant achat.
 5. Atteindre 90 % de population touchée avant la fin du remède. Le bilan explique le résultat et présente le journal complet.
 
 La carte du monde utilise les contours terrestres Natural Earth. Les 24 régions du jeu restent fictives : sélectionner un marqueur numéroté au clic ou avec Tab puis Entrée pour lire son nom et ses statistiques à droite. Les halos et points rouges illustrent le cumul touché ; ce ne sont ni des personnes localisées ni des frontières de simulation réelles. Les noms complets sont aussi disponibles au survol.
@@ -14,10 +14,11 @@ La carte du monde utilise les contours terrestres Natural Earth. Les 24 régions
 | --- | --- |
 | Espace | Pause / reprise pendant la partie |
 | 1, 2, 4 | Choisir la vitesse |
+| E / Évolution | Ouvrir ou fermer l'écran des compétences ; la partie est en pause pendant le choix et reprend ensuite comme avant |
 | F1 | Ouvrir ou fermer l'aide, en pause |
 | F2 | En partie, mettre en pause et retrouver les choix logistiques intégrés |
 | F3 / Monde | Consulter courbes, achats datés, effets et actualités en pause ; F3 ou Échap revient |
-| Échap | Menu et pause de la partie |
+| Échap | Depuis Évolution : retour à la carte. Depuis la carte : menu et pause de la partie |
 | Tab / Maj + Tab | Parcourir les contrôles |
 | Entrée | Activer le contrôle sélectionné |
 | Molette sur la carte | Zoomer autour du pointeur entre ×1 et ×4 |
@@ -90,7 +91,7 @@ Après Diffusion puis Mobilité, vous pouvez choisir une seule spécialisation p
 
 Le bonus ne touche que le transport choisi ; il ne rouvre aucune route. L'accélération du remède est permanente après achat et se multiplie avec Discrétion, la difficulté et les événements. Le coût retarde aussi les autres achats : une spécialisation peut être moins intéressante qu'un achat plus précoce de Discrétion.
 
-Le panneau droit comporte six évolutions dans Standard et neuf dans Dégel. Les six ou neuf évolutions sont affichées ensemble dans une grille permanente, avec effet et état. Tab/Maj + Tab parcourt les achats sans déplacer le panneau. Lire les contreparties avant Entrée. F1 → Évolutions explique les choix ; F1 → Transports indique le coefficient courant, spécialisation comprise, hors Mobilité et bonus saisonnier.
+L'écran Évolution comporte six compétences dans Standard et neuf dans Dégel, réparties par famille. Tab/Maj + Tab parcourt les nœuds de l'onglet ouvert. Lire les contreparties avant Entrée. F1 → Évolutions explique les choix ; F1 → Transports indique le coefficient courant, spécialisation comprise, hors Mobilité et bonus saisonnier.
 
 ## Détection et réactions
 
@@ -161,7 +162,7 @@ Les choix apparaissent sous la carte, en pause, sans masquer les évolutions. On
 
 Activer Contenu enrichi avant une nouvelle partie ajoute douze évolutions et huit événements : 18 évolutions en Standard, 21 dans Dégel. Le profil classique reste proposé par défaut et le tutoriel conserve ses règles. NACRE est un agent fictif représenté par un emblème de réseau original.
 
-Les nœuds compacts affichent nom court et coût. Sélectionner ou survoler révèle le nom complet et les raisons ; le losange indique un blocage. Les liens montrent les prérequis directs de la sélection. Utiliser Évoluer pour acheter. Tous les choix logistiques restent sous la carte.
+Chaque nœud affiche le nom complet, le coût et un état écrit ; le losange indique un blocage. Les traits relient chaque prérequis à la compétence qu'il débloque. Utiliser Évoluer pour acheter. Tous les choix logistiques restent sous la carte.
 
 Le profil enrichi utilise le format de sauvegarde 5, à reprendre avec la version 0.18 ou suivante compatible. Les parties classiques gardent leur format et leurs règles ; aucun ajout rétroactif aux anciennes parties.
 
@@ -200,3 +201,14 @@ Dans Réseaux fragiles réactif, Double relais est obligatoire : 6 000 unités d
 ## Familles et fiche de compétences (0.23)
 
 Les trois symboles de la légende identifient Diffusion (réseau), Discrétion (bouclier) et Résilience (anneau). Les compétences suivent cet ordre, avec les mêmes coûts, prérequis et exclusions. La sélection montre toute son ascendance, le nom complet, l'effet et les coefficients actuels → après achat. Ils sont calculés depuis vos compétences achetées, hors climat et événements temporaires ; une compétence acquise n'est pas comptée deux fois. Les effets cumulés restent décrits dans les événements et les transports. Seul le bouton Évoluer dépense des points.
+
+## Écran Évolution
+
+Touche E ou bouton « Évolution » à droite de la carte. La partie se met en pause ; Échap, E ou « Retour à la carte » la rend dans l'état d'avant (en cours ou en pause).
+
+- **Onglets** : un par famille (Diffusion, Discrétion, Résilience), avec le nombre de compétences acquises. L'onglet ouvert est souligné.
+- **Arbre** : il se lit de gauche à droite. Un trait relie un prérequis à la compétence qu'il débloque ; il est épais quand le prérequis est acquis. Chaque nœud indique nom, coût et état : Disponible, Acquise, Prérequis, Incompatible ou « Manque N pts ».
+- **Fiche** : famille et coût, état détaillé, effet, coefficients avant → après (hors climat et aléas), prérequis un par un et, pour les spécialisations, ce que le choix exclut.
+- **Évoluer** : seul ce bouton dépense des points. Sélectionner un nœud ne coûte rien.
+
+Quelques compétences de Résilience exigent une compétence de Diffusion : la fiche le précise.

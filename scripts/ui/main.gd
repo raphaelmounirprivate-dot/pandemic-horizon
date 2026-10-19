@@ -14,6 +14,7 @@ const CONFIG_PATH = "user://settings.cfg"
 
 const Skills = preload("res://scripts/ui/skill_presenter.gd")
 const MenuView = preload("res://scripts/ui/menu_view.gd")
+const EvolutionView = preload("res://scripts/ui/evolution_view.gd")
 var incident_button: Button
 var map_legend: Label
 var world = World.new()
@@ -63,7 +64,15 @@ var evolution_reasons: Dictionary = {}
 var selected_evolution = "transmission"
 var evolution_detail: Label
 var evolution_purchase: Button
-var evolution_tree: GridContainer
+var evolution_tree: Control
+var evolution_family = "diffusion"
+var evolution_tabs: Dictionary = {}
+var evolution_title: Label
+var evolution_subtitle: Label
+var evolution_back: Button
+var evolution_open_button: Button
+var evolution_summary: Label
+var evolution_return_paused = true
 var effects_label: RichTextLabel
 var save_store = SaveStore.new()
 var autosave_enabled = true
@@ -147,6 +156,7 @@ func close_help() -> void:
 func _return_to(target: String) -> void:
 	match target:
 		"game": show_game()
+		"evolution": show_evolution()
 		"decision": show_decision()
 		"result": show_result()
 		"saves": show_saves()
@@ -221,9 +231,6 @@ func select_region(index: int) -> void:
 	if is_instance_valid(map_view): map_view.selected = index
 	if tutorial != null: tutorial.select_region(index, world)
 	_refresh()
-
-func reveal_evolution_group(_group: Control) -> void:
-	pass # All upgrades are permanently visible.
 
 func autosave() -> String:
 	if tutorial != null or not autosave_enabled or world.regions.is_empty(): return ""
@@ -468,64 +475,19 @@ func show_game() -> void:
 	effects_label.add_theme_color_override("default_color",AMBER)
 	map_column.add_child(effects_label)
 	var sidebar = VBoxContainer.new()
-	sidebar.custom_minimum_size.x = 500
+	sidebar.custom_minimum_size.x = 380
 	sidebar.add_theme_constant_override("separation",2)
 	content.add_child(sidebar)
 	region_details = _label("",14)
 	sidebar.add_child(region_details)
 	transport_details = _label("",13,MUTED)
 	sidebar.add_child(transport_details)
-	load("res://scripts/ui/family_symbol.gd").legend(self,sidebar)
-	specialization_details = _label("",13,AMBER)
-	specialization_details.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	sidebar.add_child(specialization_details)
-	var grid = load("res://scripts/ui/evolution_tree.gd").new()
-	evolution_tree = grid
-	grid.world = world
-	grid.columns = 6 if world.expanded_content else 3
-	grid.add_theme_constant_override("h_separation",8)
-	grid.add_theme_constant_override("v_separation",4 if world.expanded_content else 6)
-	if world.expanded_content:
-		var graph_margin = MarginContainer.new()
-		graph_margin.add_theme_constant_override("margin_top",4)
-		sidebar.add_child(graph_margin)
-		graph_margin.add_child(grid)
-	else: sidebar.add_child(grid)
-	for id in Skills.ordered(world):
-		var group = VBoxContainer.new()
-		group.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		group.add_theme_constant_override("separation",2)
-		grid.add_child(group)
-		var button = load("res://scripts/ui/evolution_node.gd").new()
-		button.evolution_id = id
-		button.family_id = Skills.family(id).get("id","")
-		button.custom_minimum_size.y = 44
-		button.pressed.connect(func():
-			select_evolution(id)
-			if not evolution_purchase.disabled: evolution_purchase.grab_focus())
-		button.focus_entered.connect(func(): select_evolution(id))
-		group.add_child(button)
-		button.add_theme_font_size_override("font_size",12 if world.expanded_content else 13)
-		for state in ["normal","hover","pressed","disabled","focus"]:
-			var style = button.get_theme_stylebox(state).duplicate()
-			style.content_margin_top = 4
-			style.content_margin_bottom = 4
-			style.content_margin_left = 26 if world.expanded_content else 28
-			style.content_margin_right = 12 if world.expanded_content else 8
-			button.add_theme_stylebox_override(state,style)
-		button.tooltip_text = world.evolutions[id].effect
-		evolution_buttons[id] = button
-		grid.nodes[id] = group
-		var reason = _label("",13,AMBER)
-		reason.clip_text = true
-		group.add_child(reason)
-		reason.visible = not world.expanded_content
-		evolution_reasons[id] = reason
-	evolution_detail = _label("",12,MUTED)
-	evolution_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	sidebar.add_child(evolution_detail)
-	evolution_purchase = _button("",func(): buy_evolution(selected_evolution),sidebar)
-	evolution_purchase.add_theme_font_size_override("font_size",13)
+	evolution_open_button = _button("", open_evolution, sidebar)
+	evolution_open_button.custom_minimum_size.y = 64
+	evolution_open_button.add_theme_font_size_override("font_size",22)
+	evolution_summary = _label("",14,MUTED)
+	evolution_summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	sidebar.add_child(evolution_summary)
 	status_label = _label("",14,MUTED)
 	body.add_child(status_label)
 	journal_label = _label("",14,MUTED)
@@ -556,7 +518,7 @@ func show_game() -> void:
 		tutorial_next = _button("Terminer" if tutorial.stage == 5 else "Continuer", next_lesson, controls)
 		_button("Quitter l'entraînement", finish_tutorial, controls)
 		if tutorial.stage == 1: initial_focus = map_view.buttons[2]
-		elif tutorial.stage == 2: initial_focus = evolution_buttons.transmission
+		elif tutorial.stage == 2: initial_focus = evolution_open_button
 		elif tutorial.stage == 3: initial_focus = map_view.buttons[0]
 		if tutorial.ready: initial_focus = tutorial_next
 	_button("Aide [F1]", open_help, controls)
@@ -568,16 +530,63 @@ func buy_evolution(id: String) -> void:
 	var error = world.purchase(id)
 	if error.is_empty(): feedback.play_cue("purchase")
 	if tutorial != null and error.is_empty(): tutorial.ready = true
+	if screen == "evolution":
+		EvolutionView.refresh(self)
+		status_label.text = error if not error.is_empty() else "%s acquise. Points restants : %d." % [world.evolutions[id].name, world.points]
+		if error.is_empty() and tutorial != null: evolution_back.grab_focus()
+		return
 	_refresh()
-	if not error.is_empty():
-		status_label.text = error
-	if evolution_buttons.has(id) and evolution_buttons[id].has_focus():
-		var group = evolution_buttons[id].get_parent()
-		reveal_evolution_group(group)
+	if not error.is_empty(): status_label.text = error
 
 func select_evolution(id: String) -> void:
+	if not world.evolutions.has(id): return
 	selected_evolution = id
-	if is_instance_valid(evolution_purchase): _refresh()
+	if screen != "evolution": return
+	if EvolutionView.family_of(self,id) != evolution_family:
+		show_evolution_family(EvolutionView.family_of(self,id))
+		return
+	if tutorial == null: status_label.text = ""
+	EvolutionView.refresh(self)
+
+## Purchase reason including the tutorial restriction (only Diffusion in exercise 3).
+func purchase_reason_for(id: String) -> String:
+	var reason = world.purchase_reason(id)
+	if tutorial != null and id not in world.purchased and (tutorial.stage != 2 or id != "transmission"):
+		return "Hors exercice" + (" · " + reason if not reason.is_empty() else "")
+	return reason
+
+## Opens the Évolution screen, optionally on the tab of a given skill. The game pauses
+## and returns to its previous pause state when the screen is closed.
+func open_evolution(id: String = "") -> void:
+	if world.regions.is_empty() or not world.outcome.is_empty(): return
+	if screen == "evolution":
+		if id.is_empty(): close_evolution()
+		else: select_evolution(id)
+		return
+	if screen != "game": return
+	evolution_return_paused = paused
+	if not id.is_empty() and world.evolutions.has(id):
+		selected_evolution = id
+		evolution_family = EvolutionView.family_of(self,id)
+	show_evolution()
+	if evolution_buttons.has(selected_evolution): evolution_buttons[selected_evolution].grab_focus()
+
+func show_evolution() -> void:
+	EvolutionView.build(self)
+
+func show_evolution_family(family_id: String) -> void:
+	evolution_family = family_id
+	if EvolutionView.family_of(self,selected_evolution) != family_id: selected_evolution = ""
+	show_evolution()
+	if evolution_buttons.has(selected_evolution): evolution_buttons[selected_evolution].grab_focus()
+
+func close_evolution() -> void:
+	if screen != "evolution": return
+	show_game()
+	paused = evolution_return_paused if tutorial == null else true
+	_refresh()
+	# In the tutorial, show_game() already focused Continuer once the exercise succeeded.
+	if tutorial == null or not tutorial.ready: evolution_open_button.grab_focus()
 
 func build_inline_decision(parent: Control) -> void:
 	for child in parent.get_children():
@@ -645,37 +654,13 @@ func _refresh() -> void:
 	if world.scenario.id != "standard":
 		region_details.text += " · Climat local ×%.2f" % world.climate_factor(region.id)
 	transport_details.text = world.transport_summary(region.id)
+	var available = world.evolutions.keys().filter(func(id): return purchase_reason_for(id).is_empty())
+	evolution_open_button.text = "Évolution [E] · %d pts" % world.points
+	var owned: Array[String] = []
+	for group in EvolutionView.families(self):
+		owned.append("%s %d/%d" % [group.name, group.skills.filter(func(id): return id in world.purchased).size(), group.skills.size()])
 	var specialization = world.specialization_id()
-	specialization_details.text = "Après Mobilité : une seule spécialisation au choix." if specialization.is_empty() else "Spécialisation : " + world.evolutions[specialization].name
-	for id in evolution_buttons:
-		var evolution = world.evolutions[id]
-		var acquired = id in world.purchased
-		var short_names = {"transmission":"Diffus.","mobility":"Mobil.","discretion":"Discr.","land_network":"Terre","air_bridge":"Air","sea_logistics":"Mer","polar":"Polaire","seasonal":"Saison","resilience":"Climat"}
-		var displayed_name = evolution.get("short",short_names.get(id,evolution.name)) if world.expanded_content else evolution.name
-		evolution_buttons[id].text = "%s\n%s" % [displayed_name, "acquise" if acquired else "%d pts" % evolution.cost]
-		# Keep insufficient purchases focusable so keyboard users can read the reason.
-		evolution_buttons[id].disabled = tutorial != null and (tutorial.stage != 2 or id != "transmission")
-		evolution_buttons[id].add_theme_color_override("font_color",ACCENT if id == selected_evolution or acquired else INK)
-		evolution_buttons[id].selected_node = id == selected_evolution
-		evolution_buttons[id].blocked = not world.purchase_reason(id).is_empty() and not acquired
-		evolution_buttons[id].queue_redraw()
-		var reason = world.purchase_reason(id)
-		if tutorial != null and not acquired and (tutorial.stage != 2 or id != "transmission"):
-			reason = "Hors exercice" + (" · " + reason if not reason.is_empty() else "")
-		evolution_buttons[id].tooltip_text = Skills.family(id).get("name","") + " · " + evolution.name + "\n" + Skills.comparison(world,id) + " · Coefficients hors climat/aléas\n" + evolution.effect + " " + reason
-		var short_reason = "Prérequis manquant" if reason.begins_with("Prérequis") else ("Incompatible" if "Incompatible" in reason else reason)
-		if reason.begins_with("Hors exercice"): short_reason = "Prérequis (exercice)" if "Prérequis" in reason else "Hors exercice"
-		evolution_reasons[id].text = "Acquise" if acquired else ("Disponible" if reason.is_empty() else short_reason)
-		evolution_reasons[id].add_theme_color_override("font_color", ACCENT if acquired or reason.is_empty() else AMBER)
-	if not world.evolutions.has(selected_evolution): selected_evolution = world.evolutions.keys()[0]
-	var chosen = world.evolutions[selected_evolution]
-	var full_reason = "Acquise" if selected_evolution in world.purchased else world.purchase_reason(selected_evolution)
-	if tutorial != null and (tutorial.stage != 2 or selected_evolution != "transmission"): full_reason = "Hors exercice · " + full_reason
-	evolution_detail.text = Skills.details(world,selected_evolution,full_reason)
-	evolution_purchase.text = "Évoluer : %s · %d pts" % [chosen.name,chosen.cost]
-	evolution_purchase.disabled = not world.purchase_reason(selected_evolution).is_empty() or (tutorial != null and (tutorial.stage != 2 or selected_evolution != "transmission"))
-	evolution_tree.queue_redraw()
-	evolution_tree.selected_id = selected_evolution
+	evolution_summary.text = "%s\n%s%s" % [" · ".join(owned), ("Aucune compétence achetable" if available.is_empty() else "%d achetable%s maintenant" % [available.size(), "s" if available.size() > 1 else ""]), "" if specialization.is_empty() else " · Spécialisation : " + world.evolutions[specialization].name]
 	pause_button.text = "Reprendre [Espace]" if paused else "Pause [Espace]"
 	status_label.text = ("En pause" if paused else "Simulation en cours") + " · Vitesse ×%d" % speed
 	if not save_notice.is_empty(): status_label.text += " · " + save_notice
@@ -784,11 +769,15 @@ func _input(event: InputEvent) -> void:
 		return
 	if event.keycode == KEY_ESCAPE:
 		if screen == "help": close_help()
+		elif screen == "evolution": close_evolution()
 		elif screen == "overview": close_overview()
 		elif screen == "saves": close_saves()
 		elif screen == "decision": show_game()
 		elif tutorial != null: finish_tutorial()
 		else: show_menu()
+		get_viewport().set_input_as_handled()
+	elif event.keycode == KEY_E and screen in ["game","evolution"] and not (get_viewport().gui_get_focus_owner() is LineEdit):
+		open_evolution()
 		get_viewport().set_input_as_handled()
 	elif event.keycode == KEY_F1:
 		open_help()

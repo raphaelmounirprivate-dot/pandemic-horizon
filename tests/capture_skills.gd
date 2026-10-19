@@ -26,7 +26,7 @@ func run() -> void:
 				scene.world.step()
 			if state == "exclusive": scene.world.purchase("land_network")
 			scene.show_game()
-			scene.select_evolution("backup_links" if state == "pending" else "regional_reserves" if state == "resilience" else ("air_bridge" if state == "exclusive" else "discretion"))
+			scene.open_evolution("backup_links" if state == "pending" else "regional_reserves" if state == "resilience" else ("air_bridge" if state == "exclusive" else "discretion"))
 			if state == "menu": scene.show_menu()
 			if state == "settings": scene.show_settings()
 			if state == "overview": scene.open_overview()

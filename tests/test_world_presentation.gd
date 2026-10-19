@@ -32,8 +32,8 @@ func run(tree: SceneTree, check: Callable) -> void:
 			await tree.process_frame
 			var viewport = Rect2(Vector2.ZERO,Vector2(dimensions))
 			check.call(not forbidden(scene.body),"Jeu sans liste déroulante ni panneau défilant : " + scenario)
-			check.call(scene.evolution_buttons.size() == (9 if scenario == "degel2042" else 6),"Arbre d'évolutions complet intégré")
-			for button in scene.evolution_buttons.values(): check.call(viewport.encloses(button.get_parent().get_global_rect()),"Achat, effet et prérequis visibles ensemble")
+			check.call(scene.EvolutionView.families(scene).reduce(func(n,g): return n+g.skills.size(),0) == (9 if scenario == "degel2042" else 6),"Toutes les évolutions sont accessibles depuis l'écran Évolution")
+			check.call(viewport.encloses(scene.evolution_open_button.get_global_rect()) and "pts" in scene.evolution_open_button.text,"Entrée Évolution visible avec les points")
 			check.call(viewport.encloses(scene.pause_button.get_global_rect()),"Commandes de jeu entièrement dans la fenêtre")
 			if scenario == "degel2042":
 				check.call(scene.decision_buttons.size() == 3 and scene.screen == "game","Trois choix intégrés, carte conservée")
