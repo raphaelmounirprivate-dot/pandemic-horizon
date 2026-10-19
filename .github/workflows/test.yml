@@ -24,7 +24,9 @@ on:
       - 'docs/tests-joueurs/**'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  # Sur main : une exécution vérifiée par commit. Ailleurs : annuler les exécutions dépassées.
+  # Sur main, une exécution commencée va jusqu'au bout ; ailleurs, elle est annulée par un
+  # nouveau push. Partout, GitHub ne garde qu'une exécution en attente par groupe : pendant
+  # une exécution, une rafale de pushs ne fait tester que le dernier commit.
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 permissions:
   contents: read
