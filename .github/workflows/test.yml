@@ -69,3 +69,5 @@ jobs:
           name: windows-${{ github.sha }}
           path: build/releases/*
           if-no-files-found: error
+          # Releases are archived locally (build/releases, checkpoints); CI copies are short-lived.
+          retention-days: 14
