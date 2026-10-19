@@ -13,6 +13,8 @@ const History = preload("res://scripts/gameplay/history.gd")
 const Expanded = preload("res://scripts/gameplay/expanded_content.gd")
 const Crises = preload("res://scripts/gameplay/crises.gd")
 const Tactics = preload("res://scripts/gameplay/tactics.gd")
+# Named options for start_with(); values are the defaults of start(). "start" is required.
+const START_OPTIONS = {"start": "", "seed": 2042, "regions_source": null, "gameplay_source": null, "scenario": "standard", "difficulty": "normal", "catalog_source": null, "transport_source": null, "objective": "", "decision": false, "expanded": false, "expanded_source": null, "crises": false, "crises_source": null, "reactive": false}
 var tactics_enabled: bool = false
 var tactics: Dictionary = {}
 var crises_enabled: bool = false
@@ -94,9 +96,6 @@ static func validate_data(data: Variant) -> String:
 			return "Connexion dupliquée."
 		edges.append(pair)
 	return ""
-
-# Named options for start_with(); values are the defaults of start(). "start" is required.
-const START_OPTIONS = {"start": "", "seed": 2042, "regions_source": null, "gameplay_source": null, "scenario": "standard", "difficulty": "normal", "catalog_source": null, "transport_source": null, "objective": "", "decision": false, "expanded": false, "expanded_source": null, "crises": false, "crises_source": null, "reactive": false}
 
 static func validate_start_options(options: Variant) -> String:
 	if not options is Dictionary: return "Les options de partie doivent être un dictionnaire."
@@ -510,11 +509,11 @@ func resolve_outcome() -> void:
 func expected_outcome() -> String:
 	if cure >= 100.0:
 		return "defeat_cure"
-	elif tactics_enabled and tactics.goal.get("status") == "failed":
+	if tactics_enabled and tactics.goal.get("status") == "failed":
 		return "defeat_network"
-	elif coverage() >= 0.9 and (not tactics_enabled or tactics.goal.is_empty() or tactics.goal.status == "completed"):
+	if coverage() >= 0.9 and (not tactics_enabled or tactics.goal.is_empty() or tactics.goal.status == "completed"):
 		return "victory"
-	elif totals().active == 0:
+	if totals().active == 0:
 		return "defeat_extinction"
 	return ""
 

@@ -6,8 +6,6 @@ const SaveStore = preload("res://scripts/persistence/save_store.gd")
 const Tutorial = preload("res://scripts/ui/tutorial.gd")
 const Help = preload("res://scripts/ui/help.gd")
 const Incidents = preload("res://scripts/ui/incident_view.gd")
-var incident_button: Button
-var map_legend: Label
 const INK = Color("e1eee9")
 const MUTED = Color("a7c4c9")
 const ACCENT = Color("69d6bd")
@@ -15,6 +13,9 @@ const AMBER = Color("efbc70")
 const CONFIG_PATH = "user://settings.cfg"
 
 const Skills = preload("res://scripts/ui/skill_presenter.gd")
+const MenuView = preload("res://scripts/ui/menu_view.gd")
+var incident_button: Button
+var map_legend: Label
 var world = World.new()
 var screen: String = "menu"
 var paused: bool = true
@@ -392,13 +393,13 @@ func _button(text: String, action: Callable, parent: Node) -> Button:
 	return button
 
 func show_menu() -> void:
-	load("res://scripts/ui/menu_view.gd").build(self)
+	MenuView.build(self)
 
 func _menu_catalog() -> Dictionary:
-	return load("res://scripts/ui/menu_view.gd").catalog(self)
+	return MenuView.catalog(self)
 
 func _update_menu_choices(catalog: Dictionary) -> void:
-	load("res://scripts/ui/menu_view.gd").update_choices(self,catalog)
+	MenuView.update_choices(self,catalog)
 
 func show_settings() -> void:
 	load("res://scripts/ui/settings_view.gd").build(self)

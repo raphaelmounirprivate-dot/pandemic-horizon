@@ -1,9 +1,9 @@
-﻿extends Control
+extends Control
+signal region_selected(index: int)
 const RED = Color("ff766d")
 const ACCENT = Color("69d6bd")
 const AMBER = Color("efbc70")
 const Incidents = preload("res://scripts/ui/incident_view.gd")
-var focused_incident = ""
 const ANCHORS = {
  "toundra":Vector2(.105,.16),"boreale":Vector2(.25,.13),"hauts_pays":Vector2(.14,.34),"occident":Vector2(.28,.34),
  "peninsule":Vector2(.20,.51),"equateur":Vector2(.34,.50),"atlantide":Vector2(.39,.66),"plateaux":Vector2(.28,.69),"australe":Vector2(.32,.88),
@@ -11,6 +11,7 @@ const ANCHORS = {
  "levant":Vector2(.61,.45),"orient":Vector2(.80,.34),"pacifique":Vector2(.94,.33),"littoral":Vector2(.92,.52),
  "delta":Vector2(.73,.53),"jade":Vector2(.81,.68),"corail":Vector2(.95,.73),"savane":Vector2(.48,.55),
  "cap_sud":Vector2(.56,.80),"mousson":Vector2(.83,.87),"archipel":Vector2(.96,.94)}
+var focused_incident = ""
 var world: PandemicWorld
 var selected = 0
 var buttons: Array[Button] = []
@@ -31,7 +32,6 @@ var filter_button: Button
 var terrain_mesh: ArrayMesh
 var projected_coasts: Array[PackedVector2Array] = []
 var terrain_view: Array = []
-signal region_selected(index: int)
 func setup(model: PandemicWorld) -> void:
 	world = model
 	custom_minimum_size = Vector2(640,220)

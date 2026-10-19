@@ -1,5 +1,6 @@
 extends SceneTree
 const Store = preload("res://scripts/persistence/save_store.gd")
+const Main = preload("res://scenes/main.tscn")
 func _initialize() -> void:
 	call_deferred("capture")
 
@@ -8,7 +9,7 @@ func capture() -> void:
 	for resolution in [Vector2i(1280,720),Vector2i(1920,1080)]:
 		DisplayServer.window_set_size(resolution)
 		for surface in ["menu-off","menu-on","scheduled","pending","insufficient","support","limit","neutral","expired","timeout","help","legacy-pending","legacy-active","legacy-help","spread","movement-a","movement-b"]:
-			var scene = load("res://scenes/main.tscn").instantiate()
+			var scene = Main.instantiate()
 			root.add_child(scene)
 			scene.set_process(false)
 			scene.autosave_enabled = false
@@ -60,7 +61,7 @@ func capture() -> void:
 			scene.queue_free()
 			await process_frame
 	DisplayServer.window_set_size(Vector2i(2395,1060))
-	var wide = load("res://scenes/main.tscn").instantiate()
+	var wide = Main.instantiate()
 	root.add_child(wide)
 	wide.set_process(false)
 	wide.autosave_enabled = false

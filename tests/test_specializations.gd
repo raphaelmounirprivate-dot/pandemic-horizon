@@ -126,14 +126,14 @@ func run(tree: SceneTree, check: Callable) -> void:
 	await tree.process_frame
 	var group = scene.evolution_buttons.air_bridge.get_parent()
 	check.call(group.get_parent().get_parent().get_global_rect().encloses(group.get_global_rect()), "Bouton, contrepartie et état visibles ensemble au clavier")
-	await load("res://tests/input_journey.gd").new().key(tree, KEY_ENTER)
-	await load("res://tests/input_journey.gd").new().key(tree, KEY_ENTER)
+	var inputs = load("res://tests/input_journey.gd").new()
+	await inputs.key(tree, KEY_ENTER)
+	await inputs.key(tree, KEY_ENTER)
 	await tree.process_frame
 	check.call(group.get_parent().get_parent().get_global_rect().encloses(group.get_global_rect()), "Effet et état restent visibles après achat")
 	check.call(scene.world.specialization_id() == "air_bridge" and "Pont aérien" in scene.specialization_details.text, "Choix au clavier dans le panneau défilant")
 	check.call("Incompatible" in scene.evolution_reasons.land_network.text and "Incompatible" in scene.evolution_reasons.sea_logistics.text, "Motifs d'exclusion visibles après achat")
 	check.call("×1,18" in scene.world.evolutions.air_bridge.effect, "Contrepartie annoncée avant achat")
-	var inputs = load("res://tests/input_journey.gd").new()
 	for dimensions in [Vector2i(1280, 720), Vector2i(1920, 1080)]:
 		tree.root.size = dimensions
 		scene.scenario_id = "degel2042"

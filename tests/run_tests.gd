@@ -1,6 +1,7 @@
 extends SceneTree
 
 const World = preload("res://scripts/simulation/world.gd")
+const GameplaySuite = preload("res://tests/test_gameplay.gd")
 var failures: int = 0
 var checks: int = 0
 
@@ -57,7 +58,7 @@ func run() -> void:
 	# No active connections means no spontaneous spread to an isolated region.
 	var isolated = data.duplicate(true)
 	isolated.connections = []
-	model.start("boreale", 3, isolated, load("res://tests/test_gameplay.gd").new().clean_content())
+	model.start("boreale", 3, isolated, GameplaySuite.new().clean_content())
 	for i in range(30): model.step()
 	check(model.regions[1].active == 0, "Pas de diffusion sans connexion")
 	# Reversing edge traversal must not change any simulation result.
@@ -134,7 +135,7 @@ func run() -> void:
 	model.start("orient")
 	check(model.day == 0 and model.points == 8 and model.outcome == "" and model.purchased.is_empty(), "Nouvelle partie réinitialisée")
 	var before_gameplay = checks
-	load("res://tests/test_gameplay.gd").new().run(check)
+	GameplaySuite.new().run(check)
 	check(checks - before_gameplay >= 59, "Suite gameplay entièrement exécutée")
 	var before_scenarios = checks
 	load("res://tests/test_scenarios.gd").new().run(check)

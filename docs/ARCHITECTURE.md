@@ -90,7 +90,8 @@ Raccourcis (`main.gd::_input`) : F1 aide, F2 décision ou réponse de crise en a
 | `scripts/build-identity.ps1`, `test-build-identity.ps1` | Contrôle de provenance (commit, version, SHA-256). |
 | `scripts/package-windows.ps1` | ZIP identifié par commit + kit joueurs + licences + notes de version. |
 | `scripts/checkpoint.ps1` | Bundle Git + sources dans `build/checkpoints/<version>-<sha>`. |
-| `.github/workflows/test.yml` | CI Windows : setup, import, tests, provenance, export, paquet, artefact. |
+| `.github/workflows/test.yml` | CI : job `lint` (Ubuntu, `gdlint` selon `gdlintrc`) et job Windows (Godot en cache, import, tests, provenance, export, paquet, artefact 14 jours). Ignorée pour la documentation seule, sauf fichiers du kit joueurs. |
+| `gdlintrc` | Règles `gdlint` (gdtoolkit 4.5.0) : valeurs par défaut, sauf longueur de ligne, nombre de `return` et de méthodes publiques (style hérité) et 15 arguments pour `World.start()`. Localement : `pip install gdtoolkit==4.5.0` puis `gdlint <fichiers .gd>`. |
 
 L'export (`export_presets.cfg`) exclut `docs/`, `tests/`, `build/`, les `.ps1` et `scripts/analysis/*` par motif. Tous les outils d'équilibrage, lanceurs `balance*.gd` compris, vivent dans `scripts/analysis/` ; `tests/test_export_filter.gd` échoue si un `.gd` est posé à la racine de `scripts/`.
 

@@ -30,7 +30,8 @@ func run() -> void:
 				printerr("Résultat inattendu pour capture "+state)
 				quit(1)
 				return
-			scene.show_result() if not scene.world.outcome.is_empty() else scene.show_game()
+			if scene.world.outcome.is_empty(): scene.show_game()
+			else: scene.show_result()
 			scene.open_overview()
 			await process_frame
 			await process_frame
