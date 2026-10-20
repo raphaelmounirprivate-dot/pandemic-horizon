@@ -2,9 +2,9 @@
 
 Du plus récent au plus ancien. Toutes les versions sont des **candidats de prototype** : implémentées et testées automatiquement, jamais essayées par des joueurs externes, sans release binaire GitHub. Le détail de chaque lot est dans les [points de suivi](docs/suivi/00-index.md) ; les notes jointes aux archives sont dans `docs/versions/NOTES-VERSION-*.md`.
 
-## Non publié — après la 0.23 (19 octobre 2026)
+## Non publié — après la 0.23 (19-20 octobre 2026)
 
-Aucun changement de règles, de coefficients ni de format de sauvegarde ; la version reste 0.23.
+Aucun changement de règles, de coefficients ni de format de sauvegarde ; la version reste 0.23. [Point 29](docs/suivi/29-dette-technique-ci.md) (technique) · [point 30](docs/suivi/30-ecrans-dedies.md) (écrans dédiés, 6 455 contrôles).
 
 - Dépôt renommé `pandemic-horizon`.
 - Kit joueurs : conduite à tenir en cas d'alerte antivirus ; procédure de signalement de faux positif ([ANTIVIRUS.md](docs/ANTIVIRUS.md)).

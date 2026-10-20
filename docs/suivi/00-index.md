@@ -32,6 +32,7 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 - [Point 27 — Crises réactives et Double relais](27-crises-reactives.md) : prototype 0.22, ciblage au déclenchement, réponses à la panne, Double relais obligatoire et format 7.
 - [Point 28 — Familles et validation après audit](28-familles-validation.md) : candidat 0.23, familles de compétences, fiches comparées, vues extraites, livraison et réserve AVG.
 - [Point 29 — Dette technique, CI et rangement](29-dette-technique-ci.md) : candidat 0.23 inchangé pour le joueur ; start_with, main.gd à 810 lignes, typage strict de la simulation, CI allégée et gdlint, docs rangés, renommage du dépôt.
+- [Point 30 — Écrans dédiés](30-ecrans-dedies.md) : candidat 0.23, règles inchangées ; écran Évolution par famille, écran titre et nouvelle partie en trois étapes, bilan illustré ; 6 455 contrôles, 57 captures.
 
 ## Documents liés
 
@@ -39,13 +40,13 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 - [Feuille de route](../roadmap/README.md) : backlog, audits et décisions ouvertes.
 - [Règles effectives](../REGLES.md) · [Développement](../DEVELOPPEMENT.md) · [Architecture](../ARCHITECTURE.md) · [Guide joueur](../GUIDE-JOUEUR.md).
 
-## État et priorités au 19 octobre 2026
+## État et priorités au 20 octobre 2026
 
-Candidat 0.23 (point 28), plus des changements techniques sans effet sur les règles ni les sauvegardes (point 29 et section « Non publié » du [CHANGELOG](../../CHANGELOG.md)). Implémenté et testé automatiquement ; **aucun essai humain, aucun essai sur un second PC, aucune release publiée.**
+Candidat 0.23 (point 28), plus des changements techniques et d'interface sans effet sur les règles ni les sauvegardes (points 29 et 30, section « Non publié » du [CHANGELOG](../../CHANGELOG.md)). Implémenté et testé automatiquement ; **aucun essai humain, aucun essai sur un second PC, aucune release publiée.**
 
 1. Trois sessions joueurs exploratoires ([protocole](../tests-joueurs/README.md)) ; le registre `resultats.csv` est encore vide.
 2. Recontrôle de la livraison avec AVG actif et signalement du faux positif ([ANTIVIRUS.md](../ANTIVIRUS.md)).
 3. Après les sessions : intérêt des réponses de crise (sans effet sur les taux de victoire en 270 simulations), létalité, lisibilité des objectifs.
 4. Avant la 1.0 : [décision sur les formats de sauvegarde](../roadmap/07-decision-formats-sauvegarde.md).
 
-Pour chaque lot livré : créer `30-<lot>.md` (périmètre, fichiers principaux, tests exécutés, limites, prochaine action), puis mettre à jour cet index, le backlog et le CHANGELOG.
+Pour chaque lot livré : créer `31-<lot>.md` (périmètre, fichiers principaux, tests exécutés, limites, prochaine action), puis mettre à jour cet index, le backlog et le CHANGELOG.

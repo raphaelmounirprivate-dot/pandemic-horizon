@@ -57,7 +57,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Play        
 
 ## Façon de travailler sur un lot
 
-1. Lire `docs/suivi/00-index.md`, puis le dernier point (`docs/suivi/28-…` actuellement) et `docs/roadmap/03-backlog.md`.
+1. Lire `docs/suivi/00-index.md`, puis le dernier point (`docs/suivi/30-…` actuellement) et `docs/roadmap/03-backlog.md`.
 2. `git status` : vérifier qu'aucune modification locale n'est perdue.
 3. Petit changement, puis `dev.ps1 Test`. Pour l'UI : captures aux trois résolutions. Pour les règles : comparaison appariée (mêmes graines/difficultés) avant d'ajuster un coefficient.
 4. Ajouter les contrôles correspondants dans une suite `tests/test_*.gd` (skill `godot-tests`).
