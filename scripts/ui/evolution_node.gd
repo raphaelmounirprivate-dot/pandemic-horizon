@@ -8,6 +8,7 @@ var selected_node = false
 var blocked = false
 var acquired = false
 var name_label: Label
+var effect_label: Label
 var state_label: Label
 
 func _init() -> void:
@@ -15,19 +16,24 @@ func _init() -> void:
 	var margin = MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	margin.add_theme_constant_override("margin_left",34)
-	margin.add_theme_constant_override("margin_right",10)
-	margin.add_theme_constant_override("margin_top",4)
-	margin.add_theme_constant_override("margin_bottom",4)
+	margin.add_theme_constant_override("margin_left",28)
+	margin.add_theme_constant_override("margin_right",4)
+	margin.add_theme_constant_override("margin_top",0)
+	margin.add_theme_constant_override("margin_bottom",0)
 	add_child(margin)
 	var rows = VBoxContainer.new()
 	rows.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	rows.alignment = BoxContainer.ALIGNMENT_CENTER
-	rows.add_theme_constant_override("separation",0)
+	# Three lines must fit the 50 px nodes of 1280×720.
+	rows.add_theme_constant_override("separation",-4)
 	margin.add_child(rows)
-	name_label = _part(15)
+	name_label = _part(14)
 	name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	rows.add_child(name_label)
+	effect_label = _part(12)
+	effect_label.add_theme_color_override("font_color",Color("a7c4c9"))
+	effect_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	rows.add_child(effect_label)
 	state_label = _part(13)
 	state_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	rows.add_child(state_label)
@@ -38,8 +44,9 @@ func _part(font_size: int) -> Label:
 	label.add_theme_font_size_override("font_size",font_size)
 	return label
 
-func show_state(title: String, cost_text: String, state: String, ok: bool) -> void:
+func show_state(title: String, effect: String, cost_text: String, state: String, ok: bool) -> void:
 	name_label.text = title
+	effect_label.text = effect
 	state_label.text = state if cost_text.is_empty() else cost_text + " · " + state
 	state_label.add_theme_color_override("font_color",ACCENT if ok else AMBER)
 	queue_redraw()

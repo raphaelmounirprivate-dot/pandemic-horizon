@@ -98,6 +98,8 @@ func run(tree: SceneTree, check: Callable) -> void:
 	await tree.process_frame
 	check.call("Diffusion · 0/" in scene.evolution_tabs.diffusion.text, "Onglet indique les compétences acquises")
 	check.call("12 pts · Disponible" in scene.evolution_reasons.transmission.text and "Prérequis" in scene.evolution_reasons.mobility.text, "États écrits sur les nœuds")
+	check.call(scene.evolution_buttons.transmission.effect_label.text == "Croissance +8" and scene.evolution_buttons.mobility.effect_label.text == "Échanges ×3", "Effet principal écrit sur les nœuds")
+	check.call(scene.Skills.short_effect({"modifiers": {"sea_multiplier": 2.5, "cure_multiplier": 1.12}}) == "Mer ×2,5 · Remède +12 %" and scene.Skills.short_effect({"modifiers": {"cure_multiplier": 0.7}}) == "Remède −30 %", "Effet court : facteurs et pourcentages signés")
 	await inputs.click(tree, scene.evolution_buttons.transmission)
 	check.call(scene.world.purchased.is_empty(), "Cliquer un nœud ne dépense rien")
 	await inputs.click(tree, scene.evolution_purchase)

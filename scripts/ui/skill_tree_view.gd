@@ -4,7 +4,7 @@ extends Control
 const ACCENT = Color("69d6bd")
 const MUTED = Color("a7c4c9")
 const GAP_X = 40
-const MIN_GAP_X = 24
+const MIN_GAP_X = 20
 const GAP_Y = 10
 const MAX_NODE_WIDTH = 250
 const MAX_NODE_HEIGHT = 64

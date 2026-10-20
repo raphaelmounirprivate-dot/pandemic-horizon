@@ -80,8 +80,8 @@ static func build(ui) -> void:
 		ui.evolution_buttons[id] = button
 		ui.evolution_reasons[id] = button.state_label
 	var sheet = VBoxContainer.new()
-	sheet.custom_minimum_size.x = 360 if ui.get_viewport_rect().size.x < 1600 else 480
-	sheet.add_theme_constant_override("separation", 6)
+	sheet.custom_minimum_size.x = 300 if ui.get_viewport_rect().size.x < 1600 else 480
+	sheet.add_theme_constant_override("separation", 4)
 	content.add_child(sheet)
 	ui.evolution_title = ui._label("", 24)
 	ui.evolution_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -129,7 +129,7 @@ static func refresh(ui) -> void:
 		button.blocked = not reason.is_empty() and not acquired
 		button.disabled = ui.tutorial != null and (ui.tutorial.stage != 2 or id != "transmission")
 		button.tooltip_text = skill.name + "\n" + skill.effect
-		button.show_state(skill.name, "" if acquired else "%d pts" % skill.cost, state_text(acquired, reason, skill.cost - world.points), acquired or reason.is_empty())
+		button.show_state(skill.name, ui.Skills.short_effect(skill), "" if acquired else "%d pts" % skill.cost, state_text(acquired, reason, skill.cost - world.points), acquired or reason.is_empty())
 	var id = ui.selected_evolution
 	var chosen = world.evolutions[id]
 	var full_reason = "Acquise" if id in world.purchased else ui.purchase_reason_for(id)

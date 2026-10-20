@@ -26,6 +26,20 @@ static func lineage(world,id: String) -> Array:
 		result.append(current)
 		pending.append_array(world.evolutions[current].requires)
 	return result
+## One-line effect for a tree node, built from the modifiers ("Mer ×2,5 · Remède ×1,12").
+static func short_effect(skill: Dictionary) -> String:
+	var parts: Array[String] = []
+	for key in skill.get("modifiers",{}):
+		var value = float(skill.modifiers[key])
+		if key == "growth_bonus": parts.append("Croissance +%s" % number(value*100))
+		# Cure and incident factors are small: a signed percentage reads faster than ×1,04.
+		elif key == "cure_multiplier" or key.begins_with("incident_"): parts.append("%s %s%s %%" % [NAMES.get(key,key),"+" if value > 1.0 else "−",number(absf(value-1.0)*100)])
+		else: parts.append("%s ×%s" % [NAMES.get(key,key),number(value)])
+	return " · ".join(parts)
+static func number(value: float) -> String:
+	var rounded = snappedf(value,0.01)
+	if is_equal_approx(rounded,roundf(rounded)): return str(int(roundf(rounded)))
+	return String.num(rounded,2).replace(".",",")
 static func comparison(world,id: String) -> String:
 	if not world.evolutions.has(id): return ""
 	var skill = world.evolutions[id]

@@ -218,7 +218,7 @@ La fiche de 12 px expose nom complet et famille, effet rédigé, comparaison ava
 
 - Onglets de famille : 220 × 52 px minimum, symbole vectoriel à 10 px du bord, texte 18 px « Famille · acquises/total ». L'onglet actif a le fond `button-hover` **et** un soulignement `accent` de 4 px.
 - Arbre (`skill_tree_view.gd`) : colonnes = profondeur du prérequis dans la famille, lignes = ordre des feuilles, parent centré sur ses enfants. Nœuds jusqu'à 250 × 64 px, jamais moins de 44 px de haut ; écart horizontal 40 px (24 px sous 1 100 px de large), vertical 10 px. Liens coudés : 1,5 px `muted`, 3 px `accent` quand le prérequis est acquis, point d'arrivée de 3 px.
-- Nœud (`evolution_node.gd`) : symbole de famille à 17 px du bord, nom complet 15 px, ligne « coût · état » 13 px (`accent` si acquise ou disponible, `amber` sinon) ; acquise = contour `accent` 1 px, sélection = contour `accent` 3 px, blocage = losange `amber`. L'état est toujours écrit.
+- Nœud (`evolution_node.gd`) : symbole de famille à 17 px du bord, nom complet 14 px, ligne d'effet 12 px `muted` (calculée depuis les modificateurs : « Mer ×2,5 · Remède +12 % », remède et aléas en pourcentage signé), ligne « coût · état » 13 px (`accent` si acquise ou disponible, `amber` sinon) ; acquise = contour `accent` 1 px, sélection = contour `accent` 3 px, blocage = losange `amber`. L'état est toujours écrit.
 - Fiche : 360 px de large sous 1 600 px, 480 px au-delà ; titre 24 px, texte 15 px en sections EFFET / AVANT → APRÈS / PRÉREQUIS, règle de spécialisation 14 px `amber`, bouton Évoluer 56 px, 20 px.
 - Pied : « Retour à la carte [Échap] » (320 px) et rappel des touches 15 px `muted`.
 
