@@ -11,7 +11,7 @@ Code, interface, textes et ressources sont originaux ; le jeu est autonome et ne
 - Scénarios Standard, Dégel 2042 et Réseaux fragiles ; trois difficultés ; profils facultatifs enrichi, aléas et crises réactives.
 - Sauvegardes locales, tutoriel, aide F1, accessibilité (clavier, mouvements réduits, lecture agrandie, sons facultatifs).
 
-Dernier lot : [point 30](docs/suivi/30-ecrans-dedies.md), écrans dédiés (Évolution, nouvelle partie en trois étapes, bilan illustré), sans changement de règles.
+Derniers lots : [point 30](docs/suivi/30-ecrans-dedies.md), écrans dédiés (Évolution, nouvelle partie en trois étapes, bilan illustré), et [point 31](docs/suivi/31-vue-de-jeu.md), écran de jeu extrait de `main.gd` ; aucun changement de règles.
 
 Prochaine étape : [trois sessions exploratoires avec des joueurs](docs/tests-joueurs/README.md), puis corrections fondées sur les observations. Historique : [CHANGELOG.md](CHANGELOG.md).
 

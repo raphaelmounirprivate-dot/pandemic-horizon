@@ -63,7 +63,8 @@ Les régions et connexions (`regions.json`, 24 régions fictives) sont validées
 
 | Fichier | Rôle |
 | --- | --- |
-| `main.gd` | Contrôleur : écrans, temps, achats, sauvegardes, raccourcis. ~810 lignes. |
+| `main.gd` | Contrôleur : navigation entre écrans, temps, achats, sauvegardes, tutoriel, raccourcis. ~660 lignes. |
+| `game_view.gd` | Écran de jeu : carte, panneau latéral, choix logistique ou réponse de crise sous la carte, ligne d'état, commandes ; `refresh()` lit le modèle sans le modifier. |
 | `menu_view.gd` | Écran titre et « Nouvelle partie » en trois étapes (scénario, difficulté et options, départ sur la carte) ; contraintes entre options dans `update_choices()`. |
 | `choice_card.gd` | Carte de choix (scénario, difficulté) avec état écrit « Choisi ». |
 | `result_view.gd`, `stat_card.gd`, `progress_meter.gd` | Bilan de fin : bandeau d'issue, cartes de résultat à barres, courbe, moments clés (`key_moments()`, lecture seule du journal). |

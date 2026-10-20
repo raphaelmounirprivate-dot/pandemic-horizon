@@ -1,7 +1,6 @@
 extends Control
 
 const World = preload("res://scripts/simulation/world.gd")
-const MapView = preload("res://scripts/ui/region_map.gd")
 const SaveStore = preload("res://scripts/persistence/save_store.gd")
 const Tutorial = preload("res://scripts/ui/tutorial.gd")
 const Help = preload("res://scripts/ui/help.gd")
@@ -15,6 +14,7 @@ const CONFIG_PATH = "user://settings.cfg"
 const Skills = preload("res://scripts/ui/skill_presenter.gd")
 const MenuView = preload("res://scripts/ui/menu_view.gd")
 const EvolutionView = preload("res://scripts/ui/evolution_view.gd")
+const GameView = preload("res://scripts/ui/game_view.gd")
 var incident_button: Button
 var map_legend: Label
 var world = World.new()
@@ -493,90 +493,7 @@ func restart_game() -> void:
 	start_game()
 
 func show_game() -> void:
-	screen = "game"
-	_reset_screen("Tutoriel guidé" if tutorial != null else "Pandemic Horizon", "Entraînement séparé · Six exercices" if tutorial != null else "%s · %s · Objectif : 90 %% avant le remède" % [world.scenario.name,world.difficulty.name])
-	body.get_child(0).get_child(0).add_theme_font_size_override("font_size",22)
-	metrics = _label("",20,ACCENT)
-	body.add_child(metrics)
-	objective_details = _label("",13,MUTED)
-	objective_details.visible = not world.objective.is_empty() or (world.tactics_enabled and not world.tactics.goal.is_empty())
-	body.add_child(objective_details)
-	var content = HBoxContainer.new()
-	content.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	body.add_child(content)
-	var map_column = VBoxContainer.new()
-	map_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	content.add_child(map_column)
-	map_view = MapView.new()
-	map_view.setup(world)
-	map_view.selected = selected
-	map_view.region_selected.connect(select_region)
-	map_column.add_child(map_view)
-	map_view.restore_camera(map_camera)
-	reset_map_camera = false
-	map_legend = _label("",13,MUTED)
-	map_legend.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	map_column.add_child(map_legend)
-	decision_area = VBoxContainer.new()
-	decision_signature = ""
-	map_column.add_child(decision_area)
-	build_inline_decision(decision_area)
-	effects_label = RichTextLabel.new()
-	effects_label.custom_minimum_size.y = 48
-	effects_label.visible = not World.Decisions.pending(world) and not World.Tactics.pending(world)
-	effects_label.add_theme_font_size_override("normal_font_size",13)
-	effects_label.add_theme_color_override("default_color",AMBER)
-	map_column.add_child(effects_label)
-	var sidebar = VBoxContainer.new()
-	sidebar.custom_minimum_size.x = 380
-	sidebar.add_theme_constant_override("separation",2)
-	content.add_child(sidebar)
-	region_details = _label("",14)
-	sidebar.add_child(region_details)
-	transport_details = _label("",13,MUTED)
-	sidebar.add_child(transport_details)
-	evolution_open_button = _button("", open_evolution, sidebar)
-	evolution_open_button.custom_minimum_size.y = 64
-	evolution_open_button.add_theme_font_size_override("font_size",22)
-	evolution_summary = _label("",14,MUTED)
-	evolution_summary.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	sidebar.add_child(evolution_summary)
-	status_label = _label("",14,MUTED)
-	body.add_child(status_label)
-	journal_label = _label("",14,MUTED)
-	journal_label.custom_minimum_size.y = 22 if tutorial == null else 44
-	if tutorial == null:
-		journal_label.mouse_filter = Control.MOUSE_FILTER_STOP
-		journal_label.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
-		journal_label.gui_input.connect(func(event):
-			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed: open_overview())
-	body.add_child(journal_label)
-	var controls = HBoxContainer.new()
-	body.add_child(controls)
-	pause_button = _button("", toggle_pause, controls)
-	var initial_focus: Button = pause_button
-	for value in [1, 2, 4]:
-		_button("×%d" % value, func():
-			speed = value
-			_refresh()
-		, controls)
-	if tutorial == null:
-		_button("Recommencer", restart_game, controls)
-		_button("Menu", show_menu, controls)
-		_button("Sauvegardes", open_saves, controls)
-		_button("Monde [F3]",open_overview,controls)
-		incident_button = _button("Local [F4]",func(): map_view.focus_next_incident(),controls) if world.crises_enabled else null
-	else:
-		if tutorial.stage == 5: initial_focus = _button("Sauvegardes d'essai", open_saves, controls)
-		tutorial_next = _button("Terminer" if tutorial.stage == 5 else "Continuer", next_lesson, controls)
-		_button("Quitter l'entraînement", finish_tutorial, controls)
-		if tutorial.stage == 1: initial_focus = map_view.buttons[2]
-		elif tutorial.stage == 2: initial_focus = evolution_open_button
-		elif tutorial.stage == 3: initial_focus = map_view.buttons[0]
-		if tutorial.ready: initial_focus = tutorial_next
-	_button("Aide [F1]", open_help, controls)
-	_refresh()
-	initial_focus.grab_focus()
+	GameView.build(self)
 
 func buy_evolution(id: String) -> void:
 	if tutorial != null and (tutorial.stage != 2 or id != "transmission"): return
@@ -641,49 +558,6 @@ func close_evolution() -> void:
 	# In the tutorial, show_game() already focused Continuer once the exercise succeeded.
 	if tutorial == null or not tutorial.ready: evolution_open_button.grab_focus()
 
-func build_inline_decision(parent: Control) -> void:
-	for child in parent.get_children():
-		parent.remove_child(child)
-		child.queue_free()
-	decision_signature = JSON.stringify(world.decision)+JSON.stringify(world.tactics)+str(world.points)
-	decision_buttons.clear()
-	decision_notice = null
-	if World.Tactics.pending(world) or (world.tactics_enabled and not world.tactics.response.is_empty() and not World.Decisions.pending(world)):
-		load("res://scripts/ui/crisis_response_view.gd").build(self,parent)
-		return
-	if world.decision.is_empty(): return
-	decision_notice = _label("",13,AMBER)
-	decision_notice.visible = false
-	var title = World.Decisions.summary(world)
-	if world.decision_profile == "0.11": title += " · Tarif historique 6 pts"
-	parent.add_child(_label(title,13,AMBER))
-	if World.Decisions.pending(world):
-		var choices = HBoxContainer.new()
-		choices.add_theme_constant_override("separation",8)
-		parent.add_child(choices)
-		for choice in World.Decisions.definition(world).choices:
-			var id = choice.id
-			var column = VBoxContainer.new()
-			column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			choices.add_child(column)
-			var button = _button("%s · %d pts" % [choice.name,choice.cost],func():
-				var error = World.Decisions.choose(world,id)
-				if error.is_empty():
-					feedback.play_cue("purchase")
-					autosave()
-					show_game()
-				else:
-					decision_notice.text = error
-					decision_notice.show()
-			,column)
-			button.add_theme_font_size_override("font_size",13)
-			decision_buttons[id] = button
-			var detail = _label(("Sans ajout d'effet" if id == "observe" else "Mer ×%.2f · remède ×%.2f\n12 jours dès demain" % [choice.sea,choice.cure])+"\n"+World.Decisions.reason(world,id),13,MUTED)
-			detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			column.add_child(detail)
-		parent.add_child(_label("Choix irréversible · Sans choix : maintien gratuit au J31 · Les fermetures restent prioritaires",12,AMBER))
-	parent.add_child(decision_notice)
-
 func show_decision() -> void:
 	if tutorial != null or (world.decision.is_empty() and not World.Tactics.pending(world)): return
 	paused = true
@@ -696,51 +570,7 @@ func toggle_pause() -> void:
 	_refresh()
 
 func _refresh() -> void:
-	if screen != "game":
-		return
-	if decision_signature != JSON.stringify(world.decision)+JSON.stringify(world.tactics)+str(world.points): build_inline_decision(decision_area)
-	effects_label.visible = not World.Decisions.pending(world) and not World.Tactics.pending(world)
-	metrics.text = "Jour %d     Touchés : %.1f %%     Remède : %.1f %%     Points : %d     Détectées : %d/%d" % [world.day, world.coverage() * 100, world.cure, world.points, world.detected_count(), world.regions.size()]
-	objective_details.text = World.Tactics.goal_summary(world) if world.tactics_enabled and not world.tactics.goal.is_empty() else World.Objectives.summary(world)
-	var region = world.regions[selected]
-	region_details.text = "%s · Population : %d\nSains : %d · Actifs : %d · Retirés : %d\n%s" % [region.name, region.population, region.healthy, region.active, region.removed, "Détectée" if region.detected else "Non détectée"]
-	if world.scenario.id != "standard":
-		region_details.text += " · Climat local ×%.2f" % world.climate_factor(region.id)
-	transport_details.text = world.transport_summary(region.id)
-	var available = world.evolutions.keys().filter(func(id): return purchase_reason_for(id).is_empty())
-	evolution_open_button.text = "Évolution [E] · %d pts" % world.points
-	var owned: Array[String] = []
-	for group in EvolutionView.families(self):
-		owned.append("%s %d/%d" % [group.name, group.skills.filter(func(id): return id in world.purchased).size(), group.skills.size()])
-	var specialization = world.specialization_id()
-	evolution_summary.text = "%s\n%s%s" % [" · ".join(owned), ("Aucune compétence achetable" if available.is_empty() else "%d achetable%s maintenant" % [available.size(), "s" if available.size() > 1 else ""]), "" if specialization.is_empty() else " · Spécialisation : " + world.evolutions[specialization].name]
-	pause_button.text = "Reprendre [Espace]" if paused else "Pause [Espace]"
-	status_label.text = ("En pause" if paused else "Simulation en cours") + " · Vitesse ×%d" % speed
-	if not save_notice.is_empty(): status_label.text += " · " + save_notice
-	status_label.clip_text = true
-	journal_label.text = "Actu · " + world.journal[-1] if not world.journal.is_empty() else ""
-	journal_label.tooltip_text = "Actualités [F3]\n" + "\n".join(world.journal.slice(maxi(0,world.journal.size()-5)))
-	journal_label.clip_text = true
-	if tutorial != null:
-		status_label.text = "Étape %d / 6 · %s · %s" % [tutorial.stage + 1, Tutorial.TITLES[tutorial.stage], "Action réussie : continuez." if tutorial.ready else "À vous de jouer"]
-		journal_label.text = tutorial.instruction(world.day)
-		journal_label.clip_text = false
-		journal_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		var just_completed = tutorial.ready and tutorial_next.disabled
-		tutorial_next.disabled = not tutorial.ready
-		if just_completed: tutorial_next.grab_focus()
-		pause_button.disabled = not tutorial.can_run()
-	var counts = Incidents.counts(world)
-	map_legend.text = "Rouge : touchés · Véhicules : échanges du jour · 24 régions fictives"
-	if world.crises_enabled:
-		map_legend.text = "Aléas locaux : %d · mondiaux : %d · F4 : localiser" % [counts.local,counts.global]
-		incident_button.disabled = counts.local == 0
-		incident_button.tooltip_text = "Localiser l'aléa local suivant : repère, région ou liaison. Les effets mondiaux restent dans Monde [F3]."
-	var lines = Incidents.active_lines(world)
-	var climate = "Phase %s · %.0f °C fictifs · Remède de phase ×%.2f\n" % [world.phase.name, world.phase.temperature, world.phase.cure_multiplier] if world.scenario.id != "standard" else ""
-	effects_label.text = climate + "Événements actifs\n" + ("Aucun effet temporaire." if lines.is_empty() else "\n".join(lines))
-	map_view.refresh()
-	map_view.motion_enabled = not reduced_motion and not paused and world.outcome.is_empty()
+	GameView.refresh(self)
 
 func _process(delta: float) -> void:
 	advance_time(delta)
