@@ -17,11 +17,11 @@ Candidat 0.23 inchangé pour le joueur : refactorisation sans effet sur les règ
 ## Limites
 
 - `gdlint` non exécuté en local (pas de Python sur ce poste) : contrôlé seulement par la CI après push.
-- `tests/capture_crises.gd` échoue (code 1) **avant comme après** ce changement : la combinaison Dégel 2042 + crises + décision + objectif qu'il demande est refusée par `start_game`, le monde reste vide et `show_game` échoue sur `world.scenario.name`. Défaut antérieur de l'outil de capture, non corrigé ici.
+- `tests/capture_crises.gd` échouait (code 1) **avant comme après** l'extraction : Réseaux fragiles impose un départ en Centrale (« Ce scénario impose un départ en centrale. »), mais le script partait de Boréale. Depuis l'écran titre (`7b16e77`), `show_menu()` n'applique plus `update_choices()`, qui fixe le départ imposé ; les états « menu-* » ne capturaient plus non plus que l'écran titre. **Corrigé dans un commit séparé** : le script passe par l'étape 2 (`show_new_game(2)`) et signale un démarrage refusé au lieu de planter. Résultat : 21 captures, code 0 ; deux relues à 1280×720 (options Réseaux fragiles, écran Évolution au J43).
 - Les vues accèdent toujours directement aux champs du contrôleur.
 
 ## Livraison
 
 Commit local. Push et CI : à faire séparément. Pas d'archive, pas de checkpoint, pas de changement de version.
 
-Prochaine étape : corriger `capture_crises.gd`, puis poursuivre le découpage (tutoriel, sauvegardes) ou passer aux sessions joueurs.
+Prochaine étape : poursuivre le découpage (tutoriel, sauvegardes) ou passer aux sessions joueurs.
