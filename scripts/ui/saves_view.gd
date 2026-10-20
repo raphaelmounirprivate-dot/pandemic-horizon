@@ -50,3 +50,39 @@ static func build(ui) -> void:
 	ui.body.add_child(notice)
 	ui._button("Retour", ui.close_saves, ui.body).grab_focus()
 	if training_action != null: training_action.grab_focus()
+
+static func save_manual(ui, slot: String) -> void:
+	var error = ui.save_store.save_slot(slot, ui.world, ui.selected, ui.speed)
+	if error.is_empty() and ui.tutorial != null and ui.tutorial.stage == 5: ui.tutorial.saved_slot = slot
+	ui.save_notice = "Partie enregistrée dans l'emplacement %s." % slot.trim_prefix("slot") if error.is_empty() else error
+	build(ui)
+
+## Replaces the game in memory only after a complete, valid read; the game resumes paused.
+static func load_slot(ui, slot: String) -> void:
+	var result = ui.save_store.load_slot(slot)
+	if not result.error.is_empty():
+		ui.save_notice = result.error + " La partie en mémoire est conservée."
+		build(ui)
+		return
+	var world = result.world
+	ui.world = world
+	ui.reset_map_camera = true
+	if ui.tutorial != null and ui.tutorial.stage == 5 and ui.tutorial.saved_slot == slot: ui.tutorial.ready = true
+	ui.selected = result.selected
+	ui.speed = result.speed
+	ui.start_id = world.start_region_id
+	ui.scenario_id = world.scenario.id
+	ui.difficulty_id = world.difficulty.id
+	# The tutorial keeps the player's menu choices aside; only a real game updates them.
+	if ui.tutorial == null:
+		ui.objective_id = world.objective.get("id", "")
+		ui.decision_enabled = not world.decision.is_empty()
+		ui.advanced_mode = world.expanded_content
+		ui.crises_mode = world.crises_enabled
+		ui.reactive_mode = world.tactics_enabled
+		ui.simulation_seed = world.rng.seed
+	ui.paused = true
+	ui.elapsed = 0.0
+	ui.save_notice = result.get("warning", "Partie chargée en pause.")
+	if world.outcome.is_empty(): ui.show_game()
+	else: ui.show_result()

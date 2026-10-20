@@ -34,6 +34,7 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 - [Point 29 — Dette technique, CI et rangement](29-dette-technique-ci.md) : candidat 0.23 inchangé pour le joueur ; start_with, main.gd à 810 lignes, typage strict de la simulation, CI allégée et gdlint, docs rangés, renommage du dépôt.
 - [Point 30 — Écrans dédiés](30-ecrans-dedies.md) : candidat 0.23, règles inchangées ; écran Évolution par famille, écran titre et nouvelle partie en trois étapes, bilan illustré ; 6 455 contrôles, 57 captures.
 - [Point 31 — Écran de jeu extrait](31-vue-de-jeu.md) : candidat 0.23 inchangé ; `game_view.gd`, `main.gd` à 664 lignes, 35 captures identiques avant/après.
+- [Point 32 — Tutoriel et sauvegardes extraits](32-tutoriel-sauvegardes.md) : candidat 0.23 inchangé ; `tutorial_flow.gd`, chargement et enregistrement dans `saves_view.gd`, `main.gd` à 597 lignes, 80 captures identiques.
 
 ## Documents liés
 
@@ -50,4 +51,4 @@ Candidat 0.23 (point 28), plus des changements techniques et d'interface sans ef
 3. Après les sessions : intérêt des réponses de crise (sans effet sur les taux de victoire en 270 simulations), létalité, lisibilité des objectifs.
 4. Avant la 1.0 : [décision sur les formats de sauvegarde](../roadmap/07-decision-formats-sauvegarde.md).
 
-Pour chaque lot livré : créer `32-<lot>.md` (périmètre, fichiers principaux, tests exécutés, limites, prochaine action), puis mettre à jour cet index, le backlog et le CHANGELOG.
+Pour chaque lot livré : créer `33-<lot>.md` (périmètre, fichiers principaux, tests exécutés, limites, prochaine action), puis mettre à jour cet index, le backlog et le CHANGELOG.

@@ -9,7 +9,7 @@ Aucun changement de règles, de coefficients ni de format de sauvegarde ; la ver
 - Dépôt renommé `pandemic-horizon`.
 - Kit joueurs : conduite à tenir en cas d'alerte antivirus ; procédure de signalement de faux positif ([ANTIVIRUS.md](docs/ANTIVIRUS.md)).
 - `World.start_with(options)` : options nommées et validées ; `start()` conservée pour les tests historiques.
-- `main.gd` ramené de 1 089 à 810 lignes : écran des sauvegardes et smoke test d'export extraits ; puis à 664 lignes avec l'écran de jeu dans `game_view.gd` (rendu identique à l'octet près).
+- `main.gd` ramené de 1 089 à 810 lignes : écran des sauvegardes et smoke test d'export extraits ; puis à 664 lignes avec l'écran de jeu dans `game_view.gd`, et à 597 lignes avec le tutoriel et le chargement extraits (rendu identique à l'octet près).
 - Lanceurs d'équilibrage rangés dans `scripts/analysis/`, exclu de l'export par motif, avec un test de garde.
 - Typage statique obligatoire dans `scripts/simulation/` ; règles par dossier pour la suite.
 - CI : pas d'exécution pour la documentation seule, exécutions dépassées annulées hors `main`, Godot en cache, artefacts conservés 14 jours, job `gdlint`.

@@ -36,7 +36,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Play        
 | `scripts/simulation/world.gd` (`PandemicWorld`) | État et règles du monde. **Aucune dépendance aux scènes/UI.** Déterministe par graine. |
 | `scripts/gameplay/*.gd` | Validation et logique des catalogues : contenu, scénarios, transports, objectifs, décisions, historique, contenu enrichi, crises, tactiques. |
 | `scripts/persistence/save_store.gd` | Sauvegardes JSON (formats 1→7), empreintes de contenu, secours `.bak`. |
-| `scripts/ui/main.gd` | Contrôleur d'interface (~660 lignes, découpage progressif en cours). Vues extraites dans `scripts/ui/*_view.gd`. |
+| `scripts/ui/main.gd` | Contrôleur d'interface (~600 lignes, découpage progressif en cours). Vues extraites dans `scripts/ui/*_view.gd`. |
 | `data/*.json` | Toutes les règles chiffrées. |
 | `tests/run_tests.gd` | Point d'entrée unique ; enchaîne toutes les suites `tests/test_*.gd`. |
 | `scripts/analysis/` (dont les lanceurs `balance*.gd`) | Outils d'équilibrage, **exclus de l'export**. |
@@ -57,7 +57,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Play        
 
 ## Façon de travailler sur un lot
 
-1. Lire `docs/suivi/00-index.md`, puis le dernier point (`docs/suivi/31-…` actuellement) et `docs/roadmap/03-backlog.md`.
+1. Lire `docs/suivi/00-index.md`, puis le dernier point (`docs/suivi/32-…` actuellement) et `docs/roadmap/03-backlog.md`.
 2. `git status` : vérifier qu'aucune modification locale n'est perdue.
 3. Petit changement, puis `dev.ps1 Test`. Pour l'UI : captures aux trois résolutions. Pour les règles : comparaison appariée (mêmes graines/difficultés) avant d'ajuster un coefficient.
 4. Ajouter les contrôles correspondants dans une suite `tests/test_*.gd` (skill `godot-tests`).

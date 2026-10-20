@@ -63,12 +63,13 @@ Les régions et connexions (`regions.json`, 24 régions fictives) sont validées
 
 | Fichier | Rôle |
 | --- | --- |
-| `main.gd` | Contrôleur : navigation entre écrans, temps, achats, sauvegardes, tutoriel, raccourcis. ~660 lignes. |
+| `main.gd` | Contrôleur : navigation entre écrans, temps, achats, raccourcis ; points d'entrée qui délèguent aux vues. ~600 lignes. |
+| `tutorial_flow.gd` | Entrée et sortie du tutoriel : partie, choix et sauvegardes du joueur mis de côté puis restaurés ; entraînement dans un dossier séparé. |
 | `game_view.gd` | Écran de jeu : carte, panneau latéral, choix logistique ou réponse de crise sous la carte, ligne d'état, commandes ; `refresh()` lit le modèle sans le modifier. |
 | `menu_view.gd` | Écran titre et « Nouvelle partie » en trois étapes (scénario, difficulté et options, départ sur la carte) ; contraintes entre options dans `update_choices()`. |
 | `choice_card.gd` | Carte de choix (scénario, difficulté) avec état écrit « Choisi ». |
 | `result_view.gd`, `stat_card.gd`, `progress_meter.gd` | Bilan de fin : bandeau d'issue, cartes de résultat à barres, courbe, moments clés (`key_moments()`, lecture seule du journal). |
-| `settings_view.gd`, `overview_view.gd`, `saves_view.gd` | Vues extraites (0.23, puis écran des sauvegardes) ; accèdent encore aux champs du contrôleur. |
+| `settings_view.gd`, `overview_view.gd`, `saves_view.gd` | Vues extraites (0.23, puis écran des sauvegardes, avec `save_manual()` et `load_slot()`) ; accèdent encore aux champs du contrôleur. |
 | `runtime_smoke.gd` | Smoke test de l'export (`--smoke-test`), piloté par `main.gd` ; embarqué dans l'exe, vérifié par `verify-export.ps1`. |
 | `region_map.gd` | Carte vectorielle (Natural Earth, `assets/maps/*.geojson`), zoom/déplacement, flux animés. |
 | `evolution_view.gd` | Écran Évolution (E) : onglets par famille, fiche, achat explicite, partie en pause. |

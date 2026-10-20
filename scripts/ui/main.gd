@@ -15,6 +15,8 @@ const Skills = preload("res://scripts/ui/skill_presenter.gd")
 const MenuView = preload("res://scripts/ui/menu_view.gd")
 const EvolutionView = preload("res://scripts/ui/evolution_view.gd")
 const GameView = preload("res://scripts/ui/game_view.gd")
+const SavesView = preload("res://scripts/ui/saves_view.gd")
+const TutorialFlow = preload("res://scripts/ui/tutorial_flow.gd")
 var incident_button: Button
 var map_legend: Label
 var world = World.new()
@@ -173,52 +175,10 @@ func _return_to(target: String) -> void:
 		_: show_menu()
 
 func start_tutorial() -> void:
-	if tutorial != null: return
-	tutorial_session = {"world": world, "selected": selected, "speed": speed, "save_store": save_store,
-		"save_notice": save_notice, "saves_return": saves_return, "screen": screen,
-		"start_id": start_id, "scenario_id": scenario_id, "difficulty_id": difficulty_id, "objective_id":objective_id,"decision_enabled":decision_enabled}
-	world = World.new()
-	var error = world.start_with({"start": "boreale"})
-	if not error.is_empty():
-		world = tutorial_session.world
-		tutorial_session.clear()
-		save_notice = error
-		show_menu()
-		return
-	tutorial = Tutorial.new()
-	save_store = SaveStore.new()
-	save_store.directory = training_directory
-	# Only the fixed training files are recycled; player slots are never touched.
-	for slot in SaveStore.SLOTS:
-		for suffix in ["", ".bak", ".tmp", ".bak.tmp"]:
-			var path = save_store._path(slot) + suffix
-			if FileAccess.file_exists(path): DirAccess.remove_absolute(path)
-	selected = 0
-	speed = 1
-	paused = true
-	elapsed = 0.0
-	save_notice = "Entraînement séparé · vos parties et sauvegardes sont conservées."
-	show_game()
+	TutorialFlow.start(self)
 
 func _restore_tutorial_session() -> String:
-	var target: String = tutorial_session.screen
-	world = tutorial_session.world
-	selected = tutorial_session.selected
-	speed = tutorial_session.speed
-	save_store = tutorial_session.save_store
-	save_notice = tutorial_session.save_notice
-	saves_return = tutorial_session.saves_return
-	start_id = tutorial_session.start_id
-	scenario_id = tutorial_session.scenario_id
-	difficulty_id = tutorial_session.difficulty_id
-	objective_id = tutorial_session.objective_id
-	decision_enabled = tutorial_session.decision_enabled
-	tutorial = null
-	tutorial_session.clear()
-	paused = true
-	elapsed = 0.0
-	screen = target
-	return target
+	return TutorialFlow.restore(self)
 
 func finish_tutorial() -> void:
 	if tutorial == null: return
@@ -287,40 +247,13 @@ func close_saves() -> void:
 	else: show_menu()
 
 func save_manual(slot: String) -> void:
-	var error = save_store.save_slot(slot, world, selected, speed)
-	if error.is_empty() and tutorial != null and tutorial.stage == 5: tutorial.saved_slot = slot
-	save_notice = "Partie enregistrée dans l'emplacement %s." % slot.trim_prefix("slot") if error.is_empty() else error
-	show_saves()
+	SavesView.save_manual(self, slot)
 
 func load_saved(slot: String) -> void:
-	var result = save_store.load_slot(slot)
-	if not result.error.is_empty():
-		save_notice = result.error + " La partie en mémoire est conservée."
-		show_saves()
-		return
-	world = result.world
-	reset_map_camera = true
-	if tutorial != null and tutorial.stage == 5 and tutorial.saved_slot == slot: tutorial.ready = true
-	selected = result.selected
-	speed = result.speed
-	start_id = world.start_region_id
-	scenario_id = world.scenario.id
-	difficulty_id = world.difficulty.id
-	if tutorial == null: objective_id = world.objective.get("id", "")
-	if tutorial == null: decision_enabled = not world.decision.is_empty()
-	if tutorial == null: advanced_mode = world.expanded_content
-	if tutorial == null:
-		crises_mode = world.crises_enabled
-		reactive_mode = world.tactics_enabled
-		simulation_seed = world.rng.seed
-	paused = true
-	elapsed = 0.0
-	save_notice = result.get("warning", "Partie chargée en pause.")
-	if world.outcome.is_empty(): show_game()
-	else: show_result()
+	SavesView.load_slot(self, slot)
 
 func show_saves() -> void:
-	preload("res://scripts/ui/saves_view.gd").build(self)
+	SavesView.build(self)
 
 func _ready() -> void:
 	autosave_enabled = not ("--no-autosave" in OS.get_cmdline_user_args() or "--smoke-test" in OS.get_cmdline_user_args())
