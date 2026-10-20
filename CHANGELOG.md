@@ -11,7 +11,7 @@ Aucun changement de règles, de coefficients ni de format de sauvegarde ; la ver
 - `World.start_with(options)` : options nommées et validées ; `start()` conservée pour les tests historiques.
 - `main.gd` ramené de 1 089 à 810 lignes : écran des sauvegardes et smoke test d'export extraits ; puis à 664 lignes avec l'écran de jeu dans `game_view.gd`, et à 597 lignes avec le tutoriel et le chargement extraits (rendu identique à l'octet près).
 - Lanceurs d'équilibrage rangés dans `scripts/analysis/`, exclu de l'export par motif, avec un test de garde.
-- Typage statique obligatoire dans `scripts/simulation/` ; règles par dossier pour la suite.
+- Typage statique obligatoire dans `scripts/simulation/`, puis dans `scripts/persistence/` ; règles par dossier pour la suite.
 - CI : pas d'exécution pour la documentation seule, exécutions dépassées annulées hors `main`, Godot en cache, artefacts conservés 14 jours, job `gdlint`.
 - **Interface : écran Évolution dédié** (touche E) avec un onglet par famille, un arbre de gauche à droite à liens visibles, des nœuds au nom complet et à l'état écrit, une fiche en sections ; la carte récupère la place de l'ancienne grille. Aucune règle modifiée.
 - **Interface : écran titre et « Nouvelle partie » en trois étapes** (scénario, difficulté et options, départ choisi sur la carte), cartes de choix à état écrit, plus aucune liste déroulante dans le menu. Aucune règle modifiée.

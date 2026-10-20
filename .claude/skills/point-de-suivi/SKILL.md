@@ -11,7 +11,7 @@ Chaque affirmation porte un statut parmi : **prévu / implémenté / testé auto
 
 ## Étapes
 
-1. **Numéro** : prendre le plus grand `docs/suivi/NN-*.md` + 1 (actuellement 32 → prochain **33**). Nom : `NN-<thème-court-en-kebab>.md`.
+1. **Numéro** : prendre le plus grand `docs/suivi/NN-*.md` + 1 (actuellement 33 → prochain **34**). Nom : `NN-<thème-court-en-kebab>.md`.
 2. **Créer le point** (français, concis) :
 
 ```markdown

@@ -13,7 +13,6 @@ gdscript/warnings/directory_rules={
 "res://addons": 0,
 "res://scripts/analysis": 0,
 "res://scripts/gameplay": 0,
-"res://scripts/persistence": 0,
 "res://scripts/ui": 0,
 "res://tests": 0
 }

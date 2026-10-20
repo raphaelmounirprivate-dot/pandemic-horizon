@@ -108,7 +108,7 @@ L'export (`export_presets.cfg`) exclut `docs/`, `tests/`, `build/`, les `.ps1` e
 | Étape | Périmètre | État |
 | --- | --- | --- |
 | 1 | `scripts/simulation/` (`world.gd`) — `untyped_declaration` | Fait |
-| 2 | `scripts/persistence/`, puis `scripts/gameplay/` | À faire |
+| 2 | `scripts/persistence/` (`save_store.gd`), puis `scripts/gameplay/` | `persistence` fait (point 33) ; `gameplay` à faire |
 | 3 | `scripts/ui/`, `tests/`, `scripts/analysis/` | À faire |
 | 4 | Règles `unsafe_property_access`, `unsafe_method_access`, `unsafe_call_argument`, `unsafe_cast`, dossier par dossier | À faire ; ~5 700 occurrences mesurées le 19 octobre 2026, surtout des accès à des `Dictionary` issus du JSON |
 
