@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "profile": "strategy-0.25",
+  "day_seconds": 6.0,
+  "first_decision": 20,
+  "interval": 12,
+  "window": 4,
+  "duration": 8,
+  "last_decision": 128,
+  "base_exchange": 1.5,
+  "mobility_factor": 0.55,
+  "agents": {
+    "nacre": {
+      "name": "NACRE · relais",
+      "description": "Les régions touchées à 40 % exportent deux fois plus. Consolider des foyers ouvre le réseau.",
+      "threshold": 0.4,
+      "export": 2.0
+    },
+    "pulse": {
+      "name": "ONDE · cycles",
+      "description": "Cycle de 12 jours : croissance ×1,6 pendant 5 jours, puis ×0,7. Planifier les poussées.",
+      "period": 12,
+      "burst": 5,
+      "high": 1.6,
+      "low": 0.7
+    },
+    "veil": {
+      "name": "VOILE · discrétion",
+      "description": "Croissance ×1,45 avant détection, ×0,85 ensuite. Retarder la détection préserve les foyers.",
+      "hidden": 1.45,
+      "detected": 0.85
+    }
+  },
+  "choices": [
+    {
+      "id": "anchor",
+      "name": "Consolider les foyers",
+      "cost": 3,
+      "growth": 1.6,
+      "exchange": 0.2,
+      "cure": 0.95,
+      "description": "8 jours dès demain : croissance ×1,6, échanges ×0,2, remède ×0,95."
+    },
+    {
+      "id": "surge",
+      "name": "Forcer les relais",
+      "cost": 3,
+      "growth": 0.85,
+      "exchange": 4.0,
+      "cure": 1.45,
+      "description": "8 jours dès demain : croissance ×0,85, échanges ×4, remède ×1,45. Les routes fermées restent fermées."
+    },
+    {
+      "id": "observe",
+      "name": "Garder ses points",
+      "cost": 0,
+      "growth": 1.0,
+      "exchange": 1.0,
+      "cure": 1.0,
+      "description": "Aucun effet supplémentaire ; conserver le budget des évolutions."
+    }
+  ]
+}

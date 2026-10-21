@@ -6,14 +6,15 @@ Code, interface, textes et ressources sont originaux ; le jeu est autonome et ne
 
 ## État
 
-**Candidat 0.24, prototype : pas une 1.0.** Les fonctionnalités sont implémentées et vérifiées automatiquement (6 491 contrôles, zéro échec), mais **aucun essai avec de vrais joueurs n'a encore eu lieu** et aucune release binaire n'est publiée.
+**Candidat 0.25.0 expérimental local : pas une 1.0.** 6631 contrôles automatiques réussis, zéro échec. Aucun essai externe avec des joueurs documenté.
 
-- Scénarios Standard, Dégel 2042 et Réseaux fragiles ; trois difficultés ; profils facultatifs enrichi, aléas et crises réactives.
-- Sauvegardes locales, tutoriel, aide F1, accessibilité (clavier, mouvements réduits, lecture agrandie, sons facultatifs).
+- Profils historiques conservés ; Standard, Dégel 2042 et Réseaux fragiles, trois difficultés, sauvegardes locales et tutoriel.
+- Nouveau profil facultatif : choisir NACRE, ONDE ou VOILE à l’étape 2 de Nouvelle partie. Trois mécaniques d’agent, crises de coordination récurrentes, six secondes par journée à ×1 et pauses aux décisions / premiers achats.
+- Bilan explicatif, effets régionaux d’agent, ambiance sonore facultative. Format 8 distinct, anciennes sauvegardes conservées.
 
-Derniers lots : [point 30](docs/suivi/30-ecrans-dedies.md), écrans dédiés (Évolution, nouvelle partie en trois étapes, bilan illustré), puis [points 31](docs/suivi/31-vue-de-jeu.md) [et 32](docs/suivi/32-tutoriel-sauvegardes.md), écran de jeu, tutoriel et sauvegardes extraits de `main.gd` ; enfin [point 34](docs/suivi/34-gameplay-type-aide.md), typage strict du gameplay et aide F1 en boutons, et [point 35](docs/suivi/35-evolution-mise-en-evidence.md), points et compétences achetables mis en évidence dans l'écran Évolution ; aucun changement de règles.
+Voir le [point 36](docs/suivi/36-profil-strategique.md) et les [mesures de 1 080 parties](docs/equilibrage/EQUILIBRAGE-0.25-STRATEGIE.md). Les trois stratégies mesurées sont viables en normale ; Discrétion reste très forte. Le profil demande encore un équilibrage humain. Lot non publié : les anciens exécutables ne sont pas mis à jour par ces modifications de sources.
 
-Prochaine étape : [trois sessions exploratoires avec des joueurs](docs/tests-joueurs/README.md), puis corrections fondées sur les observations. Historique : [CHANGELOG.md](CHANGELOG.md).
+Prochaine étape : [sessions joueurs](docs/tests-joueurs/README.md) sur le rythme et les choix du profil stratégique. Historique : [CHANGELOG.md](CHANGELOG.md).
 
 ## Lancer et développer
 

@@ -86,3 +86,16 @@ Voir l'[analyse](06-analyse-2026-10-19.md) et le [point 29](../suivi/29-dette-te
 | ANA-16/17 | README/CHANGELOG/index ; rangement de `docs/` | Terminé | `docs/equilibrage/`, `docs/versions/` |
 | ANA-18 | `.gitignore` | Terminé | Lignes Python retirées, `.claude/settings.local.json` ignoré |
 | ANA-19 | Conservation de `build/` | Règle proposée | Suppression laissée à l'auteur (`DEVELOPPEMENT.md`) |
+
+## Lot stratégique 0.25 — demande du 21 octobre
+
+| ID | Statut | Preuve / suite |
+| --- | --- | --- |
+| STR-01 — rythme | Implémenté et testé automatiquement | Profil facultatif 6 s/jour, pauses aux décisions et aux premiers achats ; durée humaine à mesurer |
+| STR-02 — décisions contextuelles | Implémenté et mesuré | Crises J20 puis tous les 12 jours ; consolidation / expansion / budget ; rapport dédié |
+| STR-03 — stratégies alternatives | Mesuré, équilibrage à poursuivre | Mobilité, croissance, discrétion ; comparaison appariée, aucune équivalence humaine affirmée |
+| STR-04 — agents | Implémenté | NACRE (seuil de foyer), ONDE (cycle), VOILE (détection), sauvegarde format 8 |
+| STR-05 — retours et bilan | Implémenté | Coefficients d’agent régionaux, conséquences des choix, explication de fin, ambiance facultative |
+| STR-06 — essais | À réaliser | Tester compréhension, attente, choix et envie de rejouer ; aucun essai humain déduit des simulations |
+
+Voir le [point 36](../suivi/36-profil-strategique.md). ANA-03 reste valable pour le profil historique tactics-0.22 ; le nouveau profil n’en réécrit pas les règles.

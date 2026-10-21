@@ -191,6 +191,32 @@ static func options_step(ui, data: Dictionary, parent: Control) -> void:
 	ui.menu_objective_detail = ui._label("", 14, ui.MUTED)
 	ui.menu_objective_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	goals.add_child(ui.menu_objective_detail)
+	var agent_row = HBoxContainer.new()
+	agent_row.add_theme_constant_override("separation", 4)
+	goals.add_child(agent_row)
+	for id in ["", "nacre", "pulse", "veil"]:
+		var title = "Historique" if id.is_empty() else {"nacre":"NACRE", "pulse":"ONDE", "veil":"VOILE"}[id]
+		var button = ui._button(title, func():
+			ui.agent_id = id
+			if not id.is_empty():
+				ui.reactive_mode = false
+				ui.decision_enabled = false
+				ui.advanced_mode = true
+				ui.crises_mode = true
+			ui.show_new_game(2)
+		, agent_row)
+		button.toggle_mode = true
+		button.button_pressed = ui.agent_id == id
+		button.add_theme_font_size_override("font_size", 13)
+		button.add_theme_stylebox_override("normal", ui.theme.get_stylebox("normal", "Button"))
+	var agent_text = "Profil stratégique expérimental · Sélectionner un agent active aléas et catalogue enrichi."
+	if not ui.agent_id.is_empty():
+		agent_text = ui.World.Strategy.rules().agents[ui.agent_id].description + " Décision J20 puis tous les 12 jours ; 6 s/jour à ×1."
+		ui.reactive_choice.disabled = true
+		ui.decision_choice.disabled = true
+	var agent_detail = ui._label(agent_text, 13, ui.ACCENT)
+	agent_detail.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	goals.add_child(agent_detail)
 	var seed_row = HBoxContainer.new()
 	goals.add_child(seed_row)
 	seed_row.add_child(ui._label("Graine", 16, ui.MUTED))
@@ -277,6 +303,11 @@ static func catalog(ui) -> Dictionary:
 
 ## Applies the option dependencies to the model, then mirrors them on the controls of the current step.
 static func update_choices(ui, catalog: Dictionary) -> void:
+	if not ui.agent_id.is_empty():
+		ui.advanced_mode = true
+		ui.crises_mode = true
+		ui.reactive_mode = false
+		ui.decision_enabled = false
 	if ui.reactive_mode: ui.crises_mode = true
 	if ui.scenario_id == "fragile2042": ui.crises_mode = true
 	if ui.crises_mode: ui.advanced_mode = true
@@ -294,9 +325,14 @@ static func update_choices(ui, catalog: Dictionary) -> void:
 		ui.advanced_choice.set_pressed_no_signal(ui.advanced_mode)
 		ui.advanced_choice.disabled = ui.crises_mode
 		ui.reactive_choice.set_pressed_no_signal(ui.reactive_mode)
+		if not ui.agent_id.is_empty():
+			ui.reactive_choice.disabled = true
+			ui.advanced_choice.disabled = true
+			ui.crises_choice.disabled = true
 	if ui.decision_choice != null:
 		ui.decision_choice.visible = ui.scenario_id == "degel2042"
 		ui.decision_choice.set_pressed_no_signal(ui.decision_enabled)
+		if not ui.agent_id.is_empty(): ui.decision_choice.disabled = true
 		ui.objective_choice.disabled = optional.is_empty()
 		ui.objective_choice.text = "Objectif facultatif : " + optional.get("name", "indisponible")
 		ui.objective_choice.set_pressed_no_signal(not ui.objective_id.is_empty())
@@ -319,6 +355,7 @@ static func update_choices(ui, catalog: Dictionary) -> void:
 	refresh_start(ui)
 
 static func profile_text(ui) -> String:
+	if not ui.agent_id.is_empty(): return ui.World.Strategy.rules().agents[ui.agent_id].name + " · Profil stratégique expérimental · Décisions récurrentes"
 	var degel = ui.scenario_id == "degel2042"
 	if ui.crises_mode: return "Profil aléas : %d compétences · 12 aléas + %d événements fixes, favorables ou défavorables à la diffusion." % [24 if degel else 21, 12 if degel else 14]
 	if ui.advanced_mode: return "Profil enrichi : %d compétences · %d événements programmés." % [21 if degel else 18, 12 if degel else 14]

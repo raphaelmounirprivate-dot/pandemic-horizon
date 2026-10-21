@@ -217,3 +217,11 @@ Touche E ou bouton « Évolution » à droite de la carte. La partie se met en p
 - **Évoluer** : seul ce bouton dépense des points. Sélectionner un nœud ne coûte rien.
 
 Quelques compétences de Résilience exigent une compétence de Diffusion : la fiche le précise.
+
+## Essayer les agents stratégiques (0.25)
+
+Dans Nouvelle partie → Difficulté et options, choisir NACRE, ONDE ou VOILE. Historique conserve les anciennes règles. L’agent sélectionné est nommé sous les options ; les descriptions expliquent sa mécanique. Le catalogue enrichi et les aléas sont activés automatiquement. Les anciennes décisions sont remplacées par les crises de coordination.
+
+NACRE récompense les foyers développés ; ONDE demande de tenir compte du cycle de croissance ; VOILE favorise les régions non détectées. À partir du J20, une décision revient tous les 12 jours : consolider les foyers, forcer les relais ou garder les points. Lire les trois contreparties ; F2 revient au choix en pause. Les effets durent huit jours dès le lendemain. Sans réponse pendant quatre jours, les points sont conservés gratuitement.
+
+Une journée dure 6 secondes à ×1 ; pause et ×2/×4 restent disponibles. Le jeu se met aussi en pause lorsqu’un gain ouvre un premier achat ou qu’une décision arrive. L’ambiance sonore reste facultative dans Paramètres. Le bilan explique la couverture manquante ou la marge face au remède. Ce profil est expérimental : les sessions joueurs restent à réaliser.

@@ -28,3 +28,7 @@ En attendant la décision : ne pas créer de format 8 sans nécessité (le point
 1. Option retenue (A, B, C ou combinaison).
 2. Si B : version de la rupture, texte d'annonce, archives d'exécutables à conserver.
 3. Si C : périmètre (versions publiées seulement, ou chaque candidat).
+
+## Lot 0.25 du 21 octobre 2026
+
+Pour ce lot expérimental, l’option A est appliquée : nouveau format 8 et empreinte séparée, sans retirer les formats 1–7. Ce choix de mise en œuvre conserve les parties de l’auteur ; il ne tranche pas la politique générale de la 1.0. Reprise exacte et refus des registres invalides dans `tests/test_strategy.gd`. Aucun ancien JSON ni fixture historique modifié.

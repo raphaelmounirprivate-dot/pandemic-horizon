@@ -100,3 +100,15 @@ Facultatif au lancement ; douze évolutions et huit événements supplémentaire
 Le catalogue crises.json ajoute trois compétences au profil enrichi et douze incidents tirés au lancement par un flux aléatoire indépendant de la propagation (graine xor 0x20422020). Un sac de huit types est mélangé sans répétition puis renouvelé. Dates : 18 + 8×index ±2 jours, ou 12 + 6×index ±2 dans Réseaux fragiles ; durées et cibles sont tirées selon le catalogue. Les tirages sont reconstruits à l’identique au chargement, pas recalculés à chaque journée.
 
 Les pénalités des seuls aléas sont atténuées par les trois compétences : facteur f inférieur à 1 devient 1−(1−f)×0,5 pour transports/croissance, facteur f supérieur à 1 devient 1+(f−1)×0,5 pour remède. Favorables et événements classiques restent inchangés ; fermetures prioritaires, cumul multiplicatif et fin exclusive existants. Les profils 4/5 sont conservés ; le format 6 fixe crises-0.20 et son empreinte propre. Détails et mesures : point 25 et EQUILIBRAGE-0.20-ALEAS.md.
+
+## Profil stratégique expérimental 0.25
+
+Facultatif : à l’étape 2 de Nouvelle partie, sélectionner NACRE, ONDE ou VOILE. Historique conserve les profils antérieurs. Le profil active le catalogue enrichi et les aléas ; il remplace les anciennes décisions logistiques/réactives. Il ne modifie aucun JSON historique.
+
+Une journée dure 6 secondes à ×1, contre 0,5 dans les profils historiques. Pause automatique lorsqu’un gain rend une première compétence achetable alors qu’aucune ne l’était, et lors d’une nouvelle décision. Les vitesses ×2/×4 restent disponibles. Le temps de simulation n’est pas une durée de session mesurée.
+
+Crise de coordination au J20, puis tous les 12 jours jusqu’au J128 : choix pendant quatre jours inclusivement à partir de l’ouverture, sinon conservation gratuite. Les effets commencent le lendemain du choix et durent huit jours. Consolider coûte 3 points : croissance ×1,6, échanges ×0,2, remède ×0,95. Forcer coûte 3 points : croissance ×0,85, échanges ×4, remède ×1,45. Garder ses points est gratuit et neutre. Aucun choix ne rouvre une route fermée. Le coût retarde potentiellement une évolution.
+
+Le réseau de base applique ×1,5 ; si Mobilité est achetée, son effet se compose aussi avec ×0,55. NACRE double les exports d’une région dont le cumul touché atteint 40 %. ONDE alterne un cycle de 12 jours : croissance ×1,6 aux positions 0–4, ×0,7 aux positions 5–11. VOILE applique croissance ×1,45 avant détection, ×0,85 après. Il ne modifie pas le seuil de détection. Les coefficients d’agent affichés dans la région comprennent les choix stratégiques actifs ; ils restent distincts des autres modificateurs.
+
+Règles dans `data/strategy-0.25.json`. Le format 8 enregistre l’agent et le registre chronologique des décisions. Son empreinte ajoute ce fichier à l’empreinte tactics ; formats 1–7 toujours lus sans ajout rétroactif. Les valeurs sont candidates et demandent encore des essais joueurs.

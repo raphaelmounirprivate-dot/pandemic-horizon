@@ -144,3 +144,9 @@ Décision de l'auteur du 19 octobre 2026 : le menu unique à listes déroulantes
 ## Bilan de fin illustré (après 0.23)
 
 L'écran de fin annonce l'issue par un titre, un symbole et une phrase, puis présente quatre cartes : jour de fin, population touchée (barre et repère 90 %), remède (barre) et score avec sa formule. Les objectifs facultatifs, Double relais et la décision logistique sont résumés dessous. La courbe de la partie montre touchés et remède face à l'objectif de 90 %. « Moments clés » retient au plus dix événements lus dans le journal : premiers achats, première extension et première détection, phases, décisions et réponses de crise, objectifs, totaux (achats, régions détectées, régions atteintes comptées une seule fois) et issue. Le journal complet reste dans Monde [F3]. Rejouer, Nouvelle partie, Monde, Sauvegardes, Menu et Aide sont sur une seule rangée. Aucune règle n'est modifiée ; le bilan n'écrit rien dans la partie.
+
+## Extension 0.25 — statut expérimental
+
+Le profil stratégique facultatif ajoute trois agents aux règles dépendant de la situation, des décisions récurrentes et un rythme à 6 secondes par journée. Sélection dans la deuxième étape du menu, sans liste déroulante. Anciennes parties et tutoriel conservés. Détails : [règles](docs/REGLES.md) et [point 36](docs/suivi/36-profil-strategique.md).
+
+Le bilan décrit le seuil atteint ou manquant et la marge face au remède, sans attribuer causalement l’issue à un achat. Les sons restent facultatifs : nouvel appel de décision et ambiance synthétique discrète pendant une partie stratégique en cours, coupée en pause/menu et lorsque le son est désactivé. La qualité d’écoute et l’intérêt ludique ne sont pas validés par des essais humains.

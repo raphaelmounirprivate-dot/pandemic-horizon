@@ -116,3 +116,9 @@ L'export (`export_presets.cfg`) exclut `docs/`, `tests/`, `build/`, les `.ps1` e
 | 4 | Règles `unsafe_property_access`, `unsafe_method_access`, `unsafe_call_argument`, `unsafe_cast`, dossier par dossier | À faire ; ~5 700 occurrences mesurées le 19 octobre 2026, surtout des accès à des `Dictionary` issus du JSON |
 
 Migrer un dossier : retirer sa ligne de `directory_rules`, puis lancer `Godot --headless --path . --check-only --script res://<fichier>.gd` sur chaque script et corriger. Utiliser `:=` quand la valeur a un type connu, un type explicite pour les éléments validés (`for region: Dictionary in regions`) et `Variant` pour les données pas encore validées (ex. `validate_data`), afin qu'une entrée invalide produise toujours un message plutôt qu'une erreur d'exécution. Ne pas modifier les opérations : un type ne doit jamais introduire de conversion qui change un calcul (déterminisme). Finir par la régression complète.
+
+## Extension facultative 0.25
+
+`gameplay/strategy.gd` lit `data/strategy-0.25.json` et fournit validation, registre de décisions, modificateurs d’agent, calendrier et coût total. Le modèle conserve `strategy` (agent et choix datés) ; le format 8 reconstruit les mêmes règles avant de restaurer l’état. Les modificateurs sont neutres si le profil est absent. `start_with` accepte l’option nommée `agent`; `start()` reste l’adaptateur historique à 15 paramètres.
+
+`ui/strategy_view.gd` utilise la zone de décision existante. `ui/result_explanation.gd` produit uniquement des constats descriptifs. `analysis/balance_strategy.gd` mesure les politiques, `analysis/strategy_parameters.gd` compare des hypothèses en mémoire, jamais enregistrées comme sauvegardes jouables. Les scripts d’analyse restent exclus de l’export.

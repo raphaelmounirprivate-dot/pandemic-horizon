@@ -38,7 +38,7 @@ static func build(ui) -> void:
 	build_decision(ui, ui.decision_area)
 	ui.effects_label = RichTextLabel.new()
 	ui.effects_label.custom_minimum_size.y = 48
-	ui.effects_label.visible = not ui.World.Decisions.pending(world) and not ui.World.Tactics.pending(world)
+	ui.effects_label.visible = not ui.World.Decisions.pending(world) and not ui.World.Tactics.pending(world) and not ui.World.Strategy.pending(world)
 	ui.effects_label.add_theme_font_size_override("normal_font_size",13)
 	ui.effects_label.add_theme_color_override("default_color",ui.AMBER)
 	map_column.add_child(ui.effects_label)
@@ -102,6 +102,9 @@ static func build_decision(ui, parent: Control) -> void:
 	ui.decision_signature = decision_signature(world)
 	ui.decision_buttons.clear()
 	ui.decision_notice = null
+	if not world.strategy.is_empty():
+		load("res://scripts/ui/strategy_view.gd").build(ui, parent)
+		return
 	if ui.World.Tactics.pending(world) or (world.tactics_enabled and not world.tactics.response.is_empty() and not ui.World.Decisions.pending(world)):
 		load("res://scripts/ui/crisis_response_view.gd").build(ui,parent)
 		return
@@ -139,7 +142,7 @@ static func build_decision(ui, parent: Control) -> void:
 	parent.add_child(ui.decision_notice)
 
 static func decision_signature(world) -> String:
-	return JSON.stringify(world.decision)+JSON.stringify(world.tactics)+str(world.points)
+	return JSON.stringify(world.decision)+JSON.stringify(world.tactics)+JSON.stringify(world.strategy)+str(world.points)+str(world.day if not world.strategy.is_empty() else 0)
 
 static func refresh(ui) -> void:
 	if ui.screen != "game":
@@ -147,7 +150,7 @@ static func refresh(ui) -> void:
 	var world = ui.world
 	var tutorial = ui.tutorial
 	if ui.decision_signature != decision_signature(world): build_decision(ui, ui.decision_area)
-	ui.effects_label.visible = not ui.World.Decisions.pending(world) and not ui.World.Tactics.pending(world)
+	ui.effects_label.visible = not ui.World.Decisions.pending(world) and not ui.World.Tactics.pending(world) and not ui.World.Strategy.pending(world)
 	ui.metrics.text = "Jour %d     Touchés : %.1f %%     Remède : %.1f %%     Points : %d     Détectées : %d/%d" % [world.day, world.coverage() * 100, world.cure, world.points, world.detected_count(), world.regions.size()]
 	ui.objective_details.text = ui.World.Tactics.goal_summary(world) if world.tactics_enabled and not world.tactics.goal.is_empty() else ui.World.Objectives.summary(world)
 	var region = world.regions[ui.selected]
@@ -155,6 +158,8 @@ static func refresh(ui) -> void:
 	if world.scenario.id != "standard":
 		ui.region_details.text += " · Climat local ×%.2f" % world.climate_factor(region.id)
 	ui.transport_details.text = world.transport_summary(region.id)
+	if not world.strategy.is_empty():
+		ui.region_details.text += "\nAgent : croissance ×%.2f · réseau ×%.2f" % [world.Strategy.growth(world, region), world.Strategy.exchange(world, region)]
 	var available = world.evolutions.keys().filter(func(id): return ui.purchase_reason_for(id).is_empty())
 	ui.evolution_open_button.text = "Évolution [E] · %d pts" % world.points
 	var owned: Array[String] = []
@@ -165,6 +170,7 @@ static func refresh(ui) -> void:
 	ui.pause_button.text = "Reprendre [Espace]" if ui.paused else "Pause [Espace]"
 	ui.status_label.text = ("En pause" if ui.paused else "Simulation en cours") + " · Vitesse ×%d" % ui.speed
 	if not ui.save_notice.is_empty(): ui.status_label.text += " · " + ui.save_notice
+	if not world.strategy.is_empty(): ui.status_label.text += " · 1 jour = 6 s à ×1"
 	ui.status_label.clip_text = true
 	ui.journal_label.text = "Actu · " + world.journal[-1] if not world.journal.is_empty() else ""
 	ui.journal_label.tooltip_text = "Actualités [F3]\n" + "\n".join(world.journal.slice(maxi(0,world.journal.size()-5)))

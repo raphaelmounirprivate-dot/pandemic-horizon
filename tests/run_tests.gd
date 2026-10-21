@@ -258,5 +258,8 @@ func run() -> void:
 	var before_help_view = checks
 	await load("res://tests/test_help_view.gd").new().run(self,check)
 	check(checks - before_help_view >= 25,"Suite aide en boutons entièrement exécutée")
+	var before_strategy = checks
+	await load("res://tests/test_strategy.gd").new().run(self, check)
+	check(checks - before_strategy >= 130, "Suite stratégique entièrement exécutée")
 	print("RESULT: %d checks, %d failures" % [checks, failures])
 	quit(0 if failures == 0 else 1)

@@ -9,6 +9,7 @@ Godot actuel : 4.7.2 stable, chaîne de version exacte vérifiée au chargement.
 | 5 | enriched-0.18 | Catalogue enrichi et événements fixes, sans crises aléatoires |
 | 6 | crises-0.20 | Tirage par graine ; anciennes règles conservées |
 | 7 | tactics-0.22 | Cibles résolues au déclenchement, réponse et Double relais sauvegardés |
+| 8 | strategy-0.25 | Agent, décisions récurrentes et budget validés ; empreinte séparée, règles historiques conservées |
 
 Les métadonnées de présentation des familles ne modifient ni coefficients, coûts, prérequis ni empreintes des profils historiques. Une future modification de règles exige un profil et une empreinte distincts, ses fixtures et un test de reprise. Conserver les anciens exports et les checkpoints avant de changer Godot.
 

@@ -242,3 +242,7 @@ Captures : `tests/capture_menu.gd` (7 états × 3 résolutions, `.impeccable/rev
 - Rangée de boutons : Rejouer (56 px, 20 px, ciblé), Nouvelle partie, Monde [F3], Sauvegardes, Menu, Aide.
 
 Captures : `tests/capture_result.gd` (5 fins × 3 résolutions, `.impeccable/review/result-*.png`).
+
+## Extension stratégique 0.25
+
+Conserver le thème, les écrans dédiés et la carte existants. Choix de l’agent par boutons nommés dans l’étape 2 ; description textuelle de sa mécanique. Décisions stratégiques dans la zone sous la carte, avec coûts et contreparties écrits, indisponibilité signalée. Les coefficients régionaux reflètent l’agent et la décision active. Le bilan ajoute une explication descriptive sans causalité inventée. Aucun nouvel effet lumineux ni mouvement imposé ; ambiance sonore facultative et silencieuse en pause.

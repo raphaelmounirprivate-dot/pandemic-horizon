@@ -92,7 +92,10 @@ static func banner(ui, victory: bool) -> Control:
 			mark.draw_line(Vector2(25, 11), Vector2(11, 25), color, 3, true))
 	row.add_child(mark)
 	var text = "Victoire : NACRE a touché 90 % de la population avant le remède." if victory else ("Défaite · " + ui.world.outcome_text().trim_prefix("Défaite : "))
-	var label = ui._label(text, 20, color)
+	if victory and not ui.world.strategy.is_empty():
+		text = "Victoire : %s a touché 90 %% de la population avant le remède." % ui.world.Strategy.rules().agents[ui.world.strategy.agent].name
+	text += "\n" + preload("res://scripts/ui/result_explanation.gd").text(ui.world)
+	var label = ui._label(text, 18, color)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(label)
@@ -122,7 +125,7 @@ static func key_moments(world: RefCounted) -> Array[String]:
 			keep = reached.is_empty()
 			if region not in reached: reached.append(region)
 		else:
-			keep = text.begins_with("Phase ") or text.begins_with("Décision :") or text.begins_with("Crise :") or text.begins_with("Double relais") or (not objective_name.is_empty() and text.begins_with(objective_name))
+			keep = text.begins_with("Phase ") or text.begins_with("Décision :") or text.begins_with("Crise :") or text.begins_with("Stratégie :") or text.begins_with("Double relais") or (not objective_name.is_empty() and text.begins_with(objective_name))
 		if keep:
 			var short = text.split(" ; ")[0].split(". ")[0].trim_suffix(".")
 			if short.begins_with("Phase "): short = short.split(" · ")[0]

@@ -14,9 +14,11 @@ const Decisions = preload("res://scripts/gameplay/decisions.gd")
 const History = preload("res://scripts/gameplay/history.gd")
 const Expanded = preload("res://scripts/gameplay/expanded_content.gd")
 const Crises = preload("res://scripts/gameplay/crises.gd")
+const Strategy = preload("res://scripts/gameplay/strategy.gd")
 const Tactics = preload("res://scripts/gameplay/tactics.gd")
 # Named options for start_with(); values are the defaults of start(). "start" is required.
-const START_OPTIONS = {"start": "", "seed": 2042, "regions_source": null, "gameplay_source": null, "scenario": "standard", "difficulty": "normal", "catalog_source": null, "transport_source": null, "objective": "", "decision": false, "expanded": false, "expanded_source": null, "crises": false, "crises_source": null, "reactive": false}
+const START_OPTIONS = {"start": "", "seed": 2042, "regions_source": null, "gameplay_source": null, "scenario": "standard", "difficulty": "normal", "catalog_source": null, "transport_source": null, "objective": "", "decision": false, "expanded": false, "expanded_source": null, "crises": false, "crises_source": null, "reactive": false, "agent": ""}
+var strategy: Dictionary = {}
 var tactics_enabled: bool = false
 var tactics: Dictionary = {}
 var crises_enabled: bool = false
@@ -116,7 +118,15 @@ func start_with(options: Dictionary) -> String:
 	if not error.is_empty(): return error
 	var o := START_OPTIONS.duplicate()
 	o.merge(options, true)
-	return start(o.start, o.seed, o.regions_source, o.gameplay_source, o.scenario, o.difficulty, o.catalog_source, o.transport_source, o.objective, o.decision, o.expanded, o.expanded_source, o.crises, o.crises_source, o.reactive)
+	if not o.agent.is_empty():
+		if not Strategy.validate(Strategy.rules()).is_empty(): return Strategy.validate(Strategy.rules())
+		if not Strategy.rules().agents.has(o.agent): return "Agent inconnu."
+		if o.reactive or o.decision: return "Le profil stratégique remplace les décisions historiques."
+		o.expanded = true
+		o.crises = true
+	var result: String = start(o.start, o.seed, o.regions_source, o.gameplay_source, o.scenario, o.difficulty, o.catalog_source, o.transport_source, o.objective, o.decision, o.expanded, o.expanded_source, o.crises, o.crises_source, o.reactive)
+	if result.is_empty(): strategy = Strategy.initial(o.agent) if not o.agent.is_empty() else {}
+	return result
 
 func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null, transport_source: Variant = null, objective_id: String = "", decision_enabled: bool = false, expanded_enabled: bool = false, expanded_source: Variant = null, crises_active: bool = false, crises_source: Variant = null, reactive: bool = false) -> String:
 	if reactive:
@@ -185,6 +195,7 @@ func start(start_id: String, seed_value: int = 2042, source: Variant = null, gam
 		var incidents := Crises.build(effective_gameplay,data.regions,Scenarios.connections_for(data,chosen_scenario),transports,seed_value,scenario_id,crises_source)
 		if not incidents.error.is_empty(): return incidents.error
 		effective_gameplay = incidents.content
+	strategy = {}
 	transport_profiles = transports.profiles.duplicate(true)
 	transport_modes.clear()
 	for route: Dictionary in transports.routes: transport_modes[Transports.key(route.edge)] = route.mode
@@ -458,6 +469,7 @@ func step() -> void:
 	if not outcome.is_empty() or regions.is_empty():
 		return
 	day += 1
+	Strategy.update(self)
 	latest_flows.clear()
 	_update_scenario()
 	Decisions.update(self)
@@ -478,7 +490,7 @@ func step() -> void:
 			if source.active >= 1000:
 				var seasonal: float = upgrade_modifier("seasonal_multiplier") if route_is_seasonal(edge) else 1.0
 				# Preserve the 0.7 operation order; apply the new specialization last.
-				var units := maxi(1, int(source.active * 0.001 * upgrade_modifier("exchange_multiplier") * seasonal * transport_base_factor(edge) * upgrade_modifier(route_mode(edge) + "_multiplier")))
+				var units := maxi(1, int(source.active * 0.001 * upgrade_modifier("exchange_multiplier") * seasonal * transport_base_factor(edge) * upgrade_modifier(route_mode(edge) + "_multiplier") * Strategy.exchange(self, source)))
 				incoming[direction[1]] += units
 				latest_flows.append({"from":direction[0],"to":direction[1],"units":units,"mode":route_mode(edge),"day":day})
 				Objectives.record_exchange(self,direction[0],direction[1],units)
@@ -486,7 +498,7 @@ func step() -> void:
 	for index in range(regions.size()):
 		var before: Dictionary = snapshot[index]
 		var region: Dictionary = regions[index]
-		var rate := upgrade_modifier("growth_bonus", 0.22) * event_modifier("growth_multiplier", region.id) * climate_factor(region.id)
+		var rate := upgrade_modifier("growth_bonus", 0.22) * event_modifier("growth_multiplier", region.id) * climate_factor(region.id) * Strategy.growth(self, before)
 		var growth := int(before.active * rate * rng.randf_range(0.92, 1.08))
 		var new_cases := mini(int(before.healthy), growth + int(incoming[region.id]))
 		var recovered: int = mini(int(before.active), maxi(1, int(before.active * 0.025))) if before.active > 0 else 0
@@ -497,7 +509,7 @@ func step() -> void:
 			journal.append("Jour %d · Premiers cas dans la région %s." % [day, region.name])
 	if detected_count() > 0:
 		var gain: float = cure_rules.base_gain + coverage() * cure_rules.coverage_gain + detected_count() * cure_rules.per_detected_gain
-		cure = minf(100.0, cure + gain * upgrade_modifier("cure_multiplier") * event_modifier("cure_multiplier") * difficulty.cure_multiplier * phase.cure_multiplier)
+		cure = minf(100.0, cure + gain * upgrade_modifier("cure_multiplier") * event_modifier("cure_multiplier") * difficulty.cure_multiplier * phase.cure_multiplier * Strategy.factor(self, "cure"))
 	if day % POINT_INTERVAL == 0:
 		points += POINT_GAIN
 	Tactics.update_goal(self)

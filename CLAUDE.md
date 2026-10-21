@@ -6,7 +6,7 @@ Contexte de travail pour Claude Code (et tout agent de code) sur ce dépôt. À 
 
 - **Pandemic Horizon** : jeu de stratégie original, en français, hors ligne, pour Windows. Inspiré du genre « simulation de pandémie », sans aucune ressource ni texte de Plague Inc.
 - **Moteur** : Godot **4.7.2 stable** (version exacte, vérifiée au chargement des sauvegardes), GDScript, rendu Compatibility, export Windows x86_64.
-- **État** : candidat **0.24.1** (`project.godot` → `config/version`). Prototype candidat, **pas une 1.0**. Aucun essai avec de vrais joueurs n'a encore été réalisé.
+- **État** : candidat **0.25.0** (`project.godot` → `config/version`). Prototype candidat, **pas une 1.0**. Aucun essai avec de vrais joueurs n'a encore été réalisé.
 - **Prochaine étape officielle** : trois sessions joueurs exploratoires (`docs/tests-joueurs/README.md`), puis corrections fondées sur les observations. Ne pas ajouter de contenu ou de catastrophes « parce que ce serait mieux » sans demande explicite.
 
 ## Langue et ton
@@ -35,7 +35,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Play        
 | --- | --- |
 | `scripts/simulation/world.gd` (`PandemicWorld`) | État et règles du monde. **Aucune dépendance aux scènes/UI.** Déterministe par graine. |
 | `scripts/gameplay/*.gd` | Validation et logique des catalogues : contenu, scénarios, transports, objectifs, décisions, historique, contenu enrichi, crises, tactiques. |
-| `scripts/persistence/save_store.gd` | Sauvegardes JSON (formats 1→7), empreintes de contenu, secours `.bak`. |
+| `scripts/persistence/save_store.gd` | Sauvegardes JSON (formats 1→8), empreintes de contenu, secours `.bak`. |
 | `scripts/ui/main.gd` | Contrôleur d'interface (~450 lignes ; temps, raccourcis, préférences et flux Évolution dans des modules dédiés). Vues extraites dans `scripts/ui/*_view.gd`. |
 | `data/*.json` | Toutes les règles chiffrées. |
 | `tests/run_tests.gd` | Point d'entrée unique ; enchaîne toutes les suites `tests/test_*.gd`. |
@@ -57,7 +57,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Play        
 
 ## Façon de travailler sur un lot
 
-1. Lire `docs/suivi/00-index.md`, puis le dernier point (`docs/suivi/35-…` actuellement) et `docs/roadmap/03-backlog.md`.
+1. Lire `docs/suivi/00-index.md`, puis le dernier point (`docs/suivi/36-…` actuellement) et `docs/roadmap/03-backlog.md`.
 2. `git status` : vérifier qu'aucune modification locale n'est perdue.
 3. Petit changement, puis `dev.ps1 Test`. Pour l'UI : captures aux trois résolutions. Pour les règles : comparaison appariée (mêmes graines/difficultés) avant d'ajuster un coefficient.
 4. Ajouter les contrôles correspondants dans une suite `tests/test_*.gd` (skill `godot-tests`).
@@ -77,3 +77,7 @@ Claude Code les charge directement depuis `.claude/skills/`. Modifier les skills
 ## Documents de référence
 
 `README.md` (état) · `PRODUCT.md` (comportement attendu, détaillé) · `DESIGN.md` (système visuel) · `docs/REGLES.md` (paramètres effectifs) · `docs/DEVELOPPEMENT.md` (journal technique) · `docs/ARCHITECTURE.md` (carte du code) · `docs/COMPATIBILITE.md` (formats) · `docs/roadmap/` (backlog, audit) · `docs/suivi/` (historique des lots).
+
+## Lot stratégique 0.25
+
+Profil facultatif `strategy-0.25`, données séparées, format 8. Les JSON 0.7–0.24 restent figés. Le point 36 détaille les règles, mesures et réserves. Prochain lot : essais joueurs et équilibrage, pas d’extension automatique du contenu.

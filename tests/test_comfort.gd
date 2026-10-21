@@ -66,7 +66,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 		scene.reading_large = false
 		scene.sounds_enabled = false
 		scene._save_preferences()
-	check.call(scene.feedback.cues.size() == 3 and scene.feedback.cues.purchase.data.size() == 3308,"Trois sons originaux embarqués")
+	check.call(scene.feedback.cues.size() == 4 and scene.feedback.cues.purchase.data.size() == 3308,"Quatre sons originaux embarqués")
 	scene.feedback.configure(true,0)
 	scene.feedback.play_cue("purchase")
 	check.call(not scene.feedback.player.playing,"Volume nul coupe le son")

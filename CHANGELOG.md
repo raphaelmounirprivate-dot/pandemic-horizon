@@ -2,6 +2,10 @@
 
 Du plus récent au plus ancien. Toutes les versions sont des **candidats de prototype** : implémentées et testées automatiquement, jamais essayées par des joueurs externes, sans release binaire GitHub. Le détail de chaque lot est dans les [points de suivi](docs/suivi/00-index.md) ; les notes jointes aux archives sont dans `docs/versions/NOTES-VERSION-*.md`.
 
+## 0.25.0 — candidat stratégique local, 21 octobre 2026
+
+Profil facultatif avec trois agents, crises récurrentes, rythme ralenti, bilan descriptif et ambiance facultative. Format 8 séparé, formats 1–7 conservés. Voir le [point 36](docs/suivi/36-profil-strategique.md) pour les vérifications réellement exécutées et leurs limites. Aucun push ni nouvelle release par ce lot.
+
 ## 0.24.1 — points et compétences achetables mis en évidence (21 octobre 2026)
 
 Écran Évolution : points en grand avec le prochain gain, compétences achetables à fond teinté, contour épais et marque « + », décompte par onglet. Règles et sauvegardes inchangées. [Point 35](docs/suivi/35-evolution-mise-en-evidence.md), 6 491 contrôles.

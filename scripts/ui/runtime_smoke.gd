@@ -168,7 +168,7 @@ static func run(ui) -> bool:
 	ui.reading_large = true
 	ui.paused = false
 	ui.advance_time(0.5)
-	if ui.world.day != 1 or ui.map_view.motion_enabled or ui.feedback.cues.size() != 3:
+	if ui.world.day != 1 or ui.map_view.motion_enabled or ui.feedback.cues.size() != 4:
 		return false
 	ui.open_overview()
 	ui.open_help()

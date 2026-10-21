@@ -40,6 +40,7 @@ var decision_enabled = false
 var advanced_mode = false
 var advanced_choice: CheckButton
 var crises_mode = false
+var agent_id: String = ""
 var reactive_mode = false
 var reactive_choice: CheckButton
 var crises_choice: CheckButton
@@ -353,7 +354,7 @@ func show_settings() -> void:
 
 func start_game() -> void:
 	reset_map_camera = true
-	var error = world.start_with({"start": start_id, "seed": simulation_seed, "scenario": scenario_id, "difficulty": difficulty_id, "objective": objective_id, "decision": decision_enabled, "expanded": advanced_mode, "crises": crises_mode, "reactive": reactive_mode})
+	var error = world.start_with({"start": start_id, "seed": simulation_seed, "scenario": scenario_id, "difficulty": difficulty_id, "objective": objective_id, "decision": decision_enabled, "expanded": advanced_mode, "crises": crises_mode, "reactive": reactive_mode, "agent": agent_id})
 	if not error.is_empty():
 		show_menu()
 		body.add_child(_label("Impossible de démarrer : " + error))
@@ -375,6 +376,7 @@ func restart_game() -> void:
 	decision_enabled = not world.decision.is_empty()
 	advanced_mode = world.expanded_content
 	crises_mode = world.crises_enabled
+	agent_id = world.strategy.get("agent", "")
 	reactive_mode = world.tactics_enabled
 	simulation_seed = world.rng.seed
 	start_game()
@@ -404,7 +406,7 @@ func close_evolution() -> void:
 	EvolutionFlow.close(self)
 
 func show_decision() -> void:
-	if tutorial != null or (world.decision.is_empty() and not World.Tactics.pending(world)): return
+	if tutorial != null or (world.decision.is_empty() and not World.Tactics.pending(world) and not World.Strategy.pending(world)): return
 	paused = true
 	elapsed = 0.0
 	show_game()
@@ -419,6 +421,7 @@ func _refresh() -> void:
 
 func _process(delta: float) -> void:
 	advance_time(delta)
+	if is_instance_valid(feedback): feedback.set_ambience(screen == "game" and not paused and not world.strategy.is_empty(), world.cure / 100.0)
 
 func advance_time(delta: float) -> void:
 	GameClock.advance(self, delta)

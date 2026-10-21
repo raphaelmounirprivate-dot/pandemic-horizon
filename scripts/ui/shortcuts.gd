@@ -19,7 +19,7 @@ static func handle(ui, event: InputEvent) -> void:
 	elif event.keycode == KEY_F1:
 		ui.open_help()
 		viewport.set_input_as_handled()
-	elif event.keycode == KEY_F2 and ui.screen == "game" and (not ui.world.decision.is_empty() or World.Tactics.pending(ui.world)):
+	elif event.keycode == KEY_F2 and ui.screen == "game" and (not ui.world.decision.is_empty() or World.Tactics.pending(ui.world) or World.Strategy.pending(ui.world)):
 		ui.show_decision()
 		viewport.set_input_as_handled()
 	elif event.keycode == KEY_F3 and ui.screen in ["game","result","overview"]:

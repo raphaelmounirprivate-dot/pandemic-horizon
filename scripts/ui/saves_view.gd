@@ -79,6 +79,7 @@ static func load_slot(ui, slot: String) -> void:
 		ui.decision_enabled = not world.decision.is_empty()
 		ui.advanced_mode = world.expanded_content
 		ui.crises_mode = world.crises_enabled
+		ui.agent_id = world.strategy.get("agent", "")
 		ui.reactive_mode = world.tactics_enabled
 		ui.simulation_seed = world.rng.seed
 	ui.paused = true
