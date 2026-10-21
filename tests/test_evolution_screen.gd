@@ -98,6 +98,11 @@ func run(tree: SceneTree, check: Callable) -> void:
 	await tree.process_frame
 	check.call("Diffusion · 0/" in scene.evolution_tabs.diffusion.text, "Onglet indique les compétences acquises")
 	check.call("12 pts · Disponible" in scene.evolution_reasons.transmission.text and "Prérequis" in scene.evolution_reasons.mobility.text, "États écrits sur les nœuds")
+	# Points shown large with the next gain; purchasable skills marked on nodes and tabs.
+	check.call(scene.evolution_points.text == "40" and "points disponibles" in scene.evolution_points_next.text and "+3 au J%d" % scene.world.next_points_day() in scene.evolution_points_next.text, "Points en évidence avec le prochain gain")
+	check.call(scene.world.next_points_day() > scene.world.day and scene.world.next_points_day() % 5 == 0, "Prochain gain : multiple de cinq après le jour courant")
+	check.call(scene.evolution_buttons.transmission.available and not scene.evolution_buttons.mobility.available, "Seule une compétence achetable est mise en évidence")
+	check.call("achetable" in scene.evolution_tabs.diffusion.text and "achetable" in scene.evolution_subtitle.text, "Onglet et sous-titre comptent les compétences achetables")
 	check.call(scene.evolution_buttons.transmission.effect_label.text == "Croissance +8" and scene.evolution_buttons.mobility.effect_label.text == "Échanges ×3", "Effet principal écrit sur les nœuds")
 	check.call(scene.Skills.short_effect({"modifiers": {"sea_multiplier": 2.5, "cure_multiplier": 1.12}}) == "Mer ×2,5 · Remède +12 %" and scene.Skills.short_effect({"modifiers": {"cure_multiplier": 0.7}}) == "Remède −30 %", "Effet court : facteurs et pourcentages signés")
 	await inputs.click(tree, scene.evolution_buttons.transmission)
@@ -106,6 +111,7 @@ func run(tree: SceneTree, check: Callable) -> void:
 	check.call("transmission" in scene.world.purchased and scene.world.points == 28, "Évoluer achète au coût exact")
 	check.call("Diffusion · 1/" in scene.evolution_tabs.diffusion.text and scene.evolution_reasons.transmission.text == "Acquise" and scene.evolution_purchase.disabled, "Achat reflété sur l'onglet, le nœud et le bouton")
 	check.call("acquise" in scene.status_label.text and "28" in scene.status_label.text, "Confirmation d'achat avec points restants")
+	check.call(scene.evolution_points.text == "28" and not scene.evolution_buttons.transmission.available and scene.evolution_buttons.mobility.available, "Après achat : points et mise en évidence actualisés")
 	scene.evolution_tabs.discretion.pressed.emit()
 	await tree.process_frame
 	check.call(scene.evolution_family == "discretion" and scene.selected_evolution == "discretion" and scene.evolution_buttons.has("discretion"), "Changer d'onglet sélectionne sa première compétence")

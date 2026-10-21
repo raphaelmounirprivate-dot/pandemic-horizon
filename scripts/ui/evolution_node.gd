@@ -7,6 +7,8 @@ var family_id = ""
 var selected_node = false
 var blocked = false
 var acquired = false
+## Purchasable right now: tinted fill, thick outline and a "+" mark, on top of the written state.
+var available = false
 var name_label: Label
 var effect_label: Label
 var state_label: Label
@@ -49,9 +51,21 @@ func show_state(title: String, effect: String, cost_text: String, state: String,
 	effect_label.text = effect
 	state_label.text = state if cost_text.is_empty() else cost_text + " · " + state
 	state_label.add_theme_color_override("font_color",ACCENT if ok else AMBER)
+	name_label.add_theme_color_override("font_color",ACCENT if available else Color("e1eee9"))
 	queue_redraw()
 
 func _draw() -> void:
+	if available:
+		var open = StyleBoxFlat.new()
+		open.bg_color = Color(ACCENT, 0.16)
+		open.border_color = ACCENT
+		open.set_border_width_all(2)
+		open.set_corner_radius_all(6)
+		draw_style_box(open,Rect2(Vector2.ZERO,size))
+		var mark = Vector2(size.x-10,10)
+		draw_circle(mark,7,ACCENT)
+		draw_line(mark-Vector2(4,0),mark+Vector2(4,0),Color("0b1a20"),2)
+		draw_line(mark-Vector2(0,4),mark+Vector2(0,4),Color("0b1a20"),2)
 	if acquired:
 		var done = StyleBoxFlat.new()
 		done.bg_color = Color.TRANSPARENT

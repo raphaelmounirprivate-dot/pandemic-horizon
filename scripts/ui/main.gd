@@ -84,6 +84,8 @@ var evolution_subtitle: Label
 var evolution_back: Button
 var evolution_open_button: Button
 var evolution_summary: Label
+var evolution_points: Label
+var evolution_points_next: Label
 var evolution_return_paused = true
 var result_cards: Dictionary = {}
 var result_moments: Label

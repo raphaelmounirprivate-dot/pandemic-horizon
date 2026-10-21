@@ -32,6 +32,7 @@ static func build(ui) -> void:
 		ui.selected_evolution = groups.filter(func(g): return g.id == ui.evolution_family)[0].skills[0]
 	ui._reset_screen("Évolution", "")
 	ui.evolution_subtitle = ui.body.get_child(1)
+	points_badge(ui, ui.body.get_child(0))
 	var tabs = HBoxContainer.new()
 	tabs.add_theme_constant_override("separation", 8)
 	ui.body.add_child(tabs)
@@ -40,9 +41,9 @@ static func build(ui) -> void:
 		var tab = Button.new()
 		tab.toggle_mode = true
 		tab.button_pressed = group.id == ui.evolution_family
-		tab.custom_minimum_size = Vector2(220, 52)
+		tab.custom_minimum_size = Vector2(220, 56)
 		tab.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		tab.add_theme_font_size_override("font_size", 18)
+		tab.add_theme_font_size_override("font_size", 17)
 		var active = group.id == ui.evolution_family
 		for state in ["normal", "hover", "pressed", "disabled", "focus"]:
 			tab.add_theme_stylebox_override(state, tab_style(state, active))
@@ -50,7 +51,7 @@ static func build(ui) -> void:
 		var icon = Symbol.new()
 		icon.family_id = group.id
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		icon.position = Vector2(10, 14)
+		icon.position = Vector2(10, 16)
 		icon.size = Vector2(24, 24)
 		tab.add_child(icon)
 		var family_id = group.id
@@ -115,10 +116,13 @@ static func build(ui) -> void:
 
 static func refresh(ui) -> void:
 	var world = ui.world
-	ui.evolution_subtitle.text = "%s · Jour %d · %d points disponibles · %s" % [world.scenario.name, world.day, world.points, summary(ui)]
+	ui.evolution_subtitle.text = "%s · Jour %d · %s" % [world.scenario.name, world.day, summary(ui)]
+	ui.evolution_points.text = str(world.points)
+	ui.evolution_points_next.text = "point%s disponible%s\n+%d au J%d" % ["s" if world.points > 1 else "", "s" if world.points > 1 else "", world.POINT_GAIN, world.next_points_day()]
 	for group in families(ui):
 		var owned = group.skills.filter(func(id): return id in world.purchased).size()
-		ui.evolution_tabs[group.id].text = "%s · %d/%d" % [group.name, owned, group.skills.size()]
+		var buyable = group.skills.filter(func(id): return id not in world.purchased and ui.purchase_reason_for(id).is_empty()).size()
+		ui.evolution_tabs[group.id].text = "%s · %d/%d\n%s" % [group.name, owned, group.skills.size(), "Aucune achetable" if buyable == 0 else "+ %d achetable%s" % [buyable, "s" if buyable > 1 else ""]]
 	for id in ui.evolution_buttons:
 		var skill = world.evolutions[id]
 		var acquired = id in world.purchased
@@ -127,6 +131,7 @@ static func refresh(ui) -> void:
 		button.acquired = acquired
 		button.selected_node = id == ui.selected_evolution
 		button.blocked = not reason.is_empty() and not acquired
+		button.available = reason.is_empty() and not acquired
 		button.disabled = ui.tutorial != null and (ui.tutorial.stage != 2 or id != "transmission")
 		button.tooltip_text = skill.name + "\n" + skill.effect
 		button.show_state(skill.name, ui.Skills.short_effect(skill), "" if acquired else "%d pts" % skill.cost, state_text(acquired, reason, skill.cost - world.points), acquired or reason.is_empty())
@@ -189,5 +194,33 @@ static func specialization_text(ui, id: String) -> String:
 	return "Une seule spécialisation par partie : choisir celle-ci exclut %s." % " et ".join(names)
 
 static func summary(ui) -> String:
-	var available = ui.world.evolutions.keys().filter(func(id): return ui.world.purchase_reason(id).is_empty()).size()
-	return "%d compétence%s disponible%s" % [available, "s" if available > 1 else "", "s" if available > 1 else ""]
+	var available = ui.world.evolutions.keys().filter(func(id): return ui.purchase_reason_for(id).is_empty()).size()
+	if available == 0: return "Aucune compétence achetable maintenant"
+	return "%d compétence%s achetable%s maintenant : contour épais et marque +" % [available, "s" if available > 1 else "", "s" if available > 1 else ""]
+
+## Points shown large in the title row, with the date of the next gain.
+static func points_badge(ui, heading: HBoxContainer) -> void:
+	var panel = PanelContainer.new()
+	panel.name = "points_badge"
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color("16333e")
+	style.border_color = ui.ACCENT
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(8)
+	style.content_margin_left = 14
+	style.content_margin_right = 14
+	style.content_margin_top = 0
+	style.content_margin_bottom = 0
+	panel.add_theme_stylebox_override("panel", style)
+	var row = HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	panel.add_child(row)
+	ui.evolution_points = ui._label("", 28, ui.ACCENT)
+	ui.evolution_points.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	row.add_child(ui.evolution_points)
+	ui.evolution_points_next = ui._label("", 14)
+	ui.evolution_points_next.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	row.add_child(ui.evolution_points_next)
+	# Keep the version label last, at the far right.
+	heading.add_child(panel)
+	heading.move_child(panel, heading.get_child_count() - 2)

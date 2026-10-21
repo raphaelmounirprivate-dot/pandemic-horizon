@@ -7,6 +7,8 @@ const Content = preload("res://scripts/gameplay/content.gd")
 const Scenarios = preload("res://scripts/gameplay/scenarios.gd")
 const Transports = preload("res://scripts/gameplay/transports.gd")
 const SPECIALIZATIONS = ["land_network", "air_bridge", "sea_logistics"]
+const POINT_INTERVAL = 5
+const POINT_GAIN = 3
 const Objectives = preload("res://scripts/gameplay/objectives.gd")
 const Decisions = preload("res://scripts/gameplay/decisions.gd")
 const History = preload("res://scripts/gameplay/history.gd")
@@ -440,6 +442,10 @@ func _update_events_and_detection() -> void:
 		if route_is_open(edge):
 			journal.append("Jour %d · Route rétablie : %s ↔ %s." % [day, region_name(edge[0]), region_name(edge[1])])
 
+## Day on which the next POINT_GAIN is credited (read-only helper for the interface).
+func next_points_day() -> int:
+	return day - day % POINT_INTERVAL + POINT_INTERVAL
+
 func active_event_lines() -> Array[String]:
 	var lines: Array[String] = []
 	for effect: Dictionary in active_events:
@@ -492,8 +498,8 @@ func step() -> void:
 	if detected_count() > 0:
 		var gain: float = cure_rules.base_gain + coverage() * cure_rules.coverage_gain + detected_count() * cure_rules.per_detected_gain
 		cure = minf(100.0, cure + gain * upgrade_modifier("cure_multiplier") * event_modifier("cure_multiplier") * difficulty.cure_multiplier * phase.cure_multiplier)
-	if day % 5 == 0:
-		points += 3
+	if day % POINT_INTERVAL == 0:
+		points += POINT_GAIN
 	Tactics.update_goal(self)
 	resolve_outcome()
 	Objectives.update(self)
