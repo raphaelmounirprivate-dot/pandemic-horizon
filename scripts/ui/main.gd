@@ -17,6 +17,11 @@ const EvolutionView = preload("res://scripts/ui/evolution_view.gd")
 const GameView = preload("res://scripts/ui/game_view.gd")
 const SavesView = preload("res://scripts/ui/saves_view.gd")
 const TutorialFlow = preload("res://scripts/ui/tutorial_flow.gd")
+const HelpView = preload("res://scripts/ui/help_view.gd")
+const GameClock = preload("res://scripts/ui/game_clock.gd")
+const Shortcuts = preload("res://scripts/ui/shortcuts.gd")
+const Preferences = preload("res://scripts/ui/preferences.gd")
+const EvolutionFlow = preload("res://scripts/ui/evolution_flow.gd")
 var incident_button: Button
 var map_legend: Label
 var world = World.new()
@@ -95,6 +100,7 @@ var training_directory = "user://training"
 var help_return = "menu"
 var help_topic = 0
 var help_text: RichTextLabel
+var help_buttons: Array = []
 var mouse_press_active = false
 var overview_return = "game"
 var history_chart: Control
@@ -106,27 +112,10 @@ var sound_volume = 0.35
 var feedback: Node
 
 func _load_preferences() -> void:
-	var config = ConfigFile.new()
-	if config.load(settings_path) != OK: return
-	reduced_motion = config.get_value("comfort","reduced_motion",false) == true
-	reading_large = config.get_value("comfort","reading_large",false) == true
-	sounds_enabled = config.get_value("audio","enabled",false) == true
-	var level = config.get_value("audio","volume",0.35)
-	sound_volume = clampf(float(level),0,1) if typeof(level) in [TYPE_FLOAT,TYPE_INT] and is_finite(float(level)) else 0.35
-	if config.get_value("display","fullscreen",false) == true:
-		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_FULLSCREEN)
+	Preferences.load_into(self)
 
 func _save_preferences() -> void:
-	var config = ConfigFile.new()
-	config.load(settings_path)
-	config.set_value("display","fullscreen",DisplayServer.window_get_mode() == DisplayServer.WINDOW_MODE_FULLSCREEN)
-	config.set_value("comfort","reduced_motion",reduced_motion)
-	config.set_value("comfort","reading_large",reading_large)
-	config.set_value("audio","enabled",sounds_enabled)
-	config.set_value("audio","volume",sound_volume)
-	if is_instance_valid(feedback): feedback.configure(sounds_enabled,sound_volume)
-	if config.save(settings_path) != OK and is_instance_valid(status_label):
-		status_label.text = "Préférences appliquées ; enregistrement impossible sur ce PC."
+	Preferences.save_from(self)
 
 func open_help() -> void:
 	if screen == "help":
@@ -137,27 +126,10 @@ func open_help() -> void:
 	show_help()
 
 func show_help() -> void:
-	screen = "help"
-	paused = true
-	elapsed = 0.0
-	_reset_screen("Aide", "Consultez un sujet, puis revenez à votre partie en pause. F1 ou Échap pour fermer.")
-	var topics = OptionButton.new()
-	topics.custom_minimum_size.y = 44
-	for title in Help.TITLES: topics.add_item(title)
-	topics.select(help_topic)
-	topics.item_selected.connect(func(index):
-		help_topic = index
-		help_text.text = Help.text_for(index, world, selected, tutorial.stage if tutorial != null else -1)
-	)
-	body.add_child(topics)
-	help_text = RichTextLabel.new()
-	help_text.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	help_text.focus_mode = Control.FOCUS_ALL
-	help_text.add_theme_font_size_override("normal_font_size", 24 if reading_large else 20)
-	help_text.text = Help.text_for(help_topic, world, selected, tutorial.stage if tutorial != null else -1)
-	body.add_child(help_text)
-	_button("Retour [F1]", close_help, body)
-	topics.grab_focus()
+	HelpView.build(self)
+
+func select_help_topic(index: int) -> void:
+	HelpView.select(self, index)
 
 func close_help() -> void:
 	_return_to(help_return)
@@ -276,27 +248,7 @@ func _smoke_test() -> void:
 	get_tree().quit()
 
 func _apply_theme() -> void:
-	var design = Theme.new()
-	design.default_font_size = 18
-	design.set_color("font_color", "Label", INK)
-	design.set_color("font_color", "Button", INK)
-	design.set_color("font_disabled_color", "Button", MUTED)
-	design.set_constant("separation", "VBoxContainer", 8)
-	design.set_constant("separation", "HBoxContainer", 16)
-	for state in ["normal", "hover", "pressed", "disabled", "focus"]:
-		var style = StyleBoxFlat.new()
-		style.bg_color = Color("254954") if state in ["hover", "pressed"] else Color("16333e")
-		style.set_corner_radius_all(6)
-		style.content_margin_left = 16
-		style.content_margin_right = 16
-		style.content_margin_top = 10
-		style.content_margin_bottom = 10
-		if state == "focus":
-			style.bg_color = Color.TRANSPARENT
-			style.border_color = ACCENT
-			style.set_border_width_all(2)
-		design.set_stylebox(state, "Button", style)
-	theme = design
+	theme = Preferences.theme()
 
 func _reset_screen(title: String, subtitle: String) -> void:
 	if is_instance_valid(map_view):
@@ -429,67 +381,25 @@ func show_game() -> void:
 	GameView.build(self)
 
 func buy_evolution(id: String) -> void:
-	if tutorial != null and (tutorial.stage != 2 or id != "transmission"): return
-	var error = world.purchase(id)
-	if error.is_empty(): feedback.play_cue("purchase")
-	if tutorial != null and error.is_empty(): tutorial.ready = true
-	if screen == "evolution":
-		EvolutionView.refresh(self)
-		status_label.text = error if not error.is_empty() else "%s acquise. Points restants : %d." % [world.evolutions[id].name, world.points]
-		if error.is_empty() and tutorial != null: evolution_back.grab_focus()
-		return
-	_refresh()
-	if not error.is_empty(): status_label.text = error
+	EvolutionFlow.buy(self, id)
 
 func select_evolution(id: String) -> void:
-	if not world.evolutions.has(id): return
-	selected_evolution = id
-	if screen != "evolution": return
-	if EvolutionView.family_of(self,id) != evolution_family:
-		show_evolution_family(EvolutionView.family_of(self,id))
-		return
-	if tutorial == null: status_label.text = ""
-	EvolutionView.refresh(self)
+	EvolutionFlow.select(self, id)
 
-## Purchase reason including the tutorial restriction (only Diffusion in exercise 3).
 func purchase_reason_for(id: String) -> String:
-	var reason = world.purchase_reason(id)
-	if tutorial != null and id not in world.purchased and (tutorial.stage != 2 or id != "transmission"):
-		return "Hors exercice" + (" · " + reason if not reason.is_empty() else "")
-	return reason
+	return EvolutionFlow.purchase_reason(self, id)
 
-## Opens the Évolution screen, optionally on the tab of a given skill. The game pauses
-## and returns to its previous pause state when the screen is closed.
 func open_evolution(id: String = "") -> void:
-	if world.regions.is_empty() or not world.outcome.is_empty(): return
-	if screen == "evolution":
-		if id.is_empty(): close_evolution()
-		else: select_evolution(id)
-		return
-	if screen != "game": return
-	evolution_return_paused = paused
-	if not id.is_empty() and world.evolutions.has(id):
-		selected_evolution = id
-		evolution_family = EvolutionView.family_of(self,id)
-	show_evolution()
-	if evolution_buttons.has(selected_evolution): evolution_buttons[selected_evolution].grab_focus()
+	EvolutionFlow.open(self, id)
 
 func show_evolution() -> void:
 	EvolutionView.build(self)
 
 func show_evolution_family(family_id: String) -> void:
-	evolution_family = family_id
-	if EvolutionView.family_of(self,selected_evolution) != family_id: selected_evolution = ""
-	show_evolution()
-	if evolution_buttons.has(selected_evolution): evolution_buttons[selected_evolution].grab_focus()
+	EvolutionFlow.show_family(self, family_id)
 
 func close_evolution() -> void:
-	if screen != "evolution": return
-	show_game()
-	paused = evolution_return_paused if tutorial == null else true
-	_refresh()
-	# In the tutorial, show_game() already focused Continuer once the exercise succeeded.
-	if tutorial == null or not tutorial.ready: evolution_open_button.grab_focus()
+	EvolutionFlow.close(self)
 
 func show_decision() -> void:
 	if tutorial != null or (world.decision.is_empty() and not World.Tactics.pending(world)): return
@@ -497,10 +407,10 @@ func show_decision() -> void:
 	elapsed = 0.0
 	show_game()
 func toggle_pause() -> void:
-	if tutorial != null and not tutorial.can_run(): return
-	paused = not paused
-	elapsed = 0.0
-	_refresh()
+	GameClock.toggle_pause(self)
+
+func set_speed(value: int) -> void:
+	GameClock.set_speed(self, value)
 
 func _refresh() -> void:
 	GameView.refresh(self)
@@ -509,32 +419,7 @@ func _process(delta: float) -> void:
 	advance_time(delta)
 
 func advance_time(delta: float) -> void:
-	if tutorial != null and not tutorial.can_run(): return
-	if screen != "game" or paused or not world.outcome.is_empty():
-		return
-	elapsed += delta * speed
-	# Bound work per frame while preserving the accumulated time.
-	var steps = 0
-	while elapsed >= 0.5 and steps < 16:
-		elapsed -= 0.5
-		var detected_before = world.detected_count()
-		world.step()
-		if world.detected_count() > detected_before: feedback.play_cue("alert")
-		if world.day % 10 == 0 or not world.outcome.is_empty(): autosave()
-		steps += 1
-		if tutorial != null and tutorial.after_step(world):
-			paused = true
-			elapsed = 0.0
-			break
-		if not world.outcome.is_empty():
-			paused = true
-			feedback.play_cue("outcome")
-			show_result()
-			return
-		if (World.Decisions.pending(world) and world.day == World.Decisions.definition().start_day) or (World.Tactics.pending(world) and world.tactics.response.opened == world.day):
-			show_decision()
-			return
-	_refresh()
+	GameClock.advance(self, delta)
 
 func show_result() -> void:
 	preload("res://scripts/ui/result_view.gd").build(self)
@@ -558,40 +443,4 @@ func reversed_news() -> Array[String]:
 	return news
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
-		mouse_press_active = event.pressed
-	if is_instance_valid(pending_dialog) and pending_dialog.visible: return
-	if not event is InputEventKey or not event.pressed or event.echo:
-		return
-	if event.keycode == KEY_ESCAPE:
-		if screen == "help": close_help()
-		elif screen == "evolution": close_evolution()
-		elif screen == "setup": setup_back()
-		elif screen == "overview": close_overview()
-		elif screen == "saves": close_saves()
-		elif screen == "decision": show_game()
-		elif tutorial != null: finish_tutorial()
-		else: show_menu()
-		get_viewport().set_input_as_handled()
-	elif event.keycode == KEY_E and screen in ["game","evolution"] and not (get_viewport().gui_get_focus_owner() is LineEdit):
-		open_evolution()
-		get_viewport().set_input_as_handled()
-	elif event.keycode == KEY_F1:
-		open_help()
-		get_viewport().set_input_as_handled()
-	elif event.keycode == KEY_F2 and screen == "game" and (not world.decision.is_empty() or World.Tactics.pending(world)):
-		show_decision()
-		get_viewport().set_input_as_handled()
-	elif event.keycode == KEY_F3 and screen in ["game","result","overview"]:
-		open_overview()
-		get_viewport().set_input_as_handled()
-	elif event.keycode == KEY_F4 and screen == "game" and world.crises_enabled:
-		map_view.focus_next_incident()
-		get_viewport().set_input_as_handled()
-	elif screen == "game":
-		if event.keycode == KEY_SPACE:
-			toggle_pause()
-			get_viewport().set_input_as_handled()
-		elif event.keycode in [KEY_1, KEY_2, KEY_4]:
-			speed = {KEY_1: 1, KEY_2: 2, KEY_4: 4}[event.keycode]
-			_refresh()
+	Shortcuts.handle(self, event)
