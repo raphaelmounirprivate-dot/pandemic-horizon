@@ -25,6 +25,6 @@ Candidat 0.23 : pour le joueur, seule l'aide F1 change ; ses sujets sont des bou
 
 ## Livraison
 
-Commits locaux `8f80ea5` et `784c61a`. Push, CI et archive : voir le point suivant ou la section Livraison du CHANGELOG.
+Commits locaux `8f80ea5` et `784c61a`. Montée de version **0.24.0** ensuite (version, préréglage d'export, [notes 0.24](../versions/NOTES-VERSION-0.24.md), en-tête « PROTOTYPE » lu depuis `project.godot`), pour qu'un binaire de session ne porte pas le numéro de l'archive 0.23 du point 28. Export, archive, push et CI : consignés dans [LIVRAISON-0.24](../versions/LIVRAISON-0.24.md) une fois réalisés.
 
 Prochaine étape : trois sessions joueurs exploratoires ([protocole](../tests-joueurs/README.md)).

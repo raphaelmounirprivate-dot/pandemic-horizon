@@ -1,6 +1,6 @@
-# Jouer à Pandemic Horizon 0.23
+# Jouer à Pandemic Horizon 0.24
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.23.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.24.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. À l'écran titre, choisir « Nouvelle partie », puis suivre les trois étapes : scénario (cartes Standard, Dégel 2042, Réseaux fragiles), difficulté et options, région de départ cliquée sur la carte du monde. Dégel impose Boréale, Réseaux fragiles impose Centrale. « Lancer la partie » démarre ; Retour ou Échap reviennent d'une étape.
 2. Lire les objectifs. La partie commence en pause.

@@ -36,7 +36,7 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 - [Point 31 — Écran de jeu extrait](31-vue-de-jeu.md) : candidat 0.23 inchangé ; `game_view.gd`, `main.gd` à 664 lignes, 35 captures identiques avant/après.
 - [Point 32 — Tutoriel et sauvegardes extraits](32-tutoriel-sauvegardes.md) : candidat 0.23 inchangé ; `tutorial_flow.gd`, chargement et enregistrement dans `saves_view.gd`, `main.gd` à 597 lignes, 80 captures identiques.
 - [Point 33 — Typage strict des sauvegardes](33-typage-sauvegardes.md) : candidat 0.23 inchangé ; `untyped_declaration` en erreur dans `scripts/persistence/`, `save_store.gd` typé sans changement de logique.
-- [Point 34 — Typage du gameplay, aide en boutons](34-gameplay-type-aide.md) : candidat 0.23 ; `scripts/gameplay/` typé, aide F1 sans liste déroulante, `main.gd` à 446 lignes ; 6 486 contrôles.
+- [Point 34 — Typage du gameplay, aide en boutons](34-gameplay-type-aide.md) : candidat 0.23 puis 0.24 ; `scripts/gameplay/` typé, aide F1 sans liste déroulante, `main.gd` à 446 lignes ; 6 486 contrôles.
 
 ## Documents liés
 
@@ -44,9 +44,9 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 - [Feuille de route](../roadmap/README.md) : backlog, audits et décisions ouvertes.
 - [Règles effectives](../REGLES.md) · [Développement](../DEVELOPPEMENT.md) · [Architecture](../ARCHITECTURE.md) · [Guide joueur](../GUIDE-JOUEUR.md).
 
-## État et priorités au 20 octobre 2026
+## État et priorités au 21 octobre 2026
 
-Candidat 0.23 (point 28), plus des changements techniques et d'interface sans effet sur les règles ni les sauvegardes (points 29 et 30, section « Non publié » du [CHANGELOG](../../CHANGELOG.md)). Implémenté et testé automatiquement ; **aucun essai humain, aucun essai sur un second PC, aucune release publiée.**
+Candidat 0.24 (point 34) : interface et code de la 0.23 retravaillés (points 29 à 34), règles et sauvegardes inchangées ([notes 0.24](../versions/NOTES-VERSION-0.24.md)). Implémenté et testé automatiquement ; **aucun essai humain, aucun essai sur un second PC, aucune release publiée.**
 
 1. Trois sessions joueurs exploratoires ([protocole](../tests-joueurs/README.md)) ; le registre `resultats.csv` est encore vide.
 2. Recontrôle de la livraison avec AVG actif et signalement du faux positif ([ANTIVIRUS.md](../ANTIVIRUS.md)).
