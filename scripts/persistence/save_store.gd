@@ -24,8 +24,8 @@ func crises_hash() -> String:
 func tactics_hash() -> String:
 	return (crises_hash()+"\n"+FileAccess.get_file_as_string(World.Tactics.PATH).replace("\r\n","\n")).sha256_text()
 
-func strategy_hash() -> String:
-	return (tactics_hash()+"\n"+FileAccess.get_file_as_string(World.Strategy.PATH).replace("\r\n","\n")).sha256_text()
+func strategy_hash(profile: String = World.Strategy.PROFILE) -> String:
+	return (tactics_hash()+"\n"+FileAccess.get_file_as_string(World.Strategy.PATHS[profile]).replace("\r\n","\n")).sha256_text()
 
 func encode(world: RefCounted, selected: int = 0, speed: int = 1) -> Dictionary:
 	if world.regions.is_empty(): return {}
@@ -55,9 +55,10 @@ func encode(world: RefCounted, selected: int = 0, speed: int = 1) -> Dictionary:
 		data.rules_profile = World.Tactics.PROFILE
 		data["tactics"] = world.tactics.duplicate(true)
 	if not world.strategy.is_empty():
-		data.format = 8
-		data.content = strategy_hash()
-		data.rules_profile = World.Strategy.PROFILE
+		var profile: String = World.Strategy.profile_of(world)
+		data.format = World.Strategy.FORMATS[profile]
+		data.content = strategy_hash(profile)
+		data.rules_profile = profile
 		data["strategy"] = world.strategy.duplicate(true)
 	return data
 
@@ -83,11 +84,14 @@ func decode(data: Variant) -> Dictionary:
 	var enriched: bool = data.get("format") == 5 and data.get("content") == expanded_hash()
 	var crises: bool = data.get("format") == 6 and data.get("content") == crises_hash()
 	var reactive: bool = data.get("format") == 7 and data.get("content") == tactics_hash()
-	var strategic: bool = data.get("format") == 8 and data.get("content") == strategy_hash()
+	var strategy_profile: String = ""
+	for profile: String in World.Strategy.FORMATS:
+		if data.get("format") == World.Strategy.FORMATS[profile] and data.get("content") == strategy_hash(profile): strategy_profile = profile
+	var strategic: bool = not strategy_profile.is_empty()
 	var current_format: bool = (data.get("format") == 4 and data.get("content") == content_hash()) or enriched or crises or reactive or strategic
 	if (not old_format and not current_format and not legacy09 and not legacy10 and not legacy11) or data.get("engine") != Engine.get_version_info().string:
 		return {"error": "Sauvegarde incompatible avec cette version du jeu.", "incompatible": true}
-	if strategic and (data.get("rules_profile") != World.Strategy.PROFILE or not data.get("strategy") is Dictionary): return invalid
+	if strategic and (data.get("rules_profile") != strategy_profile or not data.get("strategy") is Dictionary): return invalid
 	if not strategic and data.has("strategy"): return invalid
 	if enriched and data.get("rules_profile") != World.Expanded.PROFILE: return invalid
 	if crises and data.get("rules_profile") != World.Crises.PROFILE: return invalid
@@ -114,7 +118,7 @@ func decode(data: Variant) -> Dictionary:
 	if not _integer(data.get("speed"), 1, 4) or int(data.speed) not in [1, 2, 4]: return invalid
 	if not _strings(data.get("purchased"), 100) or not _strings(data.get("journal"), 10000) or not _strings(data.get("activated"), 200): return invalid
 	var world: RefCounted = World.new()
-	if not world.start_with({"start": data.start, "seed": data.seed.to_int(), "scenario": data.scenario, "difficulty": data.difficulty, "expanded": enriched or crises or strategic, "crises": crises or strategic, "reactive": reactive, "agent": str(data.strategy.get("agent", "")) if strategic else ""}).is_empty(): return invalid
+	if not world.start_with({"start": data.start, "seed": data.seed.to_int(), "scenario": data.scenario, "difficulty": data.difficulty, "expanded": enriched or crises or strategic, "crises": crises or strategic, "reactive": reactive, "agent": str(data.strategy.get("agent", "")) if strategic else "", "strategy": strategy_profile}).is_empty(): return invalid
 	if not data.get("regions") is Array or data.regions.size() != world.regions.size(): return invalid
 	var ids: Array = []
 	for i: int in range(world.regions.size()):

@@ -6,7 +6,7 @@ Contexte de travail pour Claude Code (et tout agent de code) sur ce dépôt. À 
 
 - **Pandemic Horizon** : jeu de stratégie original, en français, hors ligne, pour Windows. Inspiré du genre « simulation de pandémie », sans aucune ressource ni texte de Plague Inc.
 - **Moteur** : Godot **4.7.2 stable** (version exacte, vérifiée au chargement des sauvegardes), GDScript, rendu Compatibility, export Windows x86_64.
-- **État** : candidat **0.25.0** (`project.godot` → `config/version`). Prototype candidat, **pas une 1.0**. Aucun essai avec de vrais joueurs n'a encore été réalisé.
+- **État** : candidat **0.26.0** (`project.godot` → `config/version`). Prototype candidat, **pas une 1.0**. Aucun essai avec de vrais joueurs n'a encore été réalisé.
 - **Prochaine étape officielle** : trois sessions joueurs exploratoires (`docs/tests-joueurs/README.md`), puis corrections fondées sur les observations. Ne pas ajouter de contenu ou de catastrophes « parce que ce serait mieux » sans demande explicite.
 
 ## Langue et ton
@@ -45,7 +45,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Play        
 ## Invariants à ne jamais casser
 
 1. **Déterminisme.** Tout aléa passe par `world.rng` (graine). Pas de `randf()` global, pas de dépendance à l'heure, à l'ordre d'un `Dictionary` non trié ou au rendu. L'animation et `latest_flows` sont de l'observation : ils ne modifient jamais le modèle et ne sont pas sérialisés.
-2. **Empreintes de contenu = compatibilité des sauvegardes.** `save_store.gd` calcule une empreinte SHA-256 en chaîne : `content_hash()` (8 JSON : regions, evolutions, events, scenarios, transports, objectives, decisions, decisions-0.11) → `expanded_hash()` (+ expanded-content) → `crises_hash()` (+ crises) → `tactics_hash()` (+ tactics). **Modifier un seul octet utile d'un de ces fichiers invalide toutes les sauvegardes existantes des profils concernés.** Un changement de règles = nouveau fichier/profil + nouvelle empreinte + fixtures + test de reprise. Voir la skill `contenu-et-regles`.
+2. **Empreintes de contenu = compatibilité des sauvegardes.** `save_store.gd` calcule une empreinte SHA-256 en chaîne : `content_hash()` (8 JSON : regions, evolutions, events, scenarios, transports, objectives, decisions, decisions-0.11) → `expanded_hash()` (+ expanded-content) → `crises_hash()` (+ crises) → `tactics_hash()` (+ tactics) → `strategy_hash(profil)` (+ strategy-0.25 ou strategy-0.26). **Modifier un seul octet utile d'un de ces fichiers invalide toutes les sauvegardes existantes des profils concernés.** Un changement de règles = nouveau fichier/profil + nouvelle empreinte + fixtures + test de reprise. Voir la skill `contenu-et-regles`.
 3. **Profils historiques figés.** `decisions-0.11.json`, les empreintes `LEGACY_*` et les fixtures de `tests/fixtures/` décrivent des versions passées. **Ne jamais régénérer les fixtures avec la version courante**, ne jamais « corriger » un JSON historique.
 4. **Pas de rétroactivité.** Une ancienne partie chargée ne reçoit ni nouvel objectif, ni nouvelle décision, ni crise. Lire ne réécrit pas le fichier ; une sauvegarde incompatible n'est jamais écrasée.
 5. **Validation avant mutation.** Catalogues et sauvegardes sont validés entièrement avant de toucher au monde ; un échec laisse l'état intact.
@@ -57,7 +57,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Play        
 
 ## Façon de travailler sur un lot
 
-1. Lire `docs/suivi/00-index.md`, puis le dernier point (`docs/suivi/36-…` actuellement) et `docs/roadmap/03-backlog.md`.
+1. Lire `docs/suivi/00-index.md`, puis le dernier point (`docs/suivi/37-…` actuellement) et `docs/roadmap/03-backlog.md`.
 2. `git status` : vérifier qu'aucune modification locale n'est perdue.
 3. Petit changement, puis `dev.ps1 Test`. Pour l'UI : captures aux trois résolutions. Pour les règles : comparaison appariée (mêmes graines/difficultés) avant d'ajuster un coefficient.
 4. Ajouter les contrôles correspondants dans une suite `tests/test_*.gd` (skill `godot-tests`).
@@ -80,4 +80,8 @@ Claude Code les charge directement depuis `.claude/skills/`. Modifier les skills
 
 ## Lot stratégique 0.25
 
-Profil facultatif `strategy-0.25`, données séparées, format 8. Les JSON 0.7–0.24 restent figés. Le point 36 détaille les règles, mesures et réserves. Prochain lot : essais joueurs et équilibrage, pas d’extension automatique du contenu.
+Profil facultatif `strategy-0.25`, données séparées, format 8. Les JSON 0.7–0.24 restent figés. Le point 36 détaille les règles, mesures et réserves.
+
+## Lot 0.26 — situations stratégiques
+
+Profil `strategy-0.26` (format 9), proposé aux nouvelles parties stratégiques ; `strategy-0.25.json` est désormais **figé** comme les autres profils historiques (références `tests/fixtures/*-0.25-*`, commit `803208f`). `strategy.gd` gère les deux profils : toute fonction doit renvoyer le calcul 0.25 inchangé pour un monde 0.25. Grilles : `dev.ps1 BalanceStrategy` / `BalanceStrategyLegacy`. Le point 37 détaille règles, mesures (Mobilité devenue la plus sûre, bénéfice VOILE non démontré) et réserves. Prochain lot : essais joueurs, pas d’extension automatique du contenu.

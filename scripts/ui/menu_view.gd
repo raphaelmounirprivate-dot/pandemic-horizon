@@ -211,7 +211,7 @@ static func options_step(ui, data: Dictionary, parent: Control) -> void:
 		button.add_theme_stylebox_override("normal", ui.theme.get_stylebox("normal", "Button"))
 	var agent_text = "Profil stratégique expérimental · Sélectionner un agent active aléas et catalogue enrichi."
 	if not ui.agent_id.is_empty():
-		agent_text = ui.World.Strategy.rules().agents[ui.agent_id].description + " Décision J20 puis tous les 12 jours ; 6 s/jour à ×1."
+		agent_text = ui.World.Strategy.rules().agents[ui.agent_id].description + " Décision J20 puis tous les 12 jours, selon la situation du monde ; 6 s/jour à ×1."
 		ui.reactive_choice.disabled = true
 		ui.decision_choice.disabled = true
 	var agent_detail = ui._label(agent_text, 13, ui.ACCENT)

@@ -15,7 +15,11 @@ static func text_for(topic: int, world: RefCounted, selected: int, training_stag
 		if topic == 6: text += "\n\nCette partie réactive utilise plutôt tactics-0.22, format 7 : cibles résolues, réponse et Double relais sont enregistrés. Les profils historiques restent séparés."
 		if topic in [0,2] and world.scenario.id == "fragile2042": text += "\n\nDouble relais obligatoire : 6 000 unités abstraites sortant de Centrale vers Méridien ET vers Savane avant J60 inclus. L'échéance manquée entraîne la défaite ; la couverture de 90 % exige également la réussite des deux relais. Les unités mesurent les flux sur routes ouvertes, pas de nouvelles infections."
 	if not world.strategy.is_empty() and topic in [0, 1, 3, 6, 9]:
-		text += "\n\nProfil stratégique expérimental (format 8) · " + world.Strategy.rules().agents[world.strategy.agent].description
+		var profile = world.Strategy.profile_of(world)
+		text += "\n\nProfil stratégique expérimental %s (format %d) · %s" % [profile, world.Strategy.FORMATS[profile], world.Strategy.rules_of(world).agents[world.strategy.agent].description]
+		if world.Strategy.modern(world):
+			text += " Une journée dure 6 secondes à ×1. Décisions J20 puis tous les 12 jours jusqu’à J128 : 4 jours pour choisir [F2], sinon conservation gratuite ; effets 8 jours dès demain. La situation proposée dépend du monde au moment de la crise : liaison interrompue (une liaison d'une région touchée fermée), pression scientifique (remède ≥ 35 %), foyer développé (région touchée à 60 %), passage ouvert (foyer actif relié à une région épargnée) ; sinon, crise de coordination. Une même situation ne revient pas deux fois de suite. Discrétion agit 30 jours après l'achat : remède ×0,7, seuil de détection ×1,6, échanges ×0,85, puis plus d'effet. Mobilité ajoute remède ×1,15 tant qu'elle est acquise. Les effets en cours et leurs jours restants figurent dans les événements actifs."
+			return text
 		text += " Une journée dure 6 secondes à ×1. Pause automatique à la première compétence achetable après un gain et à chaque crise de coordination. Décisions J20 puis tous les 12 jours jusqu’à J128 : 4 jours pour choisir [F2], sinon conservation gratuite. Consolider : 3 points, croissance ×1,6, échanges ×0,2, remède ×0,95 ; forcer : 3 points, croissance ×0,85, échanges ×4, remède ×1,45 ; effets 8 jours dès demain. Les routes fermées restent fermées. Échanges de base ×1,5 ; Mobilité applique aussi ×0,55 pour réduire son avantage relatif. Les anciennes règles restent dans les profils historiques."
 	return text
 

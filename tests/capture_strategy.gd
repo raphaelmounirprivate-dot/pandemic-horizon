@@ -9,15 +9,21 @@ func run() -> void:
 		scene.set_process(false)
 		scene.autosave_enabled = false
 		scene.agent_id = "pulse"
-		for state in ["setup", "decision", "result"]:
+		for state in ["setup", "decision", "effects", "result"]:
 			if state == "setup": scene.show_new_game(2)
 			elif state == "decision":
 				scene.start_game()
 				for day in range(20): scene.world.step()
 				scene.show_game()
+			elif state == "effects":
+				# Chosen answer, Discrétion and ONDE phase visible in the active effects.
+				scene.world.Strategy.choose(scene.world, scene.world.Strategy.choices(scene.world)[0].id)
+				scene.world.purchase("discretion")
+				for day in range(2): scene.world.step()
+				scene.show_game()
 			else:
 				for day in range(400):
-					if scene.world.Strategy.pending(scene.world): scene.world.Strategy.choose(scene.world, "anchor")
+					if scene.world.Strategy.pending(scene.world): scene.world.Strategy.choose(scene.world, scene.world.Strategy.choices(scene.world)[0].id)
 					for id in ["transmission", "relay", "discretion", "mobility"]:
 						if id not in scene.world.purchased:
 							scene.world.purchase(id)

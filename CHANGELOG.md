@@ -2,6 +2,10 @@
 
 Du plus récent au plus ancien. Toutes les versions sont des **candidats de prototype** : implémentées et testées automatiquement, jamais essayées par des joueurs externes, sans release binaire GitHub. Le détail de chaque lot est dans les [points de suivi](docs/suivi/00-index.md) ; les notes jointes aux archives sont dans `docs/versions/NOTES-VERSION-*.md`.
 
+## 0.26.0 — situations stratégiques, 21 octobre 2026
+
+Crises liées à l’état du monde (cinq situations à réponses propres), ONDE décalé des décisions, Discrétion temporaire qui retarde la détection, contrepartie de Mobilité (remède ×1,15), ligne « En cours » des effets actifs. Profil `strategy-0.26`, format 9 ; parties 0.25 conservées et protégées par six références figées. Voir le [point 37](docs/suivi/37-situations-strategiques.md). Aucun push ni nouvelle release par ce lot.
+
 ## 0.25.0 — candidat stratégique local, 21 octobre 2026
 
 Profil facultatif avec trois agents, crises récurrentes, rythme ralenti, bilan descriptif et ambiance facultative. Format 8 séparé, formats 1–7 conservés. Voir le [point 36](docs/suivi/36-profil-strategique.md) pour les vérifications réellement exécutées et leurs limites. Aucun push ni nouvelle release par ce lot.

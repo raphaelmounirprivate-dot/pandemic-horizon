@@ -21,7 +21,7 @@ static func advance(ui, delta: float) -> void:
 		return
 	ui.elapsed += delta * ui.speed
 	# Bound work per frame while preserving the accumulated time.
-	var day_seconds = World.Strategy.rules().day_seconds if not ui.world.strategy.is_empty() else DAY_SECONDS
+	var day_seconds = World.Strategy.rules_of(ui.world).day_seconds if not ui.world.strategy.is_empty() else DAY_SECONDS
 	var steps = 0
 	while ui.elapsed >= day_seconds and steps < MAX_STEPS_PER_FRAME:
 		ui.elapsed -= day_seconds
@@ -41,7 +41,7 @@ static func advance(ui, delta: float) -> void:
 			ui.show_result()
 			return
 		if not ui.world.strategy.is_empty():
-			if World.Strategy.pending(ui.world) and ui.world.day == World.Strategy.slot(ui.world.day):
+			if World.Strategy.pending(ui.world) and ui.world.day == World.Strategy.slot_of(ui.world):
 				ui.feedback.play_cue("decision")
 				ui.show_decision()
 				return

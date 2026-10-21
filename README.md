@@ -6,7 +6,9 @@ Code, interface, textes et ressources sont originaux ; le jeu est autonome et ne
 
 ## État
 
-**Candidat 0.25.0 expérimental local : pas une 1.0.** 6631 contrôles automatiques réussis, zéro échec. Aucun essai externe avec des joueurs documenté.
+**Candidat 0.26.0 expérimental local : pas une 1.0.** 6830 contrôles automatiques réussis, zéro échec. Aucun essai externe avec des joueurs documenté.
+
+- 0.26 : les crises stratégiques dépendent de l’état du monde (liaison interrompue, pression scientifique, foyer développé, passage ouvert, coordination), ONDE se décale des décisions, Discrétion agit 30 jours et retarde la détection, une ligne « En cours » résume les effets actifs. Format 9 ; parties 0.25 conservées. Voir le [point 37](docs/suivi/37-situations-strategiques.md) et les [mesures de 2 520 parties](docs/equilibrage/EQUILIBRAGE-0.26-SITUATIONS.md) : Discrétion n’est plus dominante ; Mobilité, devenue la plus sûre, reçoit une contrepartie (remède ×1,15) qui réduit son avance ([variantes](docs/equilibrage/EQUILIBRAGE-0.26-VARIANTES.md)).
 
 - Profils historiques conservés ; Standard, Dégel 2042 et Réseaux fragiles, trois difficultés, sauvegardes locales et tutoriel.
 - Nouveau profil facultatif : choisir NACRE, ONDE ou VOILE à l’étape 2 de Nouvelle partie. Trois mécaniques d’agent, crises de coordination récurrentes, six secondes par journée à ×1 et pauses aux décisions / premiers achats.
@@ -14,7 +16,7 @@ Code, interface, textes et ressources sont originaux ; le jeu est autonome et ne
 
 Voir le [point 36](docs/suivi/36-profil-strategique.md) et les [mesures de 1 080 parties](docs/equilibrage/EQUILIBRAGE-0.25-STRATEGIE.md). Les trois stratégies mesurées sont viables en normale ; Discrétion reste très forte. Le profil demande encore un équilibrage humain. Lot non publié : les anciens exécutables ne sont pas mis à jour par ces modifications de sources.
 
-Prochaine étape : [sessions joueurs](docs/tests-joueurs/README.md) sur le rythme et les choix du profil stratégique. Historique : [CHANGELOG.md](CHANGELOG.md).
+Prochaine étape : [sessions joueurs](docs/tests-joueurs/README.md) sur le rythme, les situations et les choix du profil stratégique 0.26. Historique : [CHANGELOG.md](CHANGELOG.md).
 
 ## Lancer et développer
 

@@ -1,0 +1,432 @@
+{
+	"activated": [
+		"reaction_boreale",
+		"boreal_storm",
+		"incident_00"
+	],
+	"content": "9a831e6f74aa2eb1f3dd0bf2a7b7de33d1875cd0b0d2c6b992ab00d8fb0c164a",
+	"cure": "4befd8c4ea970b40",
+	"day": 20,
+	"decision": {},
+	"decision_profile": "",
+	"difficulty": "normal",
+	"engine": "4.7.2-stable (official)",
+	"events": [
+		{
+			"end_day": 21,
+			"id": "reaction_boreale",
+			"start_day": 13
+		},
+		{
+			"end_day": 26,
+			"id": "boreal_storm",
+			"start_day": 18
+		},
+		{
+			"end_day": 24,
+			"id": "incident_00",
+			"start_day": 19
+		}
+	],
+	"format": 8,
+	"history": [
+		{
+			"active": 200,
+			"cure": 0,
+			"day": 0,
+			"detected": 0,
+			"healthy": 3529800,
+			"points": 8,
+			"removed": 0
+		},
+		{
+			"active": 261,
+			"cure": 0,
+			"day": 1,
+			"detected": 0,
+			"healthy": 3529734,
+			"points": 8,
+			"removed": 5
+		},
+		{
+			"active": 343,
+			"cure": 0,
+			"day": 2,
+			"detected": 0,
+			"healthy": 3529646,
+			"points": 8,
+			"removed": 11
+		},
+		{
+			"active": 454,
+			"cure": 0,
+			"day": 3,
+			"detected": 0,
+			"healthy": 3529527,
+			"points": 8,
+			"removed": 19
+		},
+		{
+			"active": 593,
+			"cure": 0,
+			"day": 4,
+			"detected": 0,
+			"healthy": 3529377,
+			"points": 8,
+			"removed": 30
+		},
+		{
+			"active": 668,
+			"cure": 0,
+			"day": 5,
+			"detected": 0,
+			"healthy": 3529288,
+			"points": 11,
+			"removed": 44
+		},
+		{
+			"active": 748,
+			"cure": 0,
+			"day": 6,
+			"detected": 0,
+			"healthy": 3529192,
+			"points": 11,
+			"removed": 60
+		},
+		{
+			"active": 850,
+			"cure": 0,
+			"day": 7,
+			"detected": 0,
+			"healthy": 3529072,
+			"points": 11,
+			"removed": 78
+		},
+		{
+			"active": 963,
+			"cure": 0,
+			"day": 8,
+			"detected": 0,
+			"healthy": 3528938,
+			"points": 11,
+			"removed": 99
+		},
+		{
+			"active": 1096,
+			"cure": 0,
+			"day": 9,
+			"detected": 0,
+			"healthy": 3528781,
+			"points": 11,
+			"removed": 123
+		},
+		{
+			"active": 1244,
+			"cure": 0,
+			"day": 10,
+			"detected": 0,
+			"healthy": 3528606,
+			"points": 0,
+			"removed": 150
+		},
+		{
+			"active": 1401,
+			"cure": 0,
+			"day": 11,
+			"detected": 0,
+			"healthy": 3528416,
+			"points": 0,
+			"removed": 183
+		},
+		{
+			"active": 1886,
+			"cure": 0,
+			"day": 12,
+			"detected": 0,
+			"healthy": 3527895,
+			"points": 0,
+			"removed": 219
+		},
+		{
+			"active": 2386,
+			"cure": 43,
+			"day": 13,
+			"detected": 1,
+			"healthy": 3527346,
+			"points": 0,
+			"removed": 268
+		},
+		{
+			"active": 3029,
+			"cure": 86,
+			"day": 14,
+			"detected": 1,
+			"healthy": 3526642,
+			"points": 0,
+			"removed": 329
+		},
+		{
+			"active": 3802,
+			"cure": 129,
+			"day": 15,
+			"detected": 1,
+			"healthy": 3525792,
+			"points": 3,
+			"removed": 406
+		},
+		{
+			"active": 4851,
+			"cure": 172,
+			"day": 16,
+			"detected": 1,
+			"healthy": 3524647,
+			"points": 3,
+			"removed": 502
+		},
+		{
+			"active": 5300,
+			"cure": 216,
+			"day": 17,
+			"detected": 1,
+			"healthy": 3524076,
+			"points": 3,
+			"removed": 624
+		},
+		{
+			"active": 5794,
+			"cure": 259,
+			"day": 18,
+			"detected": 1,
+			"healthy": 3523449,
+			"points": 3,
+			"removed": 757
+		},
+		{
+			"active": 6427,
+			"cure": 302,
+			"day": 19,
+			"detected": 1,
+			"healthy": 3522671,
+			"points": 3,
+			"removed": 902
+		},
+		{
+			"active": 7082,
+			"cure": 345,
+			"day": 20,
+			"detected": 1,
+			"healthy": 3521855,
+			"points": 6,
+			"removed": 1063
+		}
+	],
+	"journal": [
+		"Jour 0 · Départ dans la région Boréale.",
+		"Jour 0 · Standard · Difficulté Normale · Phase Standard.",
+		"Jour 0 · Aléas et résilience · Graine 2042 · Conséquences favorables ou défavorables à la diffusion ; calendrier tiré au lancement.",
+		"Jour 10 · Premiers cas dans la région Occident.",
+		"Jour 10 · Premiers cas dans la région Centrale.",
+		"Jour 10 · Évolution acquise : Discrétion.",
+		"Jour 13 · Détection dans la région Boréale ; recherche mondiale renforcée.",
+		"Jour 13 · Réaction de Boréale — Boréale : croissance ×0.80 ; fin au jour 21.",
+		"Jour 18 · Tempête boréale — Boréale ↔ Centrale : route fermée ; fin au jour 26.",
+		"Jour 19 · Aléa favorable · Fenêtre maritime favorable — transport maritime : échanges ×1.40 ; fin au jour 24.",
+		"Jour 20 · Crise de coordination : choisir une stratégie [F2]."
+	],
+	"objective": {},
+	"outcome": "",
+	"phase": "standard",
+	"points": 6,
+	"purchase_history": [
+		{
+			"cost": 14,
+			"day": 10,
+			"id": "discretion"
+		}
+	],
+	"purchased": [
+		"discretion"
+	],
+	"regions": [
+		{
+			"active": 7003,
+			"detected": true,
+			"healthy": 91954,
+			"id": "boreale",
+			"removed": 1043
+		},
+		{
+			"active": 62,
+			"detected": false,
+			"healthy": 159928,
+			"id": "occident",
+			"removed": 10
+		},
+		{
+			"active": 17,
+			"detected": false,
+			"healthy": 219973,
+			"id": "centrale",
+			"removed": 10
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 120000,
+			"id": "australe",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 240000,
+			"id": "orient",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 80000,
+			"id": "archipel",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 70000,
+			"id": "toundra",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 90000,
+			"id": "taiga",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 140000,
+			"id": "steppes",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 180000,
+			"id": "levant",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 110000,
+			"id": "pacifique",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 100000,
+			"id": "hauts_pays",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 190000,
+			"id": "meridien",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 160000,
+			"id": "littoral",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 150000,
+			"id": "peninsule",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 130000,
+			"id": "plateaux",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 170000,
+			"id": "savane",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 210000,
+			"id": "delta",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 230000,
+			"id": "jade",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 90000,
+			"id": "corail",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 110000,
+			"id": "atlantide",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 180000,
+			"id": "equateur",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 100000,
+			"id": "cap_sud",
+			"removed": 0
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 200000,
+			"id": "mousson",
+			"removed": 0
+		}
+	],
+	"rng": "1190988937580951876",
+	"rules_profile": "strategy-0.25",
+	"saved_at": "2026-10-21T12:00:00",
+	"scenario": "standard",
+	"seed": "2042",
+	"selected": "boreale",
+	"speed": 1,
+	"start": "boreale",
+	"strategy": {
+		"agent": "pulse",
+		"choices": []
+	}
+}

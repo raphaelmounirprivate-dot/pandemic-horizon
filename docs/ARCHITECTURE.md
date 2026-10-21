@@ -122,3 +122,13 @@ Migrer un dossier : retirer sa ligne de `directory_rules`, puis lancer `Godot --
 `gameplay/strategy.gd` lit `data/strategy-0.25.json` et fournit validation, registre de décisions, modificateurs d’agent, calendrier et coût total. Le modèle conserve `strategy` (agent et choix datés) ; le format 8 reconstruit les mêmes règles avant de restaurer l’état. Les modificateurs sont neutres si le profil est absent. `start_with` accepte l’option nommée `agent`; `start()` reste l’adaptateur historique à 15 paramètres.
 
 `ui/strategy_view.gd` utilise la zone de décision existante. `ui/result_explanation.gd` produit uniquement des constats descriptifs. `analysis/balance_strategy.gd` mesure les politiques, `analysis/strategy_parameters.gd` compare des hypothèses en mémoire, jamais enregistrées comme sauvegardes jouables. Les scripts d’analyse restent exclus de l’export.
+
+## Deux profils stratégiques (0.26)
+
+`gameplay/strategy.gd` gère `strategy-0.25` (figé, format 8) et `strategy-0.26` (format 9) : `PATHS`, `FORMATS`, `rules(profile)` mis en cache par profil, `rules_of(world)` et `modern(world)`. Un état 0.25 garde exactement ses deux clés (`agent`, `choices`) ; un état 0.26 ajoute `profile` et `open` (crise ouverte : créneau, situation, région visée), et chaque entrée du registre porte `crisis` et `target`. `start_with` accepte l’option `strategy` (profil) ; vide, une nouvelle partie prend `CURRENT`. `save_store.strategy_hash(profile)` chaîne le fichier du profil sur l’empreinte tactics.
+
+`detect_crisis` lit l’état laissé par la veille dans l’ordre du catalogue, sans aléa. `Strategy.cure` remplace pour 0.26 l’effet permanent de Discrétion (`evolutions.json`, inchangé) par l’effet temporaire du profil ; `Strategy.detection` multiplie le seuil proportionnel de `world.gd`. Toutes ces fonctions renvoient exactement 1,0 ou le calcul 0.25 d’origine pour un monde 0.25 ; les références `tests/fixtures/*-0.25-*`, générées avec le commit `803208f`, le vérifient jusqu’au J70.
+
+Le paramètre facultatif `mobility_cure` (absent du profil, donc exactement neutre) multiplie le remède tant que Mobilité est acquise ; il sert aux variantes de `analysis/strategy_variants.gd`, qui remplacent `Strategy.cached[CURRENT]` pendant un appel synchrone puis le restaurent.
+
+Présentation : `active_lines` (détail, en tête des événements actifs via `incident_view.gd`), `compact_line` (ligne « En cours » de `strategy_view.gd`), `effect_text` (fiche de Discrétion dans `evolution_view.gd` et `skill_presenter.gd`).

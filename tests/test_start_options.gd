@@ -52,4 +52,4 @@ func run(check: Callable) -> void:
 		check.call(stable(store,world) == before, "Option refusée sans mutation : " + name)
 	check.call(not World.validate_start_options(null).is_empty() and not World.validate_start_options([]).is_empty(), "Options non dictionnaire refusées")
 	check.call(World.validate_start_options({"start": "boreale", "regions_source": [], "crises_source": 5}).is_empty(), "Sources laissées à la validation de start()")
-	check.call(World.START_OPTIONS.size() == 16, "Seize options, dont le profil stratégique facultatif")
+	check.call(World.START_OPTIONS.size() == 17, "Dix-sept options, dont l'agent et le profil stratégique facultatifs")

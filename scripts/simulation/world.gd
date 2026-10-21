@@ -17,7 +17,7 @@ const Crises = preload("res://scripts/gameplay/crises.gd")
 const Strategy = preload("res://scripts/gameplay/strategy.gd")
 const Tactics = preload("res://scripts/gameplay/tactics.gd")
 # Named options for start_with(); values are the defaults of start(). "start" is required.
-const START_OPTIONS = {"start": "", "seed": 2042, "regions_source": null, "gameplay_source": null, "scenario": "standard", "difficulty": "normal", "catalog_source": null, "transport_source": null, "objective": "", "decision": false, "expanded": false, "expanded_source": null, "crises": false, "crises_source": null, "reactive": false, "agent": ""}
+const START_OPTIONS = {"start": "", "seed": 2042, "regions_source": null, "gameplay_source": null, "scenario": "standard", "difficulty": "normal", "catalog_source": null, "transport_source": null, "objective": "", "decision": false, "expanded": false, "expanded_source": null, "crises": false, "crises_source": null, "reactive": false, "agent": "", "strategy": ""}
 var strategy: Dictionary = {}
 var tactics_enabled: bool = false
 var tactics: Dictionary = {}
@@ -118,14 +118,19 @@ func start_with(options: Dictionary) -> String:
 	if not error.is_empty(): return error
 	var o := START_OPTIONS.duplicate()
 	o.merge(options, true)
+	# New strategic games use the current profile; saves name theirs explicitly.
+	var profile: String = o.strategy if not o.strategy.is_empty() else Strategy.CURRENT
+	if not o.strategy.is_empty() and (o.agent.is_empty() or not Strategy.PATHS.has(o.strategy)): return "Profil stratégique inconnu."
 	if not o.agent.is_empty():
-		if not Strategy.validate(Strategy.rules()).is_empty(): return Strategy.validate(Strategy.rules())
-		if not Strategy.rules().agents.has(o.agent): return "Agent inconnu."
+		if not Strategy.validate(Strategy.rules(profile)).is_empty(): return Strategy.validate(Strategy.rules(profile))
+		if not Strategy.rules(profile).agents.has(o.agent): return "Agent inconnu."
 		if o.reactive or o.decision: return "Le profil stratégique remplace les décisions historiques."
 		o.expanded = true
 		o.crises = true
 	var result: String = start(o.start, o.seed, o.regions_source, o.gameplay_source, o.scenario, o.difficulty, o.catalog_source, o.transport_source, o.objective, o.decision, o.expanded, o.expanded_source, o.crises, o.crises_source, o.reactive)
-	if result.is_empty(): strategy = Strategy.initial(o.agent) if not o.agent.is_empty() else {}
+	if result.is_empty():
+		strategy = Strategy.initial(o.agent, profile) if not o.agent.is_empty() else {}
+		Strategy.prepare(self)
 	return result
 
 func start(start_id: String, seed_value: int = 2042, source: Variant = null, gameplay_source: Variant = null, scenario_id: String = "standard", difficulty_id: String = "normal", catalog_source: Variant = null, transport_source: Variant = null, objective_id: String = "", decision_enabled: bool = false, expanded_enabled: bool = false, expanded_source: Variant = null, crises_active: bool = false, crises_source: Variant = null, reactive: bool = false) -> String:
@@ -444,7 +449,7 @@ func _update_events_and_detection() -> void:
 		if day == int(definition.start_day):
 			_add_event(definition)
 	for region: Dictionary in regions:
-		if not region.detected and region.active >= detection_rules.min_active and float(region.active) / region.population >= detection_rules.active_ratio * difficulty.detection_multiplier:
+		if not region.detected and region.active >= detection_rules.min_active and float(region.active) / region.population >= detection_rules.active_ratio * difficulty.detection_multiplier * Strategy.detection(self):
 			region.detected = true
 			journal.append("Jour %d · Détection dans la région %s ; recherche mondiale renforcée." % [day, region.name])
 			_add_event({"id": "reaction_" + region.id, "name": "Réaction de " + region.name, "kind": "growth_multiplier", "target": region.id, "factor": detection_rules.reaction_factor, "duration": detection_rules.reaction_duration})
@@ -463,6 +468,7 @@ func active_event_lines() -> Array[String]:
 		lines.append("%s · %s · %d j restants" % [effect.name, effect_description(effect), effect.end_day - day])
 	if decision.get("status") in ["pending","active"]: lines.append(Decisions.summary(self))
 	if tactics_enabled and not tactics.response.is_empty(): lines.append(Tactics.summary(self))
+	lines.append_array(Strategy.active_lines(self))
 	return lines
 
 func step() -> void:
@@ -509,7 +515,7 @@ func step() -> void:
 			journal.append("Jour %d · Premiers cas dans la région %s." % [day, region.name])
 	if detected_count() > 0:
 		var gain: float = cure_rules.base_gain + coverage() * cure_rules.coverage_gain + detected_count() * cure_rules.per_detected_gain
-		cure = minf(100.0, cure + gain * upgrade_modifier("cure_multiplier") * event_modifier("cure_multiplier") * difficulty.cure_multiplier * phase.cure_multiplier * Strategy.factor(self, "cure"))
+		cure = minf(100.0, cure + gain * upgrade_modifier("cure_multiplier") * event_modifier("cure_multiplier") * difficulty.cure_multiplier * phase.cure_multiplier * Strategy.cure(self))
 	if day % POINT_INTERVAL == 0:
 		points += POINT_GAIN
 	Tactics.update_goal(self)

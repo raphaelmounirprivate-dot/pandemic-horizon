@@ -54,4 +54,4 @@ static func comparison(world,id: String) -> String:
 static func details(world,id: String,reason: String) -> String:
 	var group = family(id)
 	var state = "Acquise" if id in world.purchased else ("Disponible" if reason.is_empty() else reason)
-	return "%s · %s\n%s\n%s\nHors climat/aléas · %s" % [world.evolutions[id].name,group.get("name","Compétence"),world.evolutions[id].effect,comparison(world,id),state]
+	return "%s · %s\n%s\n%s\nHors climat/aléas · %s" % [world.evolutions[id].name,group.get("name","Compétence"),world.Strategy.effect_text(world,id),comparison(world,id),state]

@@ -93,7 +93,7 @@ static func banner(ui, victory: bool) -> Control:
 	row.add_child(mark)
 	var text = "Victoire : NACRE a touché 90 % de la population avant le remède." if victory else ("Défaite · " + ui.world.outcome_text().trim_prefix("Défaite : "))
 	if victory and not ui.world.strategy.is_empty():
-		text = "Victoire : %s a touché 90 %% de la population avant le remède." % ui.world.Strategy.rules().agents[ui.world.strategy.agent].name
+		text = "Victoire : %s a touché 90 %% de la population avant le remède." % ui.world.Strategy.rules_of(ui.world).agents[ui.world.strategy.agent].name
 	text += "\n" + preload("res://scripts/ui/result_explanation.gd").text(ui.world)
 	var label = ui._label(text, 18, color)
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

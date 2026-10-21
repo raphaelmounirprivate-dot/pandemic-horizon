@@ -19,7 +19,8 @@ static func entries(world) -> Array:
 static func active_lines(world) -> Array[String]:
 	var descriptions: Dictionary = {}
 	for entry in entries(world): descriptions[entry.id] = entry.text
-	var lines: Array[String] = []
+	# Strategic effects first: they are the player's own choices.
+	var lines: Array[String] = world.Strategy.active_lines(world)
 	for entry in entries(world): lines.append(entry.text)
 	for effect in world.active_events:
 		if not descriptions.has(effect.id): lines.append("%s · %s · %d j restants" % [effect.name,world.effect_description(effect),effect.end_day-world.day])

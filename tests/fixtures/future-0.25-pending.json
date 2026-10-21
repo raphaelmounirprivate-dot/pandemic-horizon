@@ -1,0 +1,1020 @@
+{
+	"activated": [
+		"reaction_boreale",
+		"boreal_storm",
+		"incident_00",
+		"transport_inspection",
+		"incident_01",
+		"incident_02",
+		"reaction_occident",
+		"central_slowdown",
+		"air_controls",
+		"incident_03",
+		"reaction_centrale",
+		"research_boost",
+		"port_delays",
+		"local_caution",
+		"reaction_toundra",
+		"reaction_hauts_pays",
+		"reaction_peninsule",
+		"surface_disruption",
+		"incident_04",
+		"air_corridor",
+		"incident_05",
+		"reaction_meridien",
+		"reaction_savane",
+		"sea_convoy",
+		"reaction_plateaux",
+		"reaction_taiga",
+		"research_delay",
+		"reaction_atlantide",
+		"incident_06"
+	],
+	"content": "9a831e6f74aa2eb1f3dd0bf2a7b7de33d1875cd0b0d2c6b992ab00d8fb0c164a",
+	"cure": "8d87113cca6e4040",
+	"day": 70,
+	"decision": {},
+	"decision_profile": "",
+	"difficulty": "normal",
+	"engine": "4.7.2-stable (official)",
+	"events": [
+		{
+			"end_day": 72,
+			"id": "reaction_atlantide",
+			"start_day": 64
+		},
+		{
+			"end_day": 74,
+			"id": "incident_06",
+			"start_day": 67
+		}
+	],
+	"format": 8,
+	"history": [
+		{
+			"active": 200,
+			"cure": 0,
+			"day": 0,
+			"detected": 0,
+			"healthy": 3529800,
+			"points": 8,
+			"removed": 0
+		},
+		{
+			"active": 261,
+			"cure": 0,
+			"day": 1,
+			"detected": 0,
+			"healthy": 3529734,
+			"points": 8,
+			"removed": 5
+		},
+		{
+			"active": 343,
+			"cure": 0,
+			"day": 2,
+			"detected": 0,
+			"healthy": 3529646,
+			"points": 8,
+			"removed": 11
+		},
+		{
+			"active": 454,
+			"cure": 0,
+			"day": 3,
+			"detected": 0,
+			"healthy": 3529527,
+			"points": 8,
+			"removed": 19
+		},
+		{
+			"active": 593,
+			"cure": 0,
+			"day": 4,
+			"detected": 0,
+			"healthy": 3529377,
+			"points": 8,
+			"removed": 30
+		},
+		{
+			"active": 668,
+			"cure": 0,
+			"day": 5,
+			"detected": 0,
+			"healthy": 3529288,
+			"points": 11,
+			"removed": 44
+		},
+		{
+			"active": 748,
+			"cure": 0,
+			"day": 6,
+			"detected": 0,
+			"healthy": 3529192,
+			"points": 11,
+			"removed": 60
+		},
+		{
+			"active": 850,
+			"cure": 0,
+			"day": 7,
+			"detected": 0,
+			"healthy": 3529072,
+			"points": 11,
+			"removed": 78
+		},
+		{
+			"active": 963,
+			"cure": 0,
+			"day": 8,
+			"detected": 0,
+			"healthy": 3528938,
+			"points": 11,
+			"removed": 99
+		},
+		{
+			"active": 1096,
+			"cure": 0,
+			"day": 9,
+			"detected": 0,
+			"healthy": 3528781,
+			"points": 11,
+			"removed": 123
+		},
+		{
+			"active": 1244,
+			"cure": 0,
+			"day": 10,
+			"detected": 0,
+			"healthy": 3528606,
+			"points": 0,
+			"removed": 150
+		},
+		{
+			"active": 1401,
+			"cure": 0,
+			"day": 11,
+			"detected": 0,
+			"healthy": 3528416,
+			"points": 0,
+			"removed": 183
+		},
+		{
+			"active": 1886,
+			"cure": 0,
+			"day": 12,
+			"detected": 0,
+			"healthy": 3527895,
+			"points": 0,
+			"removed": 219
+		},
+		{
+			"active": 2386,
+			"cure": 43,
+			"day": 13,
+			"detected": 1,
+			"healthy": 3527346,
+			"points": 0,
+			"removed": 268
+		},
+		{
+			"active": 3029,
+			"cure": 86,
+			"day": 14,
+			"detected": 1,
+			"healthy": 3526642,
+			"points": 0,
+			"removed": 329
+		},
+		{
+			"active": 3802,
+			"cure": 129,
+			"day": 15,
+			"detected": 1,
+			"healthy": 3525792,
+			"points": 3,
+			"removed": 406
+		},
+		{
+			"active": 4851,
+			"cure": 172,
+			"day": 16,
+			"detected": 1,
+			"healthy": 3524647,
+			"points": 3,
+			"removed": 502
+		},
+		{
+			"active": 5300,
+			"cure": 216,
+			"day": 17,
+			"detected": 1,
+			"healthy": 3524076,
+			"points": 3,
+			"removed": 624
+		},
+		{
+			"active": 5794,
+			"cure": 259,
+			"day": 18,
+			"detected": 1,
+			"healthy": 3523449,
+			"points": 3,
+			"removed": 757
+		},
+		{
+			"active": 6427,
+			"cure": 302,
+			"day": 19,
+			"detected": 1,
+			"healthy": 3522671,
+			"points": 3,
+			"removed": 902
+		},
+		{
+			"active": 7082,
+			"cure": 345,
+			"day": 20,
+			"detected": 1,
+			"healthy": 3521855,
+			"points": 6,
+			"removed": 1063
+		},
+		{
+			"active": 7923,
+			"cure": 388,
+			"day": 21,
+			"detected": 1,
+			"healthy": 3520837,
+			"points": 3,
+			"removed": 1240
+		},
+		{
+			"active": 9571,
+			"cure": 429,
+			"day": 22,
+			"detected": 1,
+			"healthy": 3518991,
+			"points": 3,
+			"removed": 1438
+		},
+		{
+			"active": 11628,
+			"cure": 470,
+			"day": 23,
+			"detected": 1,
+			"healthy": 3516695,
+			"points": 3,
+			"removed": 1677
+		},
+		{
+			"active": 17731,
+			"cure": 511,
+			"day": 24,
+			"detected": 1,
+			"healthy": 3510302,
+			"points": 3,
+			"removed": 1967
+		},
+		{
+			"active": 27635,
+			"cure": 553,
+			"day": 25,
+			"detected": 1,
+			"healthy": 3499956,
+			"points": 6,
+			"removed": 2409
+		},
+		{
+			"active": 41955,
+			"cure": 594,
+			"day": 26,
+			"detected": 1,
+			"healthy": 3484947,
+			"points": 6,
+			"removed": 3098
+		},
+		{
+			"active": 64178,
+			"cure": 636,
+			"day": 27,
+			"detected": 1,
+			"healthy": 3461676,
+			"points": 6,
+			"removed": 4146
+		},
+		{
+			"active": 95653,
+			"cure": 678,
+			"day": 28,
+			"detected": 1,
+			"healthy": 3428598,
+			"points": 6,
+			"removed": 5749
+		},
+		{
+			"active": 93652,
+			"cure": 720,
+			"day": 29,
+			"detected": 1,
+			"healthy": 3428209,
+			"points": 6,
+			"removed": 8139
+		},
+		{
+			"active": 91749,
+			"cure": 764,
+			"day": 30,
+			"detected": 1,
+			"healthy": 3427769,
+			"points": 9,
+			"removed": 10482
+		},
+		{
+			"active": 89894,
+			"cure": 808,
+			"day": 31,
+			"detected": 1,
+			"healthy": 3427329,
+			"points": 9,
+			"removed": 12777
+		},
+		{
+			"active": 88253,
+			"cure": 852,
+			"day": 32,
+			"detected": 1,
+			"healthy": 3426721,
+			"points": 9,
+			"removed": 15026
+		},
+		{
+			"active": 86653,
+			"cure": 898,
+			"day": 33,
+			"detected": 2,
+			"healthy": 3426114,
+			"points": 6,
+			"removed": 17233
+		},
+		{
+			"active": 85303,
+			"cure": 941,
+			"day": 34,
+			"detected": 2,
+			"healthy": 3425298,
+			"points": 6,
+			"removed": 19399
+		},
+		{
+			"active": 84079,
+			"cure": 984,
+			"day": 35,
+			"detected": 2,
+			"healthy": 3424389,
+			"points": 9,
+			"removed": 21532
+		},
+		{
+			"active": 84285,
+			"cure": 1027,
+			"day": 36,
+			"detected": 2,
+			"healthy": 3422080,
+			"points": 9,
+			"removed": 23635
+		},
+		{
+			"active": 85392,
+			"cure": 1070,
+			"day": 37,
+			"detected": 2,
+			"healthy": 3418866,
+			"points": 9,
+			"removed": 25742
+		},
+		{
+			"active": 87659,
+			"cure": 1113,
+			"day": 38,
+			"detected": 2,
+			"healthy": 3414463,
+			"points": 9,
+			"removed": 27878
+		},
+		{
+			"active": 91988,
+			"cure": 1157,
+			"day": 39,
+			"detected": 2,
+			"healthy": 3407942,
+			"points": 9,
+			"removed": 30070
+		},
+		{
+			"active": 98242,
+			"cure": 1187,
+			"day": 40,
+			"detected": 2,
+			"healthy": 3399389,
+			"points": 12,
+			"removed": 32369
+		},
+		{
+			"active": 102413,
+			"cure": 1218,
+			"day": 41,
+			"detected": 3,
+			"healthy": 3392763,
+			"points": 12,
+			"removed": 34824
+		},
+		{
+			"active": 105232,
+			"cure": 1251,
+			"day": 42,
+			"detected": 3,
+			"healthy": 3387384,
+			"points": 12,
+			"removed": 37384
+		},
+		{
+			"active": 108814,
+			"cure": 1284,
+			"day": 43,
+			"detected": 3,
+			"healthy": 3381173,
+			"points": 12,
+			"removed": 40013
+		},
+		{
+			"active": 112989,
+			"cure": 1328,
+			"day": 44,
+			"detected": 3,
+			"healthy": 3374278,
+			"points": 12,
+			"removed": 42733
+		},
+		{
+			"active": 118088,
+			"cure": 1373,
+			"day": 45,
+			"detected": 3,
+			"healthy": 3366356,
+			"points": 12,
+			"removed": 45556
+		},
+		{
+			"active": 124062,
+			"cure": 1465,
+			"day": 46,
+			"detected": 3,
+			"healthy": 3357431,
+			"points": 12,
+			"removed": 48507
+		},
+		{
+			"active": 130820,
+			"cure": 1558,
+			"day": 47,
+			"detected": 3,
+			"healthy": 3347576,
+			"points": 12,
+			"removed": 51604
+		},
+		{
+			"active": 149107,
+			"cure": 1653,
+			"day": 48,
+			"detected": 4,
+			"healthy": 3326024,
+			"points": 12,
+			"removed": 54869
+		},
+		{
+			"active": 174177,
+			"cure": 1751,
+			"day": 49,
+			"detected": 5,
+			"healthy": 3297228,
+			"points": 12,
+			"removed": 58595
+		},
+		{
+			"active": 208185,
+			"cure": 1852,
+			"day": 50,
+			"detected": 6,
+			"healthy": 3258869,
+			"points": 15,
+			"removed": 62946
+		},
+		{
+			"active": 237573,
+			"cure": 1953,
+			"day": 51,
+			"detected": 6,
+			"healthy": 3224281,
+			"points": 15,
+			"removed": 68146
+		},
+		{
+			"active": 246235,
+			"cure": 2029,
+			"day": 52,
+			"detected": 6,
+			"healthy": 3209685,
+			"points": 15,
+			"removed": 74080
+		},
+		{
+			"active": 250293,
+			"cure": 2105,
+			"day": 53,
+			"detected": 6,
+			"healthy": 3199477,
+			"points": 15,
+			"removed": 80230
+		},
+		{
+			"active": 254335,
+			"cure": 2157,
+			"day": 54,
+			"detected": 6,
+			"healthy": 3189182,
+			"points": 15,
+			"removed": 86483
+		},
+		{
+			"active": 259516,
+			"cure": 2210,
+			"day": 55,
+			"detected": 6,
+			"healthy": 3177645,
+			"points": 18,
+			"removed": 92839
+		},
+		{
+			"active": 265497,
+			"cure": 2262,
+			"day": 56,
+			"detected": 6,
+			"healthy": 3165179,
+			"points": 18,
+			"removed": 99324
+		},
+		{
+			"active": 273883,
+			"cure": 2315,
+			"day": 57,
+			"detected": 6,
+			"healthy": 3150159,
+			"points": 15,
+			"removed": 105958
+		},
+		{
+			"active": 284794,
+			"cure": 2392,
+			"day": 58,
+			"detected": 6,
+			"healthy": 3132406,
+			"points": 15,
+			"removed": 112800
+		},
+		{
+			"active": 297901,
+			"cure": 2472,
+			"day": 59,
+			"detected": 8,
+			"healthy": 3112185,
+			"points": 15,
+			"removed": 119914
+		},
+		{
+			"active": 337221,
+			"cure": 2553,
+			"day": 60,
+			"detected": 8,
+			"healthy": 3065422,
+			"points": 18,
+			"removed": 127357
+		},
+		{
+			"active": 389366,
+			"cure": 2637,
+			"day": 61,
+			"detected": 9,
+			"healthy": 3004850,
+			"points": 18,
+			"removed": 135784
+		},
+		{
+			"active": 456895,
+			"cure": 2723,
+			"day": 62,
+			"detected": 10,
+			"healthy": 2927593,
+			"points": 18,
+			"removed": 145512
+		},
+		{
+			"active": 542934,
+			"cure": 2812,
+			"day": 63,
+			"detected": 10,
+			"healthy": 2830138,
+			"points": 18,
+			"removed": 156928
+		},
+		{
+			"active": 604139,
+			"cure": 2889,
+			"day": 64,
+			"detected": 11,
+			"healthy": 2755370,
+			"points": 18,
+			"removed": 170491
+		},
+		{
+			"active": 608845,
+			"cure": 2967,
+			"day": 65,
+			"detected": 11,
+			"healthy": 2735569,
+			"points": 21,
+			"removed": 185586
+		},
+		{
+			"active": 614349,
+			"cure": 3020,
+			"day": 66,
+			"detected": 11,
+			"healthy": 2714850,
+			"points": 21,
+			"removed": 200801
+		},
+		{
+			"active": 622701,
+			"cure": 3074,
+			"day": 67,
+			"detected": 11,
+			"healthy": 2691143,
+			"points": 21,
+			"removed": 216156
+		},
+		{
+			"active": 633939,
+			"cure": 3129,
+			"day": 68,
+			"detected": 11,
+			"healthy": 2664343,
+			"points": 21,
+			"removed": 231718
+		},
+		{
+			"active": 647677,
+			"cure": 3193,
+			"day": 69,
+			"detected": 11,
+			"healthy": 2634762,
+			"points": 18,
+			"removed": 247561
+		},
+		{
+			"active": 662080,
+			"cure": 3287,
+			"day": 70,
+			"detected": 11,
+			"healthy": 2604172,
+			"points": 21,
+			"removed": 263748
+		}
+	],
+	"journal": [
+		"Jour 0 · Départ dans la région Boréale.",
+		"Jour 0 · Standard · Difficulté Normale · Phase Standard.",
+		"Jour 0 · Aléas et résilience · Graine 2042 · Conséquences favorables ou défavorables à la diffusion ; calendrier tiré au lancement.",
+		"Jour 10 · Premiers cas dans la région Occident.",
+		"Jour 10 · Premiers cas dans la région Centrale.",
+		"Jour 10 · Évolution acquise : Discrétion.",
+		"Jour 13 · Détection dans la région Boréale ; recherche mondiale renforcée.",
+		"Jour 13 · Réaction de Boréale — Boréale : croissance ×0.80 ; fin au jour 21.",
+		"Jour 18 · Tempête boréale — Boréale ↔ Centrale : route fermée ; fin au jour 26.",
+		"Jour 19 · Aléa favorable · Fenêtre maritime favorable — transport maritime : échanges ×1.40 ; fin au jour 24.",
+		"Jour 20 · Crise de coordination : choisir une stratégie [F2].",
+		"Jour 21 · Fin : Réaction de Boréale.",
+		"Jour 21 · Stratégie : Consolider les foyers (3 points). 8 jours dès demain : croissance ×1,6, échanges ×0,2, remède ×0,95.",
+		"Jour 22 · Contrôle des transports — Boréale ↔ Centrale : route fermée ; fin au jour 32.",
+		"Jour 24 · Fin : Aléa favorable · Fenêtre maritime favorable.",
+		"Jour 24 · Aléa favorable · Reprise des échanges terrestres — transport terrestre : échanges ×1.35 ; fin au jour 31.",
+		"Jour 26 · Fin : Tempête boréale.",
+		"Jour 29 · Premiers cas dans la région Toundra.",
+		"Jour 29 · Premiers cas dans la région Hauts-Pays.",
+		"Jour 29 · Premiers cas dans la région Péninsule.",
+		"Jour 31 · Fin : Aléa favorable · Reprise des échanges terrestres.",
+		"Jour 32 · Crise de coordination : choisir une stratégie [F2].",
+		"Jour 32 · Fin : Contrôle des transports.",
+		"Jour 32 · Route rétablie : Boréale ↔ Centrale.",
+		"Jour 33 · Aléa défavorable · Tempête maritime — Littoral ↔ Corail : route fermée ; fin au jour 37.",
+		"Jour 33 · Détection dans la région Occident ; recherche mondiale renforcée.",
+		"Jour 33 · Réaction de Occident — Occident : croissance ×0.80 ; fin au jour 41.",
+		"Jour 33 · Stratégie : Consolider les foyers (3 points). 8 jours dès demain : croissance ×1,6, échanges ×0,2, remède ×0,95.",
+		"Jour 35 · Mesures de prudence — Centrale : croissance ×0.65 ; fin au jour 42.",
+		"Jour 37 · Fin : Aléa défavorable · Tempête maritime.",
+		"Jour 37 · Route rétablie : Littoral ↔ Corail.",
+		"Jour 37 · Premiers cas dans la région Méridien.",
+		"Jour 37 · Premiers cas dans la région Savane.",
+		"Jour 40 · Contrôles aériens — transport aérien : échanges ×0.60 ; fin au jour 48.",
+		"Jour 40 · Aléa favorable · Panne de coordination de la recherche — remède ×0.70 ; fin au jour 46.",
+		"Jour 41 · Fin : Réaction de Occident.",
+		"Jour 41 · Détection dans la région Centrale ; recherche mondiale renforcée.",
+		"Jour 41 · Réaction de Centrale — Centrale : croissance ×0.80 ; fin au jour 49.",
+		"Jour 42 · Fin : Mesures de prudence.",
+		"Jour 44 · Crise de coordination : choisir une stratégie [F2].",
+		"Jour 44 · Mobilisation scientifique — remède ×1.35 ; fin au jour 52.",
+		"Jour 45 · Retards portuaires — transport maritime : échanges ×0.70 ; fin au jour 52.",
+		"Jour 45 · Stratégie : Forcer les relais (3 points). 8 jours dès demain : croissance ×0,85, échanges ×4, remède ×1,45. Les routes fermées restent fermées.",
+		"Jour 46 · Fin : Aléa favorable · Panne de coordination de la recherche.",
+		"Jour 47 · Prudence dans le Delta — Delta : croissance ×0.80 ; fin au jour 53.",
+		"Jour 48 · Fin : Contrôles aériens.",
+		"Jour 48 · Détection dans la région Toundra ; recherche mondiale renforcée.",
+		"Jour 48 · Réaction de Toundra — Toundra : croissance ×0.80 ; fin au jour 56.",
+		"Jour 48 · Premiers cas dans la région Taïga.",
+		"Jour 48 · Premiers cas dans la région Plateaux.",
+		"Jour 48 · Premiers cas dans la région Atlantide.",
+		"Jour 49 · Fin : Réaction de Centrale.",
+		"Jour 49 · Détection dans la région Hauts-Pays ; recherche mondiale renforcée.",
+		"Jour 49 · Réaction de Hauts-Pays — Hauts-Pays : croissance ×0.80 ; fin au jour 57.",
+		"Jour 50 · Détection dans la région Péninsule ; recherche mondiale renforcée.",
+		"Jour 50 · Réaction de Péninsule — Péninsule : croissance ×0.80 ; fin au jour 58.",
+		"Jour 52 · Fin : Retards portuaires.",
+		"Jour 52 · Fin : Mobilisation scientifique.",
+		"Jour 52 · Perturbation des routes — transport terrestre : échanges ×0.75 ; fin au jour 58.",
+		"Jour 52 · Aléa favorable · Flux régionaux rétablis — Hauts-Pays : croissance ×1.25 ; fin au jour 56.",
+		"Jour 53 · Fin : Prudence dans le Delta.",
+		"Jour 53 · Premiers cas dans la région Australe.",
+		"Jour 53 · Premiers cas dans la région Orient.",
+		"Jour 53 · Premiers cas dans la région Steppes.",
+		"Jour 53 · Premiers cas dans la région Delta.",
+		"Jour 56 · Crise de coordination : choisir une stratégie [F2].",
+		"Jour 56 · Fin : Aléa favorable · Flux régionaux rétablis.",
+		"Jour 56 · Fin : Réaction de Toundra.",
+		"Jour 57 · Fin : Réaction de Hauts-Pays.",
+		"Jour 57 · Stratégie : Forcer les relais (3 points). 8 jours dès demain : croissance ×0,85, échanges ×4, remède ×1,45. Les routes fermées restent fermées.",
+		"Jour 58 · Fin : Perturbation des routes.",
+		"Jour 58 · Fin : Réaction de Péninsule.",
+		"Jour 58 · Ouverture des corridors aériens — transport aérien : échanges ×1.20 ; fin au jour 64.",
+		"Jour 58 · Aléa défavorable · Séisme : déplacements freinés — Corail : croissance ×0.65 ; fin au jour 65.",
+		"Jour 59 · Détection dans la région Méridien ; recherche mondiale renforcée.",
+		"Jour 59 · Réaction de Méridien — Méridien : croissance ×0.80 ; fin au jour 67.",
+		"Jour 59 · Détection dans la région Savane ; recherche mondiale renforcée.",
+		"Jour 59 · Réaction de Savane — Savane : croissance ×0.80 ; fin au jour 67.",
+		"Jour 60 · Premiers cas dans la région Équateur.",
+		"Jour 61 · Convois coordonnés — transport maritime : échanges ×1.20 ; fin au jour 68.",
+		"Jour 61 · Détection dans la région Plateaux ; recherche mondiale renforcée.",
+		"Jour 61 · Réaction de Plateaux — Plateaux : croissance ×0.80 ; fin au jour 69.",
+		"Jour 62 · Détection dans la région Taïga ; recherche mondiale renforcée.",
+		"Jour 62 · Réaction de Taïga — Taïga : croissance ×0.80 ; fin au jour 70.",
+		"Jour 64 · Fin : Ouverture des corridors aériens.",
+		"Jour 64 · Retards de coordination — remède ×0.85 ; fin au jour 69.",
+		"Jour 64 · Détection dans la région Atlantide ; recherche mondiale renforcée.",
+		"Jour 64 · Réaction de Atlantide — Atlantide : croissance ×0.80 ; fin au jour 72.",
+		"Jour 65 · Fin : Aléa défavorable · Séisme : déplacements freinés.",
+		"Jour 65 · Premiers cas dans la région Jade.",
+		"Jour 65 · Premiers cas dans la région Cap Sud.",
+		"Jour 66 · Premiers cas dans la région Levant.",
+		"Jour 66 · Premiers cas dans la région Littoral.",
+		"Jour 67 · Fin : Réaction de Savane.",
+		"Jour 67 · Fin : Réaction de Méridien.",
+		"Jour 67 · Aléa défavorable · Panne des communications aériennes — transport aérien : échanges ×0.55 ; fin au jour 74.",
+		"Jour 68 · Crise de coordination : choisir une stratégie [F2].",
+		"Jour 68 · Fin : Convois coordonnés.",
+		"Jour 69 · Fin : Retards de coordination.",
+		"Jour 69 · Fin : Réaction de Plateaux.",
+		"Jour 69 · Stratégie : Forcer les relais (3 points). 8 jours dès demain : croissance ×0,85, échanges ×4, remède ×1,45. Les routes fermées restent fermées.",
+		"Jour 70 · Fin : Réaction de Taïga."
+	],
+	"objective": {},
+	"outcome": "",
+	"phase": "standard",
+	"points": 21,
+	"purchase_history": [
+		{
+			"cost": 14,
+			"day": 10,
+			"id": "discretion"
+		}
+	],
+	"purchased": [
+		"discretion"
+	],
+	"regions": [
+		{
+			"active": 32586,
+			"detected": true,
+			"healthy": 0,
+			"id": "boreale",
+			"removed": 67414
+		},
+		{
+			"active": 88280,
+			"detected": true,
+			"healthy": 0,
+			"id": "occident",
+			"removed": 71720
+		},
+		{
+			"active": 167041,
+			"detected": true,
+			"healthy": 0,
+			"id": "centrale",
+			"removed": 52959
+		},
+		{
+			"active": 1289,
+			"detected": false,
+			"healthy": 118587,
+			"id": "australe",
+			"removed": 124
+		},
+		{
+			"active": 2090,
+			"detected": false,
+			"healthy": 237683,
+			"id": "orient",
+			"removed": 227
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 80000,
+			"id": "archipel",
+			"removed": 0
+		},
+		{
+			"active": 54347,
+			"detected": true,
+			"healthy": 0,
+			"id": "toundra",
+			"removed": 15653
+		},
+		{
+			"active": 9005,
+			"detected": true,
+			"healthy": 79851,
+			"id": "taiga",
+			"removed": 1144
+		},
+		{
+			"active": 1951,
+			"detected": false,
+			"healthy": 137867,
+			"id": "steppes",
+			"removed": 182
+		},
+		{
+			"active": 20,
+			"detected": false,
+			"healthy": 179976,
+			"id": "levant",
+			"removed": 4
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 110000,
+			"id": "pacifique",
+			"removed": 0
+		},
+		{
+			"active": 78314,
+			"detected": true,
+			"healthy": 0,
+			"id": "hauts_pays",
+			"removed": 21686
+		},
+		{
+			"active": 38335,
+			"detected": true,
+			"healthy": 146381,
+			"id": "meridien",
+			"removed": 5284
+		},
+		{
+			"active": 7,
+			"detected": false,
+			"healthy": 159989,
+			"id": "littoral",
+			"removed": 4
+		},
+		{
+			"active": 130097,
+			"detected": true,
+			"healthy": 0,
+			"id": "peninsule",
+			"removed": 19903
+		},
+		{
+			"active": 17116,
+			"detected": true,
+			"healthy": 110816,
+			"id": "plateaux",
+			"removed": 2068
+		},
+		{
+			"active": 31662,
+			"detected": true,
+			"healthy": 134053,
+			"id": "savane",
+			"removed": 4285
+		},
+		{
+			"active": 3055,
+			"detected": false,
+			"healthy": 206649,
+			"id": "delta",
+			"removed": 296
+		},
+		{
+			"active": 40,
+			"detected": false,
+			"healthy": 229955,
+			"id": "jade",
+			"removed": 5
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 90000,
+			"id": "corail",
+			"removed": 0
+		},
+		{
+			"active": 6205,
+			"detected": true,
+			"healthy": 103056,
+			"id": "atlantide",
+			"removed": 739
+		},
+		{
+			"active": 608,
+			"detected": false,
+			"healthy": 179346,
+			"id": "equateur",
+			"removed": 46
+		},
+		{
+			"active": 32,
+			"detected": false,
+			"healthy": 99963,
+			"id": "cap_sud",
+			"removed": 5
+		},
+		{
+			"active": 0,
+			"detected": false,
+			"healthy": 200000,
+			"id": "mousson",
+			"removed": 0
+		}
+	],
+	"rng": "736728857504403492",
+	"rules_profile": "strategy-0.25",
+	"saved_at": "2026-10-21T12:00:00",
+	"scenario": "standard",
+	"seed": "2042",
+	"selected": "boreale",
+	"speed": 1,
+	"start": "boreale",
+	"strategy": {
+		"agent": "pulse",
+		"choices": [
+			{
+				"choice": "anchor",
+				"day": 21,
+				"slot": 20
+			},
+			{
+				"choice": "anchor",
+				"day": 33,
+				"slot": 32
+			},
+			{
+				"choice": "surge",
+				"day": 45,
+				"slot": 44
+			},
+			{
+				"choice": "surge",
+				"day": 57,
+				"slot": 56
+			},
+			{
+				"choice": "surge",
+				"day": 69,
+				"slot": 68
+			}
+		]
+	}
+}

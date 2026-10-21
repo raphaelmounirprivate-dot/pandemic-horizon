@@ -112,3 +112,34 @@ Crise de coordination au J20, puis tous les 12 jours jusqu’au J128 : choix pen
 Le réseau de base applique ×1,5 ; si Mobilité est achetée, son effet se compose aussi avec ×0,55. NACRE double les exports d’une région dont le cumul touché atteint 40 %. ONDE alterne un cycle de 12 jours : croissance ×1,6 aux positions 0–4, ×0,7 aux positions 5–11. VOILE applique croissance ×1,45 avant détection, ×0,85 après. Il ne modifie pas le seuil de détection. Les coefficients d’agent affichés dans la région comprennent les choix stratégiques actifs ; ils restent distincts des autres modificateurs.
 
 Règles dans `data/strategy-0.25.json`. Le format 8 enregistre l’agent et le registre chronologique des décisions. Son empreinte ajoute ce fichier à l’empreinte tactics ; formats 1–7 toujours lus sans ajout rétroactif. Les valeurs sont candidates et demandent encore des essais joueurs.
+
+Depuis la 0.26, ce profil n’est plus proposé aux nouvelles parties ; ses sauvegardes se chargent et se poursuivent avec les règles ci-dessus.
+
+## Profil stratégique expérimental 0.26
+
+Profil des nouvelles parties stratégiques, `data/strategy-0.26.json`, format 9. Le choix de l’agent, le rythme (6 s par journée), les pauses, le calendrier (J20 puis tous les 12 jours jusqu’au J128, quatre jours pour choisir, effets de huit jours dès le lendemain), le réseau ×1,5, Mobilité ×0,55 et NACRE sont identiques à la 0.25. Différences :
+
+- **ONDE** : cycle de 10 jours, croissance ×1,65 aux positions 0–3, ×0,7 aux positions 4–9. Les décisions tombent donc à des moments différents du cycle.
+- **Discrétion** : l’effet permanent (remède ×0,7) est remplacé par un effet de 30 jours après l’achat : remède ×0,7, seuil proportionnel de détection ×1,6, échanges ×0,85. Ensuite, aucun effet. Le texte de la compétence est adapté dans l’écran Évolution.
+- **VOILE** : coefficients inchangés (×1,45 avant détection, ×0,85 après) ; Discrétion retarde maintenant sa détection.
+- **Mobilité** : en plus de ×0,55 sur les échanges, remède ×1,15 tant qu’elle est acquise (contrepartie mesurée dans [EQUILIBRAGE-0.26-VARIANTES](equilibrage/EQUILIBRAGE-0.26-VARIANTES.md)). Le texte de la compétence est adapté dans l’écran Évolution.
+- **Situations** : à l’ouverture d’une crise, l’état laissé par la veille détermine la situation, par priorité : liaison interrompue (une région touchée a une liaison fermée), pression scientifique (remède ≥ 35 %), foyer développé (une région touchée à 60 %), passage ouvert (un foyer d’au moins 1 000 actifs relié par une liaison ouverte à une région sans aucun cas), sinon crise de coordination. Une situation autre que la coordination ne revient pas deux fois de suite. La première région trouvée dans l’ordre du catalogue devient la région visée.
+
+| Situation | Réponse | Coût | Effets pendant 8 jours |
+| --- | --- | --- | --- |
+| Coordination | Consolider les foyers | 3 | croissance ×1,6, échanges ×0,2, remède ×0,95 |
+| Coordination | Forcer les relais | 3 | croissance ×0,85, échanges ×4, remède ×1,45 |
+| Liaison interrompue | Réserves locales | 2 | croissance ×1,8 dans la région visée |
+| Liaison interrompue | Redéployer ailleurs | 3 | croissance ×1,2, échanges ×1,5, remède ×1,15 |
+| Pression scientifique | Faire profil bas | 4 | remède ×0,6, croissance ×0,85, échanges ×0,7 |
+| Pression scientifique | Course de vitesse | 3 | croissance ×1,4, échanges ×2, remède ×1,35 |
+| Foyer développé | Essaimer depuis le foyer | 3 | échanges ×3, croissance ×0,9, remède ×1,2 |
+| Foyer développé | Ancrer le foyer | 2 | remède ×0,85, croissance ×1,1, échanges ×0,5 |
+| Passage ouvert | Franchir le passage | 3 | échanges ×3,5, croissance ×2 dans la région visée et ×0,9 ailleurs, remède ×1,25 |
+| Passage ouvert | Contourner | 1 | croissance ×1,2, échanges ×0,8 |
+
+Chaque situation propose aussi « Garder ses points », gratuit et neutre, retenu à l’échéance. Aucun choix ne rouvre une route fermée.
+
+Lisibilité : sous le statut stratégique, une ligne « En cours » résume le choix actif, la phase d’ONDE et Discrétion avec leurs jours restants ; les événements actifs détaillent leurs coefficients et la date de la prochaine phase d’ONDE.
+
+Le format 9 enregistre le profil, l’agent, le registre (créneau, jour, situation, région visée, réponse) et la crise ouverte. Empreinte : celle de tactics plus ce fichier. Mesures et limites : [EQUILIBRAGE-0.26-SITUATIONS](equilibrage/EQUILIBRAGE-0.26-SITUATIONS.md).

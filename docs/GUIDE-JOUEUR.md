@@ -225,3 +225,21 @@ Dans Nouvelle partie → Difficulté et options, choisir NACRE, ONDE ou VOILE. H
 NACRE récompense les foyers développés ; ONDE demande de tenir compte du cycle de croissance ; VOILE favorise les régions non détectées. À partir du J20, une décision revient tous les 12 jours : consolider les foyers, forcer les relais ou garder les points. Lire les trois contreparties ; F2 revient au choix en pause. Les effets durent huit jours dès le lendemain. Sans réponse pendant quatre jours, les points sont conservés gratuitement.
 
 Une journée dure 6 secondes à ×1 ; pause et ×2/×4 restent disponibles. Le jeu se met aussi en pause lorsqu’un gain ouvre un premier achat ou qu’une décision arrive. L’ambiance sonore reste facultative dans Paramètres. Le bilan explique la couverture manquante ou la marge face au remède. Ce profil est expérimental : les sessions joueurs restent à réaliser.
+
+### Situations (0.26)
+
+Depuis la 0.26, chaque crise dépend de l’état du monde. La ligne verte sous la carte nomme la situation et, s’il y a lieu, la région visée ; « Situation : » explique ce qui l’a déclenchée :
+
+- **Liaison interrompue** : une région touchée a perdu une liaison. Réserves locales renforce cette région ; Redéployer ailleurs soutient le reste du réseau.
+- **Pression scientifique** : le remède a atteint 35 %. Faire profil bas freine le remède, mais aussi la diffusion ; Course de vitesse accélère tout, remède compris.
+- **Foyer développé** : une région est touchée à 60 %. Essaimer exporte depuis les foyers ; Ancrer freine le remède en limitant les échanges.
+- **Passage ouvert** : un foyer actif est relié à une région encore épargnée. Franchir le passage pousse les échanges et double la croissance dans cette région.
+- **Crise de coordination** : aucune de ces situations ; Consolider ou Forcer comme en 0.25.
+
+Une même situation ne revient pas deux fois de suite. Garder ses points reste toujours possible.
+
+La ligne « En cours » résume ce qui agit maintenant : la réponse choisie et ses jours restants, la phase d’ONDE (poussée ou repli, durée, phase suivante) et Discrétion. Le détail des coefficients figure en tête des événements actifs.
+
+ONDE suit désormais un cycle de 10 jours (4 jours de poussée, 6 de repli), alors que les décisions reviennent tous les 12 jours : selon la crise, le choix tombe en poussée ou en repli. Discrétion agit pendant 30 jours après l’achat : elle ralentit le remède, retarde la détection, mais réduit les échanges ; ensuite, elle n’a plus d’effet. Pour VOILE, ce retard prolonge la croissance ×1,45 des régions non détectées. Mobilité accélère les échanges mais attire la recherche : remède ×1,15 tant qu’elle est acquise.
+
+Les parties 0.25 sauvegardées se poursuivent avec leurs règles d’origine.

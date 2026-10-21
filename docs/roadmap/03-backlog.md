@@ -99,3 +99,17 @@ Voir l'[analyse](06-analyse-2026-10-19.md) et le [point 29](../suivi/29-dette-te
 | STR-06 — essais | À réaliser | Tester compréhension, attente, choix et envie de rejouer ; aucun essai humain déduit des simulations |
 
 Voir le [point 36](../suivi/36-profil-strategique.md). ANA-03 reste valable pour le profil historique tactics-0.22 ; le nouveau profil n’en réécrit pas les règles.
+
+## Lot 0.26 — situations stratégiques (21 octobre)
+
+Six pistes issues de l’analyse du profil 0.25 ; profil `strategy-0.26`, format 9. Statuts : voir le [point 37](../suivi/37-situations-strategiques.md) et [EQUILIBRAGE-0.26-SITUATIONS](../equilibrage/EQUILIBRAGE-0.26-SITUATIONS.md).
+
+| ID | Statut | Preuve / suite |
+| --- | --- | --- |
+| STR-07 — Discrétion / Mobilité | Implémenté et mesuré | Contrepartie remède ×1,15 adoptée par l’auteur : Mobilité 342/420 en difficile (418 avant), Discrétion 283, Croissance 269 ([variantes](../equilibrage/EQUILIBRAGE-0.26-VARIANTES.md)) |
+| STR-08 — VOILE | Mesuré, décision attendue | Variantes de Discrétion sans effet propre (détection au J11). Levier propre : Discrétion à 10 points pour VOILE (ordre Discrétion 44 → 58/60), mais VOILE devient le plus fort agent ; compensation à mesurer |
+| STR-09 — ONDE | Implémenté et testé automatiquement | Cycle de 10 jours contre 12 pour les décisions ; poussée ou repli selon la crise |
+| STR-10 — expansion | Implémenté et mesuré | Passage ouvert (région visée) ; chaque réponse payante a des victoires propres (11 / 7 paires) ; passage rare (350 occurrences) |
+| STR-11 — crises liées au monde | Implémenté et mesuré | Cinq situations, 3 à 5 distinctes par partie ; « Région isolée » jamais atteinte, remplacée par Liaison interrompue |
+| STR-12 — lisibilité | Implémenté, revu sur captures | Ligne « En cours » et détail des effets ; 12 captures aux trois résolutions ; compréhension à vérifier avec des joueurs |
+| STR-06 — essais | À réaliser | Inchangé : aucun essai humain |

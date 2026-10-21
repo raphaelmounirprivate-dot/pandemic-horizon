@@ -1,0 +1,100 @@
+{
+  "schema_version": 2,
+  "profile": "strategy-0.26",
+  "day_seconds": 6.0,
+  "first_decision": 20,
+  "interval": 12,
+  "window": 4,
+  "duration": 8,
+  "last_decision": 128,
+  "base_exchange": 1.5,
+  "mobility_factor": 0.55,
+  "mobility_cure": 1.15,
+  "mobility_description": "Échanges entre régions : multipliés par 3. Contrepartie de ce profil : remède ×1,15 tant qu'elle est acquise.",
+  "agents": {
+    "nacre": {
+      "name": "NACRE · relais",
+      "description": "Les régions touchées à 40 % exportent deux fois plus. Consolider des foyers ouvre le réseau.",
+      "threshold": 0.4,
+      "export": 2.0
+    },
+    "pulse": {
+      "name": "ONDE · cycles",
+      "description": "Cycle de 10 jours : croissance ×1,65 pendant 4 jours, puis ×0,7. Les décisions tombent à un moment différent du cycle.",
+      "period": 10,
+      "burst": 4,
+      "high": 1.65,
+      "low": 0.7
+    },
+    "veil": {
+      "name": "VOILE · discrétion",
+      "description": "Croissance ×1,45 avant détection, ×0,85 ensuite. Discrétion retarde la détection pendant 30 jours.",
+      "hidden": 1.45,
+      "detected": 0.85
+    }
+  },
+  "discretion": {
+    "days": 30,
+    "cure": 0.7,
+    "exchange": 0.85,
+    "detection": 1.6,
+    "description": "Pendant 30 jours après l'achat : remède ×0,7, seuil de détection ×1,6, échanges ×0,85. Ensuite, aucun effet."
+  },
+  "triggers": {
+    "saturated": 0.6,
+    "science": 35,
+    "passage": 1000
+  },
+  "crises": [
+    {
+      "id": "coordination",
+      "name": "Crise de coordination",
+      "description": "Aucune situation particulière : choix généraux.",
+      "choices": [
+        {"id": "anchor", "name": "Consolider les foyers", "cost": 3, "growth": 1.6, "exchange": 0.2, "cure": 0.95, "description": "8 jours dès demain : croissance ×1,6, échanges ×0,2, remède ×0,95."},
+        {"id": "surge", "name": "Forcer les relais", "cost": 3, "growth": 0.85, "exchange": 4.0, "cure": 1.45, "description": "8 jours dès demain : croissance ×0,85, échanges ×4, remède ×1,45. Les routes fermées restent fermées."},
+        {"id": "observe", "name": "Garder ses points", "cost": 0, "growth": 1.0, "exchange": 1.0, "cure": 1.0, "description": "Aucun effet supplémentaire ; conserver le budget des évolutions."}
+      ]
+    },
+    {
+      "id": "cut",
+      "name": "Liaison interrompue",
+      "description": "Une liaison d'une région touchée est fermée.",
+      "choices": [
+        {"id": "reserves", "name": "Réserves locales", "cost": 2, "growth": 1.0, "exchange": 1.0, "cure": 1.0, "target_growth": 1.8, "description": "8 jours dès demain : croissance ×1,8 dans la région coupée seulement."},
+        {"id": "redeploy", "name": "Redéployer ailleurs", "cost": 3, "growth": 1.2, "exchange": 1.5, "cure": 1.15, "description": "8 jours dès demain : croissance ×1,2, échanges ×1,5, remède ×1,15 partout."},
+        {"id": "observe", "name": "Garder ses points", "cost": 0, "growth": 1.0, "exchange": 1.0, "cure": 1.0, "description": "Aucun effet supplémentaire ; attendre la réouverture."}
+      ]
+    },
+    {
+      "id": "science",
+      "name": "Pression scientifique",
+      "description": "Le remède a atteint 35 % : la recherche s'accélère.",
+      "choices": [
+        {"id": "hide", "name": "Faire profil bas", "cost": 4, "growth": 0.85, "exchange": 0.7, "cure": 0.6, "description": "8 jours dès demain : remède ×0,6, croissance ×0,85, échanges ×0,7."},
+        {"id": "race", "name": "Course de vitesse", "cost": 3, "growth": 1.4, "exchange": 2.0, "cure": 1.35, "description": "8 jours dès demain : croissance ×1,4, échanges ×2, remède ×1,35."},
+        {"id": "observe", "name": "Garder ses points", "cost": 0, "growth": 1.0, "exchange": 1.0, "cure": 1.0, "description": "Aucun effet supplémentaire ; conserver le budget des évolutions."}
+      ]
+    },
+    {
+      "id": "saturated",
+      "name": "Foyer développé",
+      "description": "Une région est touchée à 60 % : elle n'a presque plus de marge locale.",
+      "choices": [
+        {"id": "export", "name": "Essaimer depuis le foyer", "cost": 3, "growth": 0.9, "exchange": 3.0, "cure": 1.2, "description": "8 jours dès demain : échanges ×3, croissance ×0,9, remède ×1,2."},
+        {"id": "entrench", "name": "Ancrer le foyer", "cost": 2, "growth": 1.1, "exchange": 0.5, "cure": 0.85, "description": "8 jours dès demain : remède ×0,85, croissance ×1,1, échanges ×0,5."},
+        {"id": "observe", "name": "Garder ses points", "cost": 0, "growth": 1.0, "exchange": 1.0, "cure": 1.0, "description": "Aucun effet supplémentaire ; conserver le budget des évolutions."}
+      ]
+    },
+    {
+      "id": "passage",
+      "name": "Passage ouvert",
+      "description": "Une liaison ouverte relie un foyer actif à une région encore épargnée.",
+      "choices": [
+        {"id": "cross", "name": "Franchir le passage", "cost": 3, "growth": 0.9, "exchange": 3.5, "cure": 1.25, "target_growth": 2.0, "description": "8 jours dès demain : échanges ×3,5, croissance ×2 dans la région visée, ×0,9 ailleurs, remède ×1,25."},
+        {"id": "bypass", "name": "Contourner", "cost": 1, "growth": 1.2, "exchange": 0.8, "cure": 1.0, "description": "8 jours dès demain : croissance ×1,2, échanges ×0,8."},
+        {"id": "observe", "name": "Garder ses points", "cost": 0, "growth": 1.0, "exchange": 1.0, "cure": 1.0, "description": "Aucun effet supplémentaire ; conserver le budget des évolutions."}
+      ]
+    }
+  ]
+}

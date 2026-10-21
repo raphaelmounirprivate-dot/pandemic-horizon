@@ -1,5 +1,5 @@
 ﻿param(
-    [ValidateSet('Import', 'Test', 'Play', 'Export', 'Capture', 'CaptureObjectives', 'CaptureArctic', 'CaptureDecisions', 'Balance', 'BalanceObjectives', 'BalanceArctic', 'BalanceDecisions', 'BalanceParameters')]
+    [ValidateSet('Import', 'Test', 'Play', 'Export', 'Capture', 'CaptureObjectives', 'CaptureArctic', 'CaptureDecisions', 'Balance', 'BalanceObjectives', 'BalanceArctic', 'BalanceDecisions', 'BalanceParameters', 'BalanceStrategy', 'BalanceStrategyLegacy', 'BalanceMobility', 'BalanceDiscretion', 'BalanceVeil')]
     [string]$Action = 'Test',
     [string]$Godot = "$PSScriptRoot/../.tools/godot/Godot_v4.7.2-stable_win64_console.exe"
 )
@@ -31,6 +31,11 @@ switch ($Action) {
     'BalanceArctic' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/balance_arctic.gd')) }
     'BalanceDecisions' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/balance_decisions.gd')) }
     'BalanceParameters' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/balance_parameters.gd')) }
+    'BalanceStrategy' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/balance_strategy.gd')) }
+    'BalanceStrategyLegacy' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/balance_strategy.gd', '--', '--legacy')) }
+    'BalanceMobility' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/strategy_variants.gd', '--', '--mobility')) }
+    'BalanceDiscretion' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/strategy_variants.gd', '--', '--discretion')) }
+    'BalanceVeil' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/strategy_variants.gd', '--', '--veil')) }
     'Play' { & $engine --path $projectRoot }
     'Export' {
         $gitArgs = @('-c', "safe.directory=$($projectRoot.Replace('\','/'))", '-C', $projectRoot)

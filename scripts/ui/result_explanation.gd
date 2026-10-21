@@ -11,5 +11,5 @@ static func text(world: RefCounted) -> String:
 		"defeat_extinction": text = "Plus aucun actif ; %.1f points de couverture manquaient. Les retirés ne relancent pas un foyer." % missing
 		_: text = "Partie en cours."
 	if not world.strategy.is_empty():
-		text += " %s · %d décisions, %d points engagés." % [world.Strategy.rules().agents[world.strategy.agent].name, world.strategy.choices.size(), world.Strategy.spent(world)]
+		text += " %s · %d décisions, %d points engagés." % [world.Strategy.rules_of(world).agents[world.strategy.agent].name, world.strategy.choices.size(), world.Strategy.spent(world)]
 	return text

@@ -133,8 +133,9 @@ static func refresh(ui) -> void:
 		button.blocked = not reason.is_empty() and not acquired
 		button.available = reason.is_empty() and not acquired
 		button.disabled = ui.tutorial != null and (ui.tutorial.stage != 2 or id != "transmission")
-		button.tooltip_text = skill.name + "\n" + skill.effect
-		button.show_state(skill.name, ui.Skills.short_effect(skill), "" if acquired else "%d pts" % skill.cost, state_text(acquired, reason, skill.cost - world.points), acquired or reason.is_empty())
+		button.tooltip_text = skill.name + "\n" + ui.World.Strategy.effect_text(world, id)
+		var short = ui.Skills.short_effect(skill) + (" · %d j" % ui.World.Strategy.rules_of(world).discretion.days if id == "discretion" and ui.World.Strategy.modern(world) else "")
+		button.show_state(skill.name, short, "" if acquired else "%d pts" % skill.cost, state_text(acquired, reason, skill.cost - world.points), acquired or reason.is_empty())
 	var id = ui.selected_evolution
 	var chosen = world.evolutions[id]
 	var full_reason = "Acquise" if id in world.purchased else ui.purchase_reason_for(id)
@@ -176,7 +177,7 @@ static func sheet_text(ui, id: String, reason: String) -> String:
 	var group = ui.Skills.family(id)
 	var state = "Acquise" if id in world.purchased else ("Disponible · sélectionner ne dépense rien, Évoluer achète" if reason.is_empty() else reason.trim_suffix("."))
 	if reason.begins_with("Points"): state = "Points insuffisants · %d requis, %d disponibles" % [skill.cost, world.points]
-	var lines: Array[String] = ["%s · %d points" % [group.get("name", "Compétence"), skill.cost], "État : " + state, "EFFET", skill.effect, "AVANT → APRÈS (hors climat et aléas)"]
+	var lines: Array[String] = ["%s · %d points" % [group.get("name", "Compétence"), skill.cost], "État : " + state, "EFFET", ui.World.Strategy.effect_text(world, id), "AVANT → APRÈS (hors climat et aléas)"]
 	lines.append_array(ui.Skills.comparison(world, id).split(" · "))
 	lines.append("PRÉREQUIS")
 	if skill.requires.is_empty(): lines.append("Aucun")

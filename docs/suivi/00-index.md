@@ -54,8 +54,10 @@ Candidat 0.24.1 (points 34 et 35) : interface et code de la 0.23 retravaillés (
 3. Après les sessions : intérêt des réponses de crise (sans effet sur les taux de victoire en 270 simulations), létalité, lisibilité des objectifs.
 4. Avant la 1.0 : [décision sur les formats de sauvegarde](../roadmap/07-decision-formats-sauvegarde.md).
 
-Pour chaque lot livré : créer `37-<lot>.md` (périmètre, fichiers principaux, tests exécutés, limites, prochaine action), puis mettre à jour cet index, le backlog et le CHANGELOG.
+Pour chaque lot livré : créer `38-<lot>.md` (périmètre, fichiers principaux, tests exécutés, limites, prochaine action), puis mettre à jour cet index, le backlog et le CHANGELOG.
 
 - [Point 36 — Profil stratégique expérimental](36-profil-strategique.md) : trois agents, crises récurrentes, rythme et bilan ; vérifications et limites détaillées.
 
-État courant : candidat 0.25.0 local, point 36. Prochaine étape : essais joueurs du profil stratégique ; prochain point 37. Les états des sections datées précédentes restent historiques.
+- [Point 37 — Situations stratégiques](37-situations-strategiques.md) : crises liées au monde, ONDE décalé, Discrétion temporaire, ligne « En cours », format 9 ; références 0.25 figées.
+
+État courant : candidat 0.26.0 local, point 37. Prochaine étape : essais joueurs du profil stratégique 0.26 ; prochain point 38. Les états des sections datées précédentes restent historiques.
