@@ -8,6 +8,8 @@ const FAMILIES = {
 	"mobility": {"base":{}, "m045":{"mobility_factor":0.45}, "m035":{"mobility_factor":0.35}, "cure115":{"mobility_cure":1.15}, "m045_cure110":{"mobility_factor":0.45, "mobility_cure":1.1}},
 	# VOILE-only levers: other agents are unaffected, so only VOILE is replayed.
 	"veil": {"base":{}, "det15":{"agents.veil.detection":1.5}, "det20":{"agents.veil.detection":2.0}, "cost10":{"agents.veil.discretion_cost":10}, "cost8":{"agents.veil.discretion_cost":8}, "det15_cost10":{"agents.veil.detection":1.5, "agents.veil.discretion_cost":10}},
+	# Discrétion at 10 points for VOILE, compensated on its own growth factors.
+	"veil_comp": {"base":{}, "cost10":{"agents.veil.discretion_cost":10}, "cost10_h135":{"agents.veil.discretion_cost":10, "agents.veil.hidden":1.35}, "cost10_h130":{"agents.veil.discretion_cost":10, "agents.veil.hidden":1.3}, "cost10_h125":{"agents.veil.discretion_cost":10, "agents.veil.hidden":1.25}, "cost10_d080":{"agents.veil.discretion_cost":10, "agents.veil.detected":0.8}, "cost10_h135_d080":{"agents.veil.discretion_cost":10, "agents.veil.hidden":1.35, "agents.veil.detected":0.8}},
 	"discretion": {"base":{}, "d45":{"discretion.days":45}, "det22":{"discretion.detection":2.2}, "d45_det22":{"discretion.days":45, "discretion.detection":2.2}, "det22_ex1":{"discretion.detection":2.2, "discretion.exchange":1.0}}
 }
 const CONTEXTS = [["standard", "boreale"], ["degel2042", ""], ["fragile2042", ""]]
@@ -73,12 +75,13 @@ static func wins(rows: Array, field: String) -> Dictionary:
 
 func run() -> void:
 	var family: String = "mobility"
-	for candidate: String in ["discretion", "veil"]:
+	for candidate: String in ["discretion", "veil", "veil_comp"]:
 		if "--" + candidate in OS.get_cmdline_user_args(): family = candidate
+	var veil_only: bool = family.begins_with("veil")
 	var rows: Dictionary = {}
 	for name: String in FAMILIES[family]:
 		rows[name] = []
-		for agent: String in (["veil"] if family == "veil" and name != "base" else ["nacre", "pulse", "veil"]):
+		for agent: String in (["veil"] if veil_only and name != "base" else ["nacre", "pulse", "veil"]):
 			for context: Array in CONTEXTS:
 				for difficulty: String in ["normal", "hard"]:
 					for seed_value: int in SEEDS:
@@ -93,7 +96,7 @@ func run() -> void:
 								rows[name].append(row)
 	var summary: Dictionary = {}
 	for name: String in rows:
-		var reference: Array = rows.base.filter(func(row): return row.agent == "veil") if family == "veil" and name != "base" else rows.base
+		var reference: Array = rows.base.filter(func(row): return row.agent == "veil") if veil_only and name != "base" else rows.base
 		var comparison: Dictionary = compare(reference, rows[name])
 		if not comparison.error.is_empty():
 			printerr(comparison.error)

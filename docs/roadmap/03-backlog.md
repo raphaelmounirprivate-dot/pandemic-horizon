@@ -107,7 +107,7 @@ Six pistes issues de l’analyse du profil 0.25 ; profil `strategy-0.26`, format
 | ID | Statut | Preuve / suite |
 | --- | --- | --- |
 | STR-07 — Discrétion / Mobilité | Implémenté et mesuré | Contrepartie remède ×1,15 adoptée par l’auteur : Mobilité 342/420 en difficile (418 avant), Discrétion 283, Croissance 269 ([variantes](../equilibrage/EQUILIBRAGE-0.26-VARIANTES.md)) |
-| STR-08 — VOILE | Mesuré, décision attendue | Variantes de Discrétion sans effet propre (détection au J11). Levier propre : Discrétion à 10 points pour VOILE (ordre Discrétion 44 → 58/60), mais VOILE devient le plus fort agent ; compensation à mesurer |
+| STR-08 — VOILE | Mesuré, renvoyé aux sessions joueurs | Discrétion à 10 points crée le lien VOILE–Discrétion mais rend VOILE trop fort ; compensé (avant détection ×1,30), VOILE égale NACRE mais le lien disparaît. Candidat si l’auteur veut un VOILE plus distinct : 10 points et ×1,35 (VOILE 153 contre 144). Non appliqué |
 | STR-09 — ONDE | Implémenté et testé automatiquement | Cycle de 10 jours contre 12 pour les décisions ; poussée ou repli selon la crise |
 | STR-10 — expansion | Implémenté et mesuré | Passage ouvert (région visée) ; chaque réponse payante a des victoires propres (11 / 7 paires) ; passage rare (350 occurrences) |
 | STR-11 — crises liées au monde | Implémenté et mesuré | Cinq situations, 3 à 5 distinctes par partie ; « Région isolée » jamais atteinte, remplacée par Liaison interrompue |

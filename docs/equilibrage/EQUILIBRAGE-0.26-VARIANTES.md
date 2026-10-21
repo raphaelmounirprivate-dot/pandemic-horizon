@@ -89,6 +89,29 @@ Lecture :
 
 Recommandation : **Discrétion à 10 points pour VOILE**, accompagnée d’une compensation mesurée avant adoption. Rien n’est appliqué pour VOILE.
 
+### Discrétion à 10 points avec compensation (`dev.ps1 BalanceVeilCompensation`)
+
+Même protocole (180 parties VOILE par variante, appariées avec la base, empreinte `aba29390…`). Compensation sur les coefficients de VOILE : croissance avant détection (`hidden`, 1,45 de base) et après détection (`detected`, 0,85). Référence, ordres Mobilité / Croissance / Discrétion sur 60 : NACRE 52 / 40 / 52 (144/180, difficile 54/90) ; ONDE 51 / 40 / 46 (137/180, difficile 47/90).
+
+| Variante VOILE | Victoires /180 | Difficile /90 | Mobilité / Croissance / Discrétion | Base seule / variante seule | Doubles victoires plus lentes |
+| --- | --- | --- | --- | --- | --- |
+| Base (14 pts, ×1,45 / ×0,85) | 148 | 58 | 56 / 48 / 44 | — | — |
+| 10 pts | 162 | 72 | 55 / 49 / 58 | 1 / 15 | 20 |
+| 10 pts, après détection ×0,80 | 156 | 66 | 54 / 47 / 55 | 4 / 12 | 82 |
+| 10 pts, avant détection ×1,35 | 153 | 63 | 53 / 48 / 52 | 4 / 9 | 103 |
+| 10 pts, ×1,35 et ×0,80 | 139 | 49 | 52 / 40 / 47 | 13 / 4 | 111 |
+| 10 pts, avant détection ×1,30 | 145 | 55 | 51 / 46 / 48 | 8 / 5 | 115 |
+| 10 pts, avant détection ×1,25 | 133 | 43 | 46 / 40 / 47 | 19 / 4 | 117 |
+
+Lecture :
+
+- **10 points avec ×1,30** ramène VOILE au niveau de NACRE (145 contre 144, difficile 55 contre 54). Mais l’ordre Discrétion de VOILE (48) passe alors sous celui de NACRE (52) : le lien propre entre VOILE et Discrétion disparaît. La compensation retire précisément la croissance cachée que Discrétion protège.
+- **10 pts avec ×1,35** est le meilleur compromis mesuré : Discrétion (52) au niveau de Mobilité (53) pour VOILE, avec la meilleure Croissance des trois agents (48). VOILE reste toutefois au-dessus de NACRE (153 contre 144 ; difficile 63 contre 54).
+- Toutes les compensations ralentissent les victoires (82 à 117 doubles victoires plus lentes).
+- **Conclusion** : avec ces politiques automatiques, aucune variante n’obtient à la fois une force égale à NACRE et un lien propre VOILE–Discrétion. Les deux objectifs se contredisent dans ce modèle.
+
+Recommandation : ne rien adopter sur la seule base de la simulation. Si l’auteur veut un VOILE plus distinct, le candidat est « Discrétion à 10 points, croissance avant détection ×1,35 », à vérifier par des sessions joueurs ; sinon, conserver VOILE tel quel.
+
 ## Limites
 
 Trois ordres d’achat fixes et deux règles de réponse. La médiane de première détection ne décrit que la première région (en pratique, la région de départ), pas la détection des régions suivantes. Une seule région de départ en Standard (Boréale). Aucun essai humain.
