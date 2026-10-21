@@ -45,6 +45,10 @@ Demandées par l’auteur après ce point. Dix variantes hypothétiques, 5 400 p
 
 **Compensation mesurée** (`dev.ps1 BalanceVeilCompensation`, 6 variantes, 1 620 parties, non appliquée) : avec Discrétion à 10 points, une croissance avant détection ×1,30 ramène VOILE au niveau de NACRE (145 contre 144), mais son ordre Discrétion (48) passe sous celui de NACRE (52). Le lien propre disparaît. Meilleur compromis : ×1,35 (VOILE 153 ; Discrétion 52 au niveau de Mobilité 53). Aucune variante n’obtient à la fois l’égalité de force et un lien propre VOILE–Discrétion. VOILE est conservé tel quel ; décision renvoyée aux sessions joueurs.
 
+## Validation de l’auteur
+
+Le 21 octobre 2026, l’auteur a lancé le jeu depuis les sources (`dev.ps1 Play`, sauvegardes isolées) et déclaré le test « validé » : situations, réponses, ligne « En cours », textes de Discrétion et de Mobilité. C’est un essai de l’auteur, sans fiche de session : il ne remplace pas les sessions joueurs externes (`docs/tests-joueurs/`).
+
 ## Livraison
 
 Lot commité en local à la demande de l’auteur (commit suivant `803208f`) ; aucun push, aucune CI distante, aucun export Windows ni publication. Les exécutables 0.24 ne contiennent ni le profil 0.25 ni le profil 0.26.
