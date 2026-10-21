@@ -13,6 +13,8 @@ Réalisée le 21 octobre 2026 sur le PC de développement (Windows 11 Pro, NVIDI
 | Archive | `build/releases/PandemicHorizon-0.24.0-Windows-x64-e36566d.zip` (38 378 271 octets), SHA-256 `FC46BCA252F4755B535AC80D3CDA067308A601D930AE0C2D73C4DAF24FB304F9` |
 | Checkpoint | `build/checkpoints/0.24.0-e36566d/` (bundle Git vérifié + sources) |
 
+Push : `682fbd4..0c3be3f` sur `main`. CI `39563200575` réussie (jobs simulation et lint/gdlint) : https://github.com/raphaelmounirprivate-dot/pandemic-horizon/actions/runs/39563200575
+
 Archive, exécutable et checkpoint restent locaux (hors Git). Aucune release GitHub binaire.
 
 ## Non prouvé par cette livraison
