@@ -161,34 +161,34 @@ func costed(world) -> String:
 
 ## strategy-0.26 (format 9): world-driven crises, temporary Discrétion, shifted ONDE cycle.
 func run_modern(check: Callable) -> void:
-	var Strategy = World.Strategy
-	var rules = Strategy.rules(Strategy.CURRENT)
-	check.call(Strategy.validate(rules).is_empty(), "0.26 : profil valide")
+	var strategy = World.Strategy
+	var rules = strategy.rules(strategy.CURRENT)
+	check.call(strategy.validate(rules).is_empty(), "0.26 : profil valide")
 	var bad = rules.duplicate(true)
 	bad.agents.pulse.period = bad.interval
-	check.call(not Strategy.validate(bad).is_empty(), "0.26 : cycle d'ONDE aligné sur les décisions refusé")
+	check.call(not strategy.validate(bad).is_empty(), "0.26 : cycle d'ONDE aligné sur les décisions refusé")
 	for key in ["discretion", "triggers", "crises"]:
 		bad = rules.duplicate(true)
 		bad.erase(key)
-		check.call(not Strategy.validate(bad).is_empty(), "0.26 : profil incomplet refusé : " + key)
+		check.call(not strategy.validate(bad).is_empty(), "0.26 : profil incomplet refusé : " + key)
 	bad = rules.duplicate(true)
 	bad.crises.reverse()
-	check.call(not Strategy.validate(bad).is_empty(), "0.26 : ordre des situations imposé")
+	check.call(not strategy.validate(bad).is_empty(), "0.26 : ordre des situations imposé")
 	bad = rules.duplicate(true)
 	bad.crises[1].choices[2].cure = 0.5
-	check.call(not Strategy.validate(bad).is_empty(), "0.26 : conservation non neutre refusée")
+	check.call(not strategy.validate(bad).is_empty(), "0.26 : conservation non neutre refusée")
 	bad = rules.duplicate(true)
 	bad.crises[2].choices[0].target_growth = 0
-	check.call(not Strategy.validate(bad).is_empty(), "0.26 : effet ciblé nul refusé")
+	check.call(not strategy.validate(bad).is_empty(), "0.26 : effet ciblé nul refusé")
 	var store = Store.new()
-	check.call(store.strategy_hash(Strategy.CURRENT) != store.strategy_hash(Strategy.PROFILE), "0.26 : empreinte distincte du profil 0.25")
+	check.call(store.strategy_hash(strategy.CURRENT) != store.strategy_hash(strategy.PROFILE), "0.26 : empreinte distincte du profil 0.25")
 	for agent in ["nacre", "pulse", "veil"]:
 		var world = World.new()
-		check.call(world.start_with({"start":"boreale", "agent":agent}).is_empty() and Strategy.profile_of(world) == Strategy.CURRENT, "0.26 : profil par défaut des nouvelles parties : " + agent)
+		check.call(world.start_with({"start":"boreale", "agent":agent}).is_empty() and strategy.profile_of(world) == strategy.CURRENT, "0.26 : profil par défaut des nouvelles parties : " + agent)
 		check.call(store.encode(world).format == 9, "0.26 : format 9")
 		var seen: Array = []
 		for day in range(70):
-			if Strategy.pending(world):
+			if strategy.pending(world):
 				if world.day == world.strategy.open.slot:
 					seen.append(world.strategy.open.crisis)
 					var waiting = store.decode(JSON.parse_string(JSON.stringify(store.encode(world), "", true, true)))
@@ -200,7 +200,7 @@ func run_modern(check: Callable) -> void:
 					data.strategy.open.crisis = "absent"
 					check.call(not store.decode(data).error.is_empty(), "0.26 : situation inconnue refusée")
 				# Answer on the second day; the J56 crisis lapses into the free default at J60.
-				if world.day == world.strategy.open.slot + 1 and world.day < 56: Strategy.choose(world, costed(world))
+				if world.day == world.strategy.open.slot + 1 and world.day < 56: strategy.choose(world, costed(world))
 			if world.day in [0, 21, 29, 40, 56, 69]:
 				var restored = store.decode(JSON.parse_string(JSON.stringify(store.encode(world), "", true, true)))
 				check.call(restored.error.is_empty(), "0.26 : reprise J%d : %s" % [world.day, agent])
@@ -222,7 +222,7 @@ func run_modern(check: Callable) -> void:
 		data.strategy.choices[0].choice = "absent"
 		check.call(not store.decode(data).error.is_empty(), "0.26 : choix étranger à la situation refusé")
 		data = store.encode(world)
-		data.rules_profile = Strategy.PROFILE
+		data.rules_profile = strategy.PROFILE
 		check.call(not store.decode(data).error.is_empty(), "0.26 : profil déclaré incohérent refusé")
 		data = store.encode(world)
 		data.format = 8
@@ -239,7 +239,7 @@ func run_modern(check: Callable) -> void:
 	for world in [first, second]:
 		world.start_with({"start":"centrale", "agent":"veil", "seed":11113})
 		for day in range(60):
-			if Strategy.pending(world): Strategy.choose(world, costed(world))
+			if strategy.pending(world): strategy.choose(world, costed(world))
 			world.step()
 	check.call(stable(first) == stable(second), "0.26 : parties identiques à graine et choix égaux")
 	# Situations read the world state of the opening day.
@@ -249,9 +249,9 @@ func run_modern(check: Callable) -> void:
 	# The scripted J18 storm would otherwise make "cut" the first situation.
 	world.active_events.clear()
 	world.cure = 40.0
-	check.call(Strategy.detect_crisis(world).crisis == "science", "0.26 : remède ≥ 35 % : pression scientifique")
+	check.call(strategy.detect_crisis(world).crisis == "science", "0.26 : remède ≥ 35 % : pression scientifique")
 	world.strategy.choices.append({"slot":8, "day":8, "choice":"observe", "crisis":"science", "target":""})
-	check.call(Strategy.detect_crisis(world).crisis != "science", "0.26 : la situation précédente n'est pas reproposée")
+	check.call(strategy.detect_crisis(world).crisis != "science", "0.26 : la situation précédente n'est pas reproposée")
 	world.strategy.choices.clear()
 	world.cure = 0.0
 	var home = world.regions[0]
@@ -259,11 +259,11 @@ func run_modern(check: Callable) -> void:
 		if region.id == "boreale": home = region
 	home.removed = int(home.population * 0.7)
 	home.healthy = home.population - home.active - home.removed
-	var found = Strategy.detect_crisis(world)
+	var found = strategy.detect_crisis(world)
 	check.call(found.crisis == "saturated" and found.target == "boreale", "0.26 : région touchée à 60 % : foyer développé")
 	for edge in world.connections:
 		if "boreale" in edge: world.active_events.append({"id":"test_" + str(edge), "name":"Test", "kind":"route_closure", "target":edge, "factor":1.0, "start_day":0, "end_day":999})
-	found = Strategy.detect_crisis(world)
+	found = strategy.detect_crisis(world)
 	check.call(found.crisis == "cut" and found.target == "boreale", "0.26 : liaison fermée d'une région touchée : liaison interrompue")
 	world.active_events.clear()
 	home.removed = 0
@@ -272,41 +272,41 @@ func run_modern(check: Callable) -> void:
 	# Make one open neighbour untouched; the scripted storm may close other links.
 	for edge in world.connections:
 		if "boreale" in edge and world.route_is_open(edge):
-			var spared = Strategy.region_by_id(world, edge[1] if edge[0] == "boreale" else edge[0])
+			var spared = strategy.region_by_id(world, edge[1] if edge[0] == "boreale" else edge[0])
 			spared.active = 0
 			spared.removed = 0
 			spared.healthy = spared.population
 			break
-	found = Strategy.detect_crisis(world)
+	found = strategy.detect_crisis(world)
 	check.call(found.crisis == "passage" and found.target != "boreale", "0.26 : foyer actif relié à une région épargnée : passage ouvert")
 	world.step()
-	check.call(Strategy.pending(world) and world.strategy.open.crisis == "passage", "0.26 : crise ouverte J20 selon la situation")
-	check.call(Strategy.choices(world).size() == 3 and Strategy.option("cross", world).cost == 3, "0.26 : réponses propres à la situation")
+	check.call(strategy.pending(world) and world.strategy.open.crisis == "passage", "0.26 : crise ouverte J20 selon la situation")
+	check.call(strategy.choices(world).size() == 3 and strategy.option("cross", world).cost == 3, "0.26 : réponses propres à la situation")
 	var target = world.strategy.open.target
-	check.call(Strategy.choose(world, "cross").is_empty(), "0.26 : passage franchi")
-	check.call(Strategy.active_lines(world)[0].contains("8 j restants"), "0.26 : effet actif affiché dès le choix")
+	check.call(strategy.choose(world, "cross").is_empty(), "0.26 : passage franchi")
+	check.call(strategy.active_lines(world)[0].contains("8 j restants"), "0.26 : effet actif affiché dès le choix")
 	world.step()
-	var reached = Strategy.region_by_id(world, target)
-	check.call(is_equal_approx(Strategy.growth(world, reached) / Strategy.growth(world, home), 2.0), "0.26 : croissance ciblée dans la région visée")
-	check.call(Strategy.active_lines(world)[0].contains("7 j restants") and Strategy.active_lines(world)[0].contains(world.region_name(target)), "0.26 : jours restants et région visée lisibles")
+	var reached = strategy.region_by_id(world, target)
+	check.call(is_equal_approx(strategy.growth(world, reached) / strategy.growth(world, home), 2.0), "0.26 : croissance ciblée dans la région visée")
+	check.call(strategy.active_lines(world)[0].contains("7 j restants") and strategy.active_lines(world)[0].contains(world.region_name(target)), "0.26 : jours restants et région visée lisibles")
 	# Discrétion: temporary bonus with an exchange counterpart.
 	world.points = 40
-	var plain = Strategy.exchange(world, home)
+	var plain = strategy.exchange(world, home)
 	check.call(world.purchase("discretion").is_empty(), "0.26 : Discrétion achetée")
 	var bought = world.day
-	check.call(is_equal_approx(Strategy.cure(world) * world.upgrade_modifier("cure_multiplier"), Strategy.factor(world, "cure") * 0.7), "0.26 : remède ×0,7 pendant Discrétion")
-	check.call(Strategy.detection(world) == 1.6 and is_equal_approx(Strategy.exchange(world, home), plain * 0.85), "0.26 : détection retardée, échanges ×0,85")
-	check.call(Strategy.effect_text(world, "discretion").contains("30 jours"), "0.26 : texte de Discrétion adapté au profil")
-	check.call(Strategy.active_lines(world).any(func(line): return line.begins_with("Discrétion") and line.contains("30 j restants")), "0.26 : durée de Discrétion affichée")
+	check.call(is_equal_approx(strategy.cure(world) * world.upgrade_modifier("cure_multiplier"), strategy.factor(world, "cure") * 0.7), "0.26 : remède ×0,7 pendant Discrétion")
+	check.call(strategy.detection(world) == 1.6 and is_equal_approx(strategy.exchange(world, home), plain * 0.85), "0.26 : détection retardée, échanges ×0,85")
+	check.call(strategy.effect_text(world, "discretion").contains("30 jours"), "0.26 : texte de Discrétion adapté au profil")
+	check.call(strategy.active_lines(world).any(func(line): return line.begins_with("Discrétion") and line.contains("30 j restants")), "0.26 : durée de Discrétion affichée")
 	world.day = bought + 31
-	check.call(is_equal_approx(Strategy.cure(world) * world.upgrade_modifier("cure_multiplier"), Strategy.factor(world, "cure")) and Strategy.detection(world) == 1.0, "0.26 : Discrétion sans effet après 30 jours")
+	check.call(is_equal_approx(strategy.cure(world) * world.upgrade_modifier("cure_multiplier"), strategy.factor(world, "cure")) and strategy.detection(world) == 1.0, "0.26 : Discrétion sans effet après 30 jours")
 	# ONDE: decisions fall on different phases of the cycle.
 	world.strategy.agent = "pulse"
 	var phases: Array = []
 	for opened in [20, 32, 44, 56]:
-		if not Strategy.pulse_high(world, opened + 1) in phases: phases.append(Strategy.pulse_high(world, opened + 1))
+		if not strategy.pulse_high(world, opened + 1) in phases: phases.append(strategy.pulse_high(world, opened + 1))
 	check.call(phases.size() == 2, "0.26 : ONDE en poussée ou en repli selon la décision")
 	world.day = 20
-	check.call(Strategy.active_lines(world).any(func(line): return line.begins_with("ONDE") and line.contains("dès J")), "0.26 : prochaine phase d'ONDE affichée")
-	var compact = Strategy.compact_line(world)
+	check.call(strategy.active_lines(world).any(func(line): return line.begins_with("ONDE") and line.contains("dès J")), "0.26 : prochaine phase d'ONDE affichée")
+	var compact = strategy.compact_line(world)
 	check.call(compact.contains("Franchir le passage : 8 j") and compact.contains("ONDE poussée") and compact.contains("Discrétion : 30 j"), "0.26 : résumé court des effets en cours")
