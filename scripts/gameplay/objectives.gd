@@ -13,7 +13,7 @@ static func integer(value: Variant, low: int, high: int) -> bool:
 static func validate(data: Variant) -> String:
 	if not data is Dictionary or data.get("schema_version") != 1 or not data.get("objectives") is Array: return "Catalogue d'objectifs invalide."
 	var ids: Array = []
-	for item in data.objectives:
+	for item: Variant in data.objectives:
 		if not item is Dictionary: return "Objectif invalide."
 		if not item.get("id") is String or item.id.is_empty() or item.id in ids: return "Identifiant d'objectif invalide."
 		if not item.get("name") is String or item.name.is_empty() or item.name.length() > 80: return "Nom d'objectif invalide."
@@ -26,7 +26,7 @@ static func validate(data: Variant) -> String:
 				if item.get("scenario") != "degel2042" or not item.get("source") is String or not item.get("phase") is String: return "Référence d'objectif invalide."
 				if not integer(item.get("quota"), 1, 100000) or not item.get("routes") is Array or item.routes.size() != 2: return "Routes d'objectif invalides."
 				var targets: Array = []
-				for route in item.routes:
+				for route: Variant in item.routes:
 					if not route is Dictionary or not route.get("target") is String or route.target.is_empty() or route.target == item.source or route.target in targets or not integer(route.get("start_day"), 1, int(item.deadline)): return "Fenêtre d'objectif invalide."
 					targets.append(route.target)
 			_: return "Type d'objectif invalide."
@@ -36,73 +36,73 @@ static func validate(data: Variant) -> String:
 static func validate_context(item: Dictionary, scenario: Dictionary, events: Array) -> String:
 	if item.scenario != scenario.id: return "Objectif incompatible avec le scénario."
 	if item.kind != "seasonal_flow": return ""
-	var begin = -1
-	var end = 501
-	for phase in scenario.phases:
+	var begin: int = -1
+	var end: int = 501
+	for phase: Dictionary in scenario.phases:
 		if phase.id == item.phase: begin = int(phase.start_day)
 		elif begin >= 0 and phase.start_day > begin: end = mini(end, int(phase.start_day))
 	if begin < 0 or item.deadline >= end: return "Phase d'objectif invalide."
-	for requested in item.routes:
-		var found = false
-		var edge = [item.source,requested.target]
-		var required_day = begin
-		for route in scenario.seasonal_routes:
+	for requested: Dictionary in item.routes:
+		var found: bool = false
+		var edge: Array = [item.source,requested.target]
+		var required_day: int = begin
+		for route: Dictionary in scenario.seasonal_routes:
 			if (route.edge == edge or route.edge == [requested.target,item.source]) and requested.start_day >= route.open_day: found = true
-		for event in events:
+		for event: Dictionary in events:
 			if event.kind == "route_closure" and (event.target == edge or event.target == [requested.target,item.source]) and event.start_day >= begin and event.start_day <= item.deadline:
 				required_day = maxi(required_day,int(event.start_day + event.duration))
 		if not found or requested.start_day < required_day: return "Objectif avant la réouverture d'une route."
 	return ""
 
 static func for_scenario(scenario_id: String) -> Dictionary:
-	var data = catalog()
+	var data: Variant = catalog()
 	if not validate(data).is_empty(): return {}
-	for item in data.objectives:
+	for item: Variant in data.objectives:
 		if item.scenario == scenario_id: return item
 	return {}
 
 static func definition(id: String) -> Dictionary:
-	var data = catalog()
+	var data: Variant = catalog()
 	if not validate(data).is_empty(): return {}
-	for item in data.objectives:
+	for item: Variant in data.objectives:
 		if item.id == id: return item
 	return {}
 
 static func count(world: RefCounted, item: Dictionary) -> int:
 	if item.kind == "seasonal_flow": return route_progress(world.objective, item)
-	var total = 0
-	for region in world.regions:
+	var total: int = 0
+	for region: Dictionary in world.regions:
 		if (region.active + region.removed) * 100 >= region.population * item.coverage_percent: total += 1
 	return mini(total, int(item.regions))
 
 static func initial(id: String) -> Dictionary:
 	if id.is_empty(): return {}
-	var state = {"id":id, "status":"pending", "progress":0, "resolved_day":-1, "reason":""}
-	var item = definition(id)
+	var state: Dictionary = {"id":id, "status":"pending", "progress":0, "resolved_day":-1, "reason":""}
+	var item: Dictionary = definition(id)
 	if item.kind == "seasonal_flow":
 		state.routes = {}
-		for route in item.routes: state.routes[route.target] = 0
+		for route: Dictionary in item.routes: state.routes[route.target] = 0
 	return state
 
 static func route_progress(state: Dictionary, item: Dictionary) -> int:
-	var total = 0
-	for route in item.routes:
+	var total: int = 0
+	for route: Dictionary in item.routes:
 		if state.routes[route.target] >= item.quota: total += 1
 	return total
 
 static func record_exchange(world: RefCounted, source: String, target: String, units: int) -> void:
 	if not world.objective.has("routes") or world.objective.status != "pending" or units <= 0: return
-	var item = definition(world.objective.id)
+	var item: Dictionary = definition(world.objective.id)
 	if item.kind != "seasonal_flow" or source != item.source or world.phase.id != item.phase or world.day > item.deadline or not world.route_is_open([source,target]): return
-	for route in item.routes:
+	for route: Dictionary in item.routes:
 		if route.target == target and world.day >= route.start_day:
 			world.objective.routes[target] = mini(int(item.quota),world.objective.routes[target] + units)
 
 static func update(world: RefCounted) -> void:
 	if world.objective.is_empty() or world.objective.status != "pending": return
-	var item = definition(world.objective.id)
+	var item: Dictionary = definition(world.objective.id)
 	world.objective.progress = count(world, item)
-	var required = int(item.regions) if item.kind == "coverage" else item.routes.size()
+	var required: int = int(item.regions) if item.kind == "coverage" else item.routes.size()
 	if world.objective.progress >= required:
 		world.objective.status = "completed"
 	elif world.day >= item.deadline or not world.outcome.is_empty():
@@ -116,14 +116,14 @@ static func description(item: Dictionary) -> String:
 	if item.is_empty(): return "Objectif facultatif indisponible."
 	if item.kind == "seasonal_flow":
 		var windows: Array[String] = []
-		for route in item.routes: windows.append("%s (J%d–%d)" % [route.target.capitalize(),route.start_day,item.deadline])
+		for route: Dictionary in item.routes: windows.append("%s (J%d–%d)" % [route.target.capitalize(),route.start_day,item.deadline])
 		return "%d unités d'échange depuis Boréale vers %s, par route. Aucun bonus de points ou de score." % [item.quota," et ".join(windows)]
 	return "%s : %d régions à %d %% touchés avant la fin du jour %d. Aucun bonus de points ou de score." % [item.name, item.regions, item.coverage_percent, item.deadline]
 
 static func summary(world: RefCounted) -> String:
 	if world.objective.is_empty(): return "Objectif facultatif : aucun."
-	var item = definition(world.objective.id)
-	var state = "En cours · échéance J%d inclus" % item.deadline
+	var item: Dictionary = definition(world.objective.id)
+	var state: String = "En cours · échéance J%d inclus" % item.deadline
 	if world.objective.status == "completed": state = "Réussi au jour %d" % world.objective.resolved_day
 	elif world.objective.status == "failed": state = "Non atteint · " + ("échéance J%d" % item.deadline if world.objective.reason == "deadline" else "fin de partie J%d" % world.objective.resolved_day)
 	if item.kind == "seasonal_flow": return "%s · Orient %d/%d · Centrale %d/%d unités · %s" % [item.name,world.objective.routes.orient,item.quota,world.objective.routes.centrale,item.quota,state]
@@ -133,17 +133,17 @@ static func valid_state(state: Variant, world: RefCounted) -> bool:
 	if not state is Dictionary: return false
 	if state.is_empty(): return true
 	if not state.get("id") is String: return false
-	for key in ["id", "status", "progress", "resolved_day", "reason"]:
+	for key: String in ["id", "status", "progress", "resolved_day", "reason"]:
 		if not state.has(key): return false
-	var item = definition(state.id)
+	var item: Dictionary = definition(state.id)
 	if item.is_empty() or item.scenario != world.scenario.id: return false
 	if not validate_context(item,world.scenario,world.event_definitions).is_empty(): return false
-	var required = int(item.regions) if item.kind == "coverage" else item.routes.size()
-	var current = count(world, item) if item.kind == "coverage" else 0
-	var earliest = 1
+	var required: int = int(item.regions) if item.kind == "coverage" else item.routes.size()
+	var current: int = count(world, item) if item.kind == "coverage" else 0
+	var earliest: int = 1
 	if item.kind == "seasonal_flow":
 		if state.size() != 6 or not state.get("routes") is Dictionary or state.routes.size() != item.routes.size(): return false
-		for route in item.routes:
+		for route: Dictionary in item.routes:
 			if not integer(state.routes.get(route.target),0,int(item.quota)): return false
 			if world.day < route.start_day and state.routes[route.target] != 0: return false
 			earliest = maxi(earliest,int(route.start_day))
