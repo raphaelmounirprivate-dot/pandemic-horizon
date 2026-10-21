@@ -1,4 +1,4 @@
-# Sessions exploratoires — candidat 0.24
+# Sessions exploratoires — candidat 0.24.1
 
 Statut : à réaliser. Aucun résultat humain n'est consigné pour l'instant.
 

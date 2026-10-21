@@ -37,6 +37,7 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 - [Point 32 — Tutoriel et sauvegardes extraits](32-tutoriel-sauvegardes.md) : candidat 0.23 inchangé ; `tutorial_flow.gd`, chargement et enregistrement dans `saves_view.gd`, `main.gd` à 597 lignes, 80 captures identiques.
 - [Point 33 — Typage strict des sauvegardes](33-typage-sauvegardes.md) : candidat 0.23 inchangé ; `untyped_declaration` en erreur dans `scripts/persistence/`, `save_store.gd` typé sans changement de logique.
 - [Point 34 — Typage du gameplay, aide en boutons](34-gameplay-type-aide.md) : candidat 0.23 puis 0.24 ; `scripts/gameplay/` typé, aide F1 sans liste déroulante, `main.gd` à 446 lignes ; 6 486 contrôles.
+- [Point 35 — Points et compétences achetables mis en évidence](35-evolution-mise-en-evidence.md) : candidat 0.24.1 ; retour de l'auteur sur l'écran Évolution ; 6 491 contrôles.
 
 ## Documents liés
 
@@ -46,11 +47,11 @@ Lire ce fichier au début d'une session, puis le dernier point de contrôle. Con
 
 ## État et priorités au 21 octobre 2026
 
-Candidat 0.24 (point 34) : interface et code de la 0.23 retravaillés (points 29 à 34), règles et sauvegardes inchangées ([notes 0.24](../versions/NOTES-VERSION-0.24.md)). Implémenté et testé automatiquement ; **aucun essai humain, aucun essai sur un second PC, aucune release publiée.**
+Candidat 0.24.1 (points 34 et 35) : interface et code de la 0.23 retravaillés (points 29 à 34), règles et sauvegardes inchangées ([notes 0.24](../versions/NOTES-VERSION-0.24.md)). Implémenté et testé automatiquement ; **aucun essai humain, aucun essai sur un second PC, aucune release publiée.**
 
 1. Trois sessions joueurs exploratoires ([protocole](../tests-joueurs/README.md)) ; le registre `resultats.csv` est encore vide.
 2. Recontrôle de la livraison avec AVG actif et signalement du faux positif ([ANTIVIRUS.md](../ANTIVIRUS.md)).
 3. Après les sessions : intérêt des réponses de crise (sans effet sur les taux de victoire en 270 simulations), létalité, lisibilité des objectifs.
 4. Avant la 1.0 : [décision sur les formats de sauvegarde](../roadmap/07-decision-formats-sauvegarde.md).
 
-Pour chaque lot livré : créer `35-<lot>.md` (périmètre, fichiers principaux, tests exécutés, limites, prochaine action), puis mettre à jour cet index, le backlog et le CHANGELOG.
+Pour chaque lot livré : créer `36-<lot>.md` (périmètre, fichiers principaux, tests exécutés, limites, prochaine action), puis mettre à jour cet index, le backlog et le CHANGELOG.

@@ -6,7 +6,7 @@ Contexte de travail pour Claude Code (et tout agent de code) sur ce dépôt. À 
 
 - **Pandemic Horizon** : jeu de stratégie original, en français, hors ligne, pour Windows. Inspiré du genre « simulation de pandémie », sans aucune ressource ni texte de Plague Inc.
 - **Moteur** : Godot **4.7.2 stable** (version exacte, vérifiée au chargement des sauvegardes), GDScript, rendu Compatibility, export Windows x86_64.
-- **État** : candidat **0.24** (`project.godot` → `config/version`). Prototype candidat, **pas une 1.0**. Aucun essai avec de vrais joueurs n'a encore été réalisé.
+- **État** : candidat **0.24.1** (`project.godot` → `config/version`). Prototype candidat, **pas une 1.0**. Aucun essai avec de vrais joueurs n'a encore été réalisé.
 - **Prochaine étape officielle** : trois sessions joueurs exploratoires (`docs/tests-joueurs/README.md`), puis corrections fondées sur les observations. Ne pas ajouter de contenu ou de catastrophes « parce que ce serait mieux » sans demande explicite.
 
 ## Langue et ton
@@ -57,7 +57,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Play        
 
 ## Façon de travailler sur un lot
 
-1. Lire `docs/suivi/00-index.md`, puis le dernier point (`docs/suivi/34-…` actuellement) et `docs/roadmap/03-backlog.md`.
+1. Lire `docs/suivi/00-index.md`, puis le dernier point (`docs/suivi/35-…` actuellement) et `docs/roadmap/03-backlog.md`.
 2. `git status` : vérifier qu'aucune modification locale n'est perdue.
 3. Petit changement, puis `dev.ps1 Test`. Pour l'UI : captures aux trois résolutions. Pour les règles : comparaison appariée (mêmes graines/difficultés) avant d'ajuster un coefficient.
 4. Ajouter les contrôles correspondants dans une suite `tests/test_*.gd` (skill `godot-tests`).

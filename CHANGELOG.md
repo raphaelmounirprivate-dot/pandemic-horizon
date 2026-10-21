@@ -2,6 +2,10 @@
 
 Du plus récent au plus ancien. Toutes les versions sont des **candidats de prototype** : implémentées et testées automatiquement, jamais essayées par des joueurs externes, sans release binaire GitHub. Le détail de chaque lot est dans les [points de suivi](docs/suivi/00-index.md) ; les notes jointes aux archives sont dans `docs/versions/NOTES-VERSION-*.md`.
 
+## 0.24.1 — points et compétences achetables mis en évidence (21 octobre 2026)
+
+Écran Évolution : points en grand avec le prochain gain, compétences achetables à fond teinté, contour épais et marque « + », décompte par onglet. Règles et sauvegardes inchangées. [Point 35](docs/suivi/35-evolution-mise-en-evidence.md), 6 491 contrôles.
+
 ## 0.24 — écrans dédiés (19-21 octobre 2026)
 
 Aucun changement de règles, de coefficients ni de format de sauvegarde ; une partie 0.23 se charge telle quelle. [Notes](docs/versions/NOTES-VERSION-0.24.md) · [Point 29](docs/suivi/29-dette-technique-ci.md) (technique) · [point 30](docs/suivi/30-ecrans-dedies.md) (écrans dédiés, 6 455 contrôles).

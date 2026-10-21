@@ -1,6 +1,6 @@
 # Jouer à Pandemic Horizon 0.24
 
-Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.24.0/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
+Prototype Windows hors ligne. Lancer `PandemicHorizon.exe` dans `build/windows-0.24.1/`. Les anciens dossiers conservent leurs versions précédentes. Pour lancer depuis les sources, consulter le README du dépôt et `docs/DEVELOPPEMENT.md`.
 
 1. À l'écran titre, choisir « Nouvelle partie », puis suivre les trois étapes : scénario (cartes Standard, Dégel 2042, Réseaux fragiles), difficulté et options, région de départ cliquée sur la carte du monde. Dégel impose Boréale, Réseaux fragiles impose Centrale. « Lancer la partie » démarre ; Retour ou Échap reviennent d'une étape.
 2. Lire les objectifs. La partie commence en pause.
@@ -210,8 +210,9 @@ Les trois symboles de la légende identifient Diffusion (réseau), Discrétion (
 
 Touche E ou bouton « Évolution » à droite de la carte. La partie se met en pause ; Échap, E ou « Retour à la carte » la rend dans l'état d'avant (en cours ou en pause).
 
-- **Onglets** : un par famille (Diffusion, Discrétion, Résilience), avec le nombre de compétences acquises. L'onglet ouvert est souligné.
-- **Arbre** : il se lit de gauche à droite. Un trait relie un prérequis à la compétence qu'il débloque ; il est épais quand le prérequis est acquis. Chaque nœud indique nom, coût et état : Disponible, Acquise, Prérequis, Incompatible ou « Manque N pts ».
+- **Points** : en grand en haut à droite, avec le prochain gain (« +3 au J40 » : 3 points tous les cinq jours).
+- **Onglets** : un par famille (Diffusion, Discrétion, Résilience), avec le nombre de compétences acquises et, en dessous, le nombre de compétences achetables maintenant. L'onglet ouvert est souligné.
+- **Arbre** : il se lit de gauche à droite. Un trait relie un prérequis à la compétence qu'il débloque ; il est épais quand le prérequis est acquis. Chaque nœud indique nom, coût et état : Disponible, Acquise, Prérequis, Incompatible ou « Manque N pts ». Une compétence achetable maintenant ressort : fond teinté, contour épais, nom en couleur et marque « + » en haut à droite.
 - **Fiche** : famille et coût, état détaillé, effet, coefficients avant → après (hors climat et aléas), prérequis un par un et, pour les spécialisations, ce que le choix exclut.
 - **Évoluer** : seul ce bouton dépense des points. Sélectionner un nœud ne coûte rien.
 
