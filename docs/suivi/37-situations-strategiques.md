@@ -60,6 +60,8 @@ Le 21 octobre 2026, l’auteur a lancé le jeu depuis les sources (`dev.ps1 Play
 - Checkpoint vérifié : `build/checkpoints/0.26.0-0bae202`.
 - Suite au commit livré : 6830 contrôles, zéro échec. Aucun blocage antivirus constaté pendant la vérification.
 
+**Push et CI** (21 octobre 2026, à la demande de l’auteur) : `e61b2cc..62a3682` poussés. La première CI ([39600310265](https://github.com/raphaelmounirprivate-dot/pandemic-horizon/actions/runs/39600310265)) a échoué au job lint : `gdlint` 4.5.0 refusait une variable locale `Strategy` dans `tests/test_strategy.gd` et `tests/test_strategy_variants.gd` (gdlint n’est pas installable sur ce poste, sans Python). Correctif `ffdad5e` (renommage, tests seulement), poussé ; CI [39601508623](https://github.com/raphaelmounirprivate-dot/pandemic-horizon/actions/runs/39601508623) réussie : lint et simulation, artefact `windows-ffdad5e0988e5bf09c1f91cdde8497dab2956e57`. L’archive locale reste celle du commit `0bae202` ; le correctif ne touche que des tests exclus de l’export. Aucune release GitHub ni tag.
+
 Non prouvé : exécution sur un autre PC sans Godot, échelles 125/150 %, son réel, compréhension par des joueurs.
 
 Historique : lot commité en local à la demande de l’auteur (commit suivant `803208f`) ; aucun push, aucune CI distante, aucune publication. Les exécutables 0.24 ne contiennent ni le profil 0.25 ni le profil 0.26 ; l’archive 0.26.0 ci-dessus les contient.
