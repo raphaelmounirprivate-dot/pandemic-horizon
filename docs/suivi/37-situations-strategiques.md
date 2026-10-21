@@ -51,6 +51,17 @@ Le 21 octobre 2026, l’auteur a lancé le jeu depuis les sources (`dev.ps1 Play
 
 ## Livraison
 
-Lot commité en local à la demande de l’auteur (commit suivant `803208f`) ; aucun push, aucune CI distante, aucun export Windows ni publication. Les exécutables 0.24 ne contiennent ni le profil 0.25 ni le profil 0.26.
+**Livraison Windows locale 0.26.0** (21 octobre 2026), commit `0bae202ed2399542141f5346b4c98be59b7a40e9` :
+
+- Export identifié (`BUILD.json`), exécutable SHA-256 `E2D5B2BBA599D9B9969EA1E5CE824958A4C4C6B43099763DAAEE0868C884956E`.
+- `verify-export.ps1` : réussi. Le test de fumée de l’exécutable couvre désormais les profils stratégiques 8 et 9 (ajout de ce lot) ; avant cet ajout, il ne les vérifiait pas.
+- `test-build-identity.ps1` : 5 contrôles réussis.
+- Archive `build/releases/PandemicHorizon-0.26.0-Windows-x64-0bae202.zip` (36,6 Mo), SHA-256 `2F75A29125CDED38DF4D76DE1C8EC5FB8D6202AFFBE651A96CE0934A853BF63A`.
+- Checkpoint vérifié : `build/checkpoints/0.26.0-0bae202`.
+- Suite au commit livré : 6830 contrôles, zéro échec. Aucun blocage antivirus constaté pendant la vérification.
+
+Non prouvé : exécution sur un autre PC sans Godot, échelles 125/150 %, son réel, compréhension par des joueurs.
+
+Historique : lot commité en local à la demande de l’auteur (commit suivant `803208f`) ; aucun push, aucune CI distante, aucune publication. Les exécutables 0.24 ne contiennent ni le profil 0.25 ni le profil 0.26 ; l’archive 0.26.0 ci-dessus les contient.
 
 Prochaine étape : sessions joueurs sur le profil 0.26 (compréhension des situations, lecture de la ligne « En cours », intérêt des choix), puis mesure d’une contrepartie à Mobilité et de variantes de Discrétion pour VOILE.

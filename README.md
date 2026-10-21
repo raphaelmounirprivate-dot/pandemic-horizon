@@ -6,7 +6,7 @@ Code, interface, textes et ressources sont originaux ; le jeu est autonome et ne
 
 ## État
 
-**Candidat 0.26.0 expérimental local : pas une 1.0.** 6830 contrôles automatiques réussis, zéro échec. Aucun essai externe avec des joueurs documenté.
+**Candidat 0.26.0 expérimental local : pas une 1.0.** 6830 contrôles automatiques réussis, zéro échec. Archive Windows locale `PandemicHorizon-0.26.0-Windows-x64-0bae202.zip` vérifiée (non publiée). Aucun essai externe avec des joueurs documenté.
 
 - 0.26 : les crises stratégiques dépendent de l’état du monde (liaison interrompue, pression scientifique, foyer développé, passage ouvert, coordination), ONDE se décale des décisions, Discrétion agit 30 jours et retarde la détection, une ligne « En cours » résume les effets actifs. Format 9 ; parties 0.25 conservées. Voir le [point 37](docs/suivi/37-situations-strategiques.md) et les [mesures de 2 520 parties](docs/equilibrage/EQUILIBRAGE-0.26-SITUATIONS.md) : Discrétion n’est plus dominante ; Mobilité, devenue la plus sûre, reçoit une contrepartie (remède ×1,15) qui réduit son avance ([variantes](docs/equilibrage/EQUILIBRAGE-0.26-VARIANTES.md)).
 
