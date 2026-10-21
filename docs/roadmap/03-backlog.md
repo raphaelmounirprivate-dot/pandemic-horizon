@@ -75,10 +75,11 @@ Voir l'[analyse](06-analyse-2026-10-19.md) et le [point 29](../suivi/29-dette-te
 | ANA-03 | Effet réel des réponses de crise | Différé | Décision de l'auteur : après les sessions ; éviterait un format 8 avant ANA-08 |
 | ANA-04 | Renommer le dépôt | Terminé | `pandemic-horizon`, remote et liens mis à jour |
 | ANA-05 | `World.start_with(options)` | Terminé | `test_start_options.gd` ; `start()` conservée |
-| ANA-06 | Découper `main.gd` | Partiel | 811 lignes au point 29 ; 834 au [point 30](../suivi/30-ecrans-dedies.md) (Évolution, menu et bilan dans leurs vues, câblage ajouté au contrôleur) ; 664 au [point 31](../suivi/31-vue-de-jeu.md) (écran de jeu dans `game_view.gd`) ; 597 au [point 32](../suivi/32-tutoriel-sauvegardes.md) (tutoriel, chargement et enregistrement extraits) ; reste : navigation, temps, achats, raccourcis |
+| ANA-06 | Découper `main.gd` | Partiel | 811 lignes au point 29 ; 834 au [point 30](../suivi/30-ecrans-dedies.md) (Évolution, menu et bilan dans leurs vues, câblage ajouté au contrôleur) ; 664 au [point 31](../suivi/31-vue-de-jeu.md) (écran de jeu dans `game_view.gd`) ; 597 au [point 32](../suivi/32-tutoriel-sauvegardes.md) (tutoriel, chargement et enregistrement extraits) ; 446 au [point 34](../suivi/34-gameplay-type-aide.md) (aide, temps, raccourcis, préférences, flux Évolution extraits) ; reste : navigation entre écrans et démarrage de partie, volontairement gardés dans le contrôleur |
 | ANA-07 | Export sûr pour les outils | Terminé | `scripts/analysis/*` par motif ; `test_export_filter.gd` |
 | ANA-08 | Avenir des formats de sauvegarde | À décider | [Note de décision](07-decision-formats-sauvegarde.md) |
-| ANA-09 | Typage GDScript | Partiel | `untyped_declaration` en erreur dans `scripts/simulation/` et `scripts/persistence/` ([point 33](../suivi/33-typage-sauvegardes.md)) ; `gameplay`, `ui`, `tests`, `analysis` et `unsafe_*` à faire |
+| ANA-09 | Typage GDScript | Partiel | `untyped_declaration` en erreur dans `scripts/simulation/`, `scripts/persistence/` ([point 33](../suivi/33-typage-sauvegardes.md)) et `scripts/gameplay/` ([point 34](../suivi/34-gameplay-type-aide.md)) ; `ui`, `tests`, `analysis` et `unsafe_*` à faire |
+| ANA-20 | Aide F1 sans liste déroulante | Terminé | Invariant 7 ; `help_view.gd`, `test_help_view.gd` ([point 34](../suivi/34-gameplay-type-aide.md)) ; lecture par des joueurs à observer |
 | ANA-10 | Source unique des skills | Terminé | `.claude/skills/` |
 | ANA-11 à 14 | CI : chemins, concurrence, cache, rétention | Terminé | CI réussies au point 29 ; une seule exécution en attente par groupe |
 | ANA-15 | `gdlint` en CI | Terminé | `gdlintrc` ; règles de style héritées assouplies |

@@ -63,7 +63,10 @@ Les régions et connexions (`regions.json`, 24 régions fictives) sont validées
 
 | Fichier | Rôle |
 | --- | --- |
-| `main.gd` | Contrôleur : navigation entre écrans, temps, achats, raccourcis ; points d'entrée qui délèguent aux vues. ~600 lignes. |
+| `main.gd` | Contrôleur : état de l'interface, navigation entre écrans, démarrage de partie ; points d'entrée publics qui délèguent aux modules ci-dessous. ~450 lignes. |
+| `game_clock.gd`, `shortcuts.gd` | Temps (pause, vitesse, journées d'une demi-seconde, au plus 16 par image) ; raccourcis clavier communs à tous les écrans. |
+| `preferences.gd`, `evolution_flow.gd` | Préférences `settings.cfg` et thème ; ouverture, sélection, achat explicite et fermeture de l'écran Évolution. |
+| `help_view.gd` | Aide F1 : sujets en boutons (pas de liste déroulante), sujet affiché marqué « ● » ; textes dans `help.gd`. |
 | `tutorial_flow.gd` | Entrée et sortie du tutoriel : partie, choix et sauvegardes du joueur mis de côté puis restaurés ; entraînement dans un dossier séparé. |
 | `game_view.gd` | Écran de jeu : carte, panneau latéral, choix logistique ou réponse de crise sous la carte, ligne d'état, commandes ; `refresh()` lit le modèle sans le modifier. |
 | `menu_view.gd` | Écran titre et « Nouvelle partie » en trois étapes (scénario, difficulté et options, départ sur la carte) ; contraintes entre options dans `update_choices()`. |
@@ -77,7 +80,7 @@ Les régions et connexions (`regions.json`, 24 régions fictives) sont validées
 | `incident_view.gd`, `crisis_response_view.gd` | Aléas et réponses aux crises. |
 | `history_chart.gd`, `help.gd`, `tutorial.gd`, `audio_feedback.gd`, `agent_emblem.gd` | Courbes, aide F1, tutoriel, sons, emblème NACRE. |
 
-Raccourcis (`main.gd::_input`) : F1 aide, F2 décision ou réponse de crise en attente, F3 « Monde » (courbes, actualités), F4 incidents (si aléas actifs), Espace pause, 1/2/4 vitesses, Échap retour. Jetons de couleurs, typographie et espacements : `DESIGN.md`.
+Raccourcis (`shortcuts.gd`, appelé par `main.gd::_input`) : F1 aide, F2 décision ou réponse de crise en attente, F3 « Monde » (courbes, actualités), F4 incidents (si aléas actifs), Espace pause, 1/2/4 vitesses, Échap retour. Jetons de couleurs, typographie et espacements : `DESIGN.md`.
 
 ## Tests — `tests/`
 
@@ -108,7 +111,7 @@ L'export (`export_presets.cfg`) exclut `docs/`, `tests/`, `build/`, les `.ps1` e
 | Étape | Périmètre | État |
 | --- | --- | --- |
 | 1 | `scripts/simulation/` (`world.gd`) — `untyped_declaration` | Fait |
-| 2 | `scripts/persistence/` (`save_store.gd`), puis `scripts/gameplay/` | `persistence` fait (point 33) ; `gameplay` à faire |
+| 2 | `scripts/persistence/` (`save_store.gd`), puis `scripts/gameplay/` | Fait (points 33 et 34) |
 | 3 | `scripts/ui/`, `tests/`, `scripts/analysis/` | À faire |
 | 4 | Règles `unsafe_property_access`, `unsafe_method_access`, `unsafe_call_argument`, `unsafe_cast`, dossier par dossier | À faire ; ~5 700 occurrences mesurées le 19 octobre 2026, surtout des accès à des `Dictionary` issus du JSON |
 
