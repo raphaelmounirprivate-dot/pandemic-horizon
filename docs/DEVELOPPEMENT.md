@@ -16,11 +16,15 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-godot.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Import
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Test
 
+# Style GDScript, identique au job lint de la CI (préparation une seule fois).
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-lint.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Lint
+
 # Lancement du projet avec l'éditeur en mode jeu.
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Play
 ```
 
-L'outillage reste dans `.tools/`, exclu de Git et de l'import Godot. Le script de préparation vérifie les archives avec les empreintes SHA512 de la distribution officielle. Les préférences des essais sont isolées dans `.tools/user/`. Le jeu distribué utilise le répertoire utilisateur normal de Godot.
+L'outillage reste dans `.tools/`, exclu de Git et de l'import Godot. Le script de préparation vérifie les archives avec les empreintes SHA512 de la distribution officielle. `setup-lint.ps1` place Python 3.12.10 embarqué et gdtoolkit 4.5.0 dans `.tools/lint/`, sans Python système ; les archives Python et pip sont vérifiées par des SHA-256 figés au premier téléchargement (21 octobre 2026), faute d’empreinte lisible automatiquement sur python.org. Ajouté après l’échec du job lint de la CI au point 37 : `Test` ne contrôle pas le style. Les préférences des essais sont isolées dans `.tools/user/`. Le jeu distribué utilise le répertoire utilisateur normal de Godot.
 
 ## Export Windows
 

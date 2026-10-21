@@ -12,9 +12,11 @@ Depuis la racine (Windows ; depuis Git Bash, la même commande fonctionne) :
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Import   # si ressources/scènes/scripts ajoutés
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Test
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Lint     # style GDScript, identique au job lint de la CI
 ```
 
-- Si `.tools/godot/` est absent : `scripts/setup-godot.ps1` d'abord.
+- Si `.tools/godot/` est absent : `scripts/setup-godot.ps1` d'abord. Si `.tools/lint/` est absent : `scripts/setup-lint.ps1` (Python embarqué + gdtoolkit 4.5.0, sans installation système).
+- `Test` et `Lint` sont indépendants : Godot accepte des noms que `gdlint` refuse (ex. `var Strategy = …` dans une fonction). Lancer les deux après toute modification de `.gd`, y compris dans `tests/`.
 - Succès = dernière ligne `RESULT: N checks, 0 failures` **et** code de sortie 0.
 - `dev.ps1` échoue aussi sur toute ligne contenant `SCRIPT ERROR:`, `ERROR:` ou `FAIL:` — chercher ces lignes en premier. Chaque échec affiche `FAIL: <description en français>`.
 - La suite complète prend plusieurs minutes (beaucoup de parties simulées). Pour itérer vite sur une seule suite, écrire temporairement un lanceur dans `scripts/analysis/` (exclu de l'export) qui charge uniquement la suite visée, puis **toujours** finir par la suite complète.

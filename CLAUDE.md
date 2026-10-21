@@ -18,12 +18,15 @@ Contexte de travail pour Claude Code (et tout agent de code) sur ce dépôt. À 
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-godot.ps1          # une fois : Godot dans .tools/
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/setup-lint.ps1           # une fois : gdlint 4.5.0 dans .tools/lint (sans Python système)
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Import            # après ajout/modif de ressources
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Test              # régression complète (headless)
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Lint              # même gdlint que le job lint de la CI
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Play              # lancer le jeu
 ```
 
 - `Test` doit finir par `RESULT: N checks, 0 failures`. `dev.ps1` échoue aussi si la sortie contient `SCRIPT ERROR:`, `ERROR:` ou `FAIL:` — un avertissement Godot transformé en erreur fait donc échouer la suite.
+- `Test` ne vérifie pas le style : la CI lance aussi `gdlint` (règles `gdlintrc`, ex. variables locales en `snake_case`). Un script accepté par Godot peut donc faire échouer la CI ; `Lint` doit finir par `LINT: N fichiers .gd, aucun problème.`
 - `dev.ps1` isole `APPDATA`/`LOCALAPPDATA` dans `.tools/user/` : les tests ne touchent jamais les sauvegardes réelles du joueur. Pour lancer Godot à la main, reproduire cette isolation.
 - Équilibrage : `dev.ps1 Balance | BalanceObjectives | BalanceArctic | BalanceDecisions | BalanceParameters` ; sorties dans `build/qa/` (hors Git).
 - Captures (session graphique requise) : `dev.ps1 Capture*` ou `Godot --path . --script res://tests/capture_<thème>.gd -- --no-autosave`. Sorties dans `.impeccable/review/`.
@@ -59,10 +62,10 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Play        
 
 1. Lire `docs/suivi/00-index.md`, puis le dernier point (`docs/suivi/37-…` actuellement) et `docs/roadmap/03-backlog.md`.
 2. `git status` : vérifier qu'aucune modification locale n'est perdue.
-3. Petit changement, puis `dev.ps1 Test`. Pour l'UI : captures aux trois résolutions. Pour les règles : comparaison appariée (mêmes graines/difficultés) avant d'ajuster un coefficient.
+3. Petit changement, puis `dev.ps1 Test` et `dev.ps1 Lint`. Pour l'UI : captures aux trois résolutions. Pour les règles : comparaison appariée (mêmes graines/difficultés) avant d'ajuster un coefficient.
 4. Ajouter les contrôles correspondants dans une suite `tests/test_*.gd` (skill `godot-tests`).
 5. Clore avec la skill `point-de-suivi` : point NN, index, backlog, README, notes de version.
-6. Avant un push : `git diff --check`, revue des fichiers inclus, commit explicite. Push et CI sont des statuts distincts.
+6. Avant un push : `dev.ps1 Lint`, `git diff --check`, revue des fichiers inclus, commit explicite. Push et CI sont des statuts distincts.
 
 ## Skills du projet (`.claude/skills/`, source unique, versionnée)
 

@@ -26,6 +26,7 @@ Mettre la même version partout :
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Import
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Test
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev.ps1 Lint    # sinon le job lint de la CI peut échouer après le push
 git diff --check
 git status            # revoir la liste des fichiers ; aucun binaire, rien de build/ ni .tools/
 git commit -m "…"     # message explicite ; demander à l'utilisateur avant de committer

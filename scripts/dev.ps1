@@ -1,5 +1,5 @@
 ﻿param(
-    [ValidateSet('Import', 'Test', 'Play', 'Export', 'Capture', 'CaptureObjectives', 'CaptureArctic', 'CaptureDecisions', 'Balance', 'BalanceObjectives', 'BalanceArctic', 'BalanceDecisions', 'BalanceParameters', 'BalanceStrategy', 'BalanceStrategyLegacy', 'BalanceMobility', 'BalanceDiscretion', 'BalanceVeil', 'BalanceVeilCompensation')]
+    [ValidateSet('Import', 'Test', 'Lint', 'Play', 'Export', 'Capture', 'CaptureObjectives', 'CaptureArctic', 'CaptureDecisions', 'Balance', 'BalanceObjectives', 'BalanceArctic', 'BalanceDecisions', 'BalanceParameters', 'BalanceStrategy', 'BalanceStrategyLegacy', 'BalanceMobility', 'BalanceDiscretion', 'BalanceVeil', 'BalanceVeilCompensation')]
     [string]$Action = 'Test',
     [string]$Godot = "$PSScriptRoot/../.tools/godot/Godot_v4.7.2-stable_win64_console.exe"
 )
@@ -26,6 +26,17 @@ $baseArgs = @('--headless', '--path', $projectRoot)
 switch ($Action) {
     'Import' { Invoke-Godot ($baseArgs + @('--editor', '--import', '--quit')) }
     'Test' { Invoke-Godot ($baseArgs + @('--script', 'res://tests/run_tests.gd', '--', '--no-autosave')) }
+    'Lint' {
+        # Same check as the CI lint job: every tracked .gd file, rules in gdlintrc.
+        $python = Join-Path $projectRoot '.tools/lint/python/python.exe'
+        if (-not (Test-Path -LiteralPath $python)) { throw 'gdlint absent : lancer scripts/setup-lint.ps1 une fois.' }
+        $gitArgs = @('-c', "safe.directory=$($projectRoot.Replace('\','/'))", '-C', $projectRoot)
+        $files = @(& git @gitArgs ls-files '*.gd')
+        Push-Location $projectRoot
+        try { & $python -m gdtoolkit.linter @files } finally { Pop-Location }
+        if ($LASTEXITCODE -ne 0) { throw "gdlint a signalé des problèmes (code $LASTEXITCODE)." }
+        Write-Output "LINT: $($files.Count) fichiers .gd, aucun problème."
+    }
     'Balance' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/balance.gd')) }
     'BalanceObjectives' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/balance_objectives.gd')) }
     'BalanceArctic' { Invoke-Godot ($baseArgs + @('--script', 'res://scripts/analysis/balance_arctic.gd')) }
