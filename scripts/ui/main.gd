@@ -247,7 +247,7 @@ func _smoke_test() -> void:
 	if not preload("res://scripts/ui/runtime_smoke.gd").run(self):
 		get_tree().quit(1)
 		return
-	print("RUNTIME_SMOKE_OK: classic scenarios and replay, tutorial, help, objectives and decisions, enriched profile5, comfort and audio, crises profile6, reactive profile7 targets/response/goal, active incident map and scopes, restart, settings, menu")
+	print("RUNTIME_SMOKE_OK: classic scenarios and replay, tutorial, help, objectives and decisions, enriched profile5, comfort and audio, crises profile6, reactive profile7 targets/response/goal, active incident map and scopes, strategy profiles 8/9, restart, settings, menu")
 	get_tree().quit()
 
 func _apply_theme() -> void:

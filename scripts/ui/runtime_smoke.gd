@@ -200,4 +200,18 @@ static func run(ui) -> bool:
 	ui.show_game()
 	if not "Double relais" in ui.objective_details.text:
 		return false
+	# Both strategy profiles must be packaged: frozen 0.25 (format 8) and current 0.26 (format 9).
+	for profile in [World.Strategy.PROFILE, World.Strategy.CURRENT]:
+		if not optional_world.start_with({"start": "boreale", "agent": "pulse", "strategy": profile}).is_empty():
+			return false
+		for day in range(24):
+			if World.Strategy.pending(optional_world): World.Strategy.choose(optional_world, World.Strategy.choices(optional_world)[0].id)
+			optional_world.step()
+		optional_loaded = smoke_store.decode(smoke_store.encode(optional_world))
+		if not optional_loaded.error.is_empty() or smoke_store.encode(optional_loaded.world).format != World.Strategy.FORMATS[profile] or optional_loaded.world.strategy != optional_world.strategy:
+			return false
+	ui.world = optional_loaded.world
+	ui.show_game()
+	if World.Strategy.compact_line(ui.world).is_empty() or World.Strategy.choices(ui.world).size() != 3:
+		return false
 	return true
